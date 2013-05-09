@@ -1,5 +1,6 @@
 package infrascructure.data.readers;
 
+
 public class DefaultResourceReadersFactory extends ResourceReadersFactory{
 	
 	@Override

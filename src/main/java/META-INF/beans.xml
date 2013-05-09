@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+<import resource="mongodb-config.xml"/>
+  <!-- services -->
+
+
+
+  <!-- Factory bean test -->  	
+  <bean id="clientBeanFactory" class="my.test.spring.core.MyBeanFactory"/>  
+  <bean id="clientBean"
+      factory-bean="clientBeanFactory"
+      factory-method="createClient"
+      > 	    	    
+  </bean>	
+  
+  
+  <!-- <bean id="buzContainerBean" class="my.test.spring.core.BuzContainer">
+      <constructor-arg ref="buzBean"/>
+  </bean> -->    
+       
+  <bean id="buzContainerBean" class="my.test.spring.core.BuzContainer" depends-on="buzBean">
+      <property name="buz" >
+  		<ref bean="buzBean"/>                          
+      </property>
+  </bean>     
+
+  <bean id="buzBean" class="my.test.spring.core.Buz">
+      <constructor-arg value="Not default buzBean"></constructor-arg>
+  </bean>
+  
+  <!-- properties -->
+  
+  <bean id="myDataSource" class="my.test.spring.core.BasicDataSource" lazy-init="false"     
+      p:driverClassName="com.mysql.jdbc.Driver"
+      p:url="jdbc:mysql://localhost:3306/mydb"
+      p:username="root"
+      p:password="masterkaoli"/>
+  
+  
+  <bean id="foo" class="my.test.spring.core.Foo">
+      <property name="accounts">
+          <map>
+              <entry key="one" value="9.99"/>
+              <entry key="two" value="2.75"/>
+              <entry key="six" value="3.99"/>
+          </map>
+      </property>
+  </bean>
+  
+  <!-- @autowired test -->
+  <bean id="testBean" class="my.test.spring.core.TestBean"/>
+  <bean id="simpleBean" class="my.test.spring.core.SimpleBean" autowire="byType">      
+  </bean>
+  
+  <!-- Method injection test -->
+  
+  <bean id="command" class="my.test.spring.core.Command" scope="prototype">
+      <property name="state" value="Devil's dance"></property>
+		<!-- inject dependencies here as required -->
+  </bean>
+
+<!-- commandProcessor uses statefulCommandHelper -->
+<bean id="commandManager" class="my.test.spring.core.CommandManager">
+	<lookup-method name="createCommand" bean="command"/>
+</bean>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+</beans>

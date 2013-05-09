@@ -93,51 +93,51 @@ public class ResourceReadersTest {
 		
 	}
 	
-	@Test
-	public void testCachedList() {
-		String sourceDir = Config.getProperty("rawdocs_dir");				
-		SimpleResourceSerializer serializer = SerializersFactory.createSimpleSerializer(sourceDir);		
-		BigList<Resource> rawdocs = new SimpleCachedList<Resource>(sourceDir, 10, serializer);		
-		try {
-		    rawdocs.add(new Resource("Metallica"));
-		    Assert.assertEquals(rawdocs.contains(0), true);
-		    Assert.assertEquals(rawdocs.size(), 1);
-		    String s = rawdocs.get(0).getData();
-		    Assert.assertEquals(rawdocs.get(0).getData(), "Metallica");
-		    
-		    
-		} catch (IOException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
-		}
-		
-	}
-	
-	@Test
-	public void testCachedReader() {
-	    ResourcesRepository reader = new ResourcesRepository();
-	    try {
-		reader.readAll();
-		Resource r;
-		int i = 0;
-		List<Resource> docs = new LinkedList<Resource>();
-		while((r = reader.get(i ++)) != null) {
-		    docs.add(r);
-		}		
-		Trace.trace("Docs downloaded: " + docs.size());
-		
-		//Assert.assertEquals(docs.size(), 11);
-		
-		PlainDocsRepository docsRepo = new PlainDocsRepository(reader);
-		docsRepo.readAll();
-		PlainTextResource doc = docsRepo.get(9);
-		
-		Trace.trace("TITTLE: " + doc.getTittle());		
-		
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
-	}
+//	@Test
+//	public void testCachedList() {
+//		String sourceDir = Config.getProperty("rawdocs_dir");				
+//		SimpleResourceSerializer serializer = SerializersFactory.createSimpleSerializer(sourceDir);		
+//		BigList<Resource> rawdocs = new SimpleCachedList<Resource>(sourceDir, 10, serializer);		
+//		try {
+//		    rawdocs.add(new Resource("Metallica"));
+//		    Assert.assertEquals(rawdocs.contains(0), true);
+//		    Assert.assertEquals(rawdocs.size(), 1);
+//		    String s = rawdocs.get(0).getData();
+//		    Assert.assertEquals(rawdocs.get(0).getData(), "Metallica");
+//		    
+//		    
+//		} catch (IOException e) {
+//		    // TODO Auto-generated catch block
+//		    e.printStackTrace();
+//		}
+//		
+//	}
+//	
+//	@Test
+//	public void testCachedReader() {
+//	    ResourcesRepository reader = new ResourcesRepository();
+//	    try {
+//		reader.readAll();
+//		Resource r;
+//		int i = 0;
+//		List<Resource> docs = new LinkedList<Resource>();
+//		while((r = reader.get(i ++)) != null) {
+//		    docs.add(r);
+//		}		
+//		Trace.trace("Docs downloaded: " + docs.size());
+//		
+//		//Assert.assertEquals(docs.size(), 11);
+//		
+//		PlainDocsRepository docsRepo = new PlainDocsRepository(reader);
+//		docsRepo.readAll();
+//		PlainTextResource doc = docsRepo.get(9);
+//		
+//		Trace.trace("TITTLE: " + doc.getTittle());		
+//		
+//	    } catch (IOException e) {
+//		e.printStackTrace();
+//	    }
+//	}
 
 }
 
