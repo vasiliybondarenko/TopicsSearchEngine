@@ -18,17 +18,20 @@
  * under the License.
  *
  */
-package infrascructure.data;
-
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.Configuration;
+package infrascructure.data.readers;
 
 /**
  * @author shredinger
  *
  */
-@Configuration
-@ImportResource("classpath:META-INF/testconfig.xml")
-public class SpringConfiguration {
+public class RemoteResourceReadersFactory extends ResourceReadersFactory{
+
+    /* (non-Javadoc)
+     * @see infrascructure.data.readers.ResourceReadersFactory#getResourceReader()
+     */
+    @Override
+    public ResourceReader getResourceReader() {	
+	return new RemoteReader();
+    }
 
 }

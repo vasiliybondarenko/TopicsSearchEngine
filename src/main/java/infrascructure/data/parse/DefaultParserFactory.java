@@ -20,19 +20,23 @@
  */
 package infrascructure.data.parse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /**
  * @author shredinger
  *
  */
+@Service
 public class DefaultParserFactory extends ParserFactory{
-
+       
     /* (non-Javadoc)
      * @see infrascructure.data.parse.ParserFactory#createParser()
      */
-    @Override
+    @Override    
     public Parser createParser() {	
 	//return new DOMParser();
-	return new DoNothingParser();
+	return new DoNothingParser();	
     }
 
 }

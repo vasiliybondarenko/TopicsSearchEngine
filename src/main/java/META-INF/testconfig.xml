@@ -5,14 +5,38 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/context
           http://www.springframework.org/schema/context/spring-context-3.0.xsd          
           http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">		
+          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+          
+    <context:property-placeholder location="classpath:META-INF/crawler.properties"/>		
  	<!-- <context:component-scan base-package="infrastructure.data" /> -->	
  	
+ 	<!-- cuurrently factory is not used  -->
  	<bean id="parserFactory" class="infrascructure.data.parse.DefaultParserFactory"/>	
  	
+ 	<bean id="parser" class="infrascructure.data.parse.DoNothingParser"/>
+ 	
  	<bean id="readersFactory" class="infrascructure.data.readers.DefaultResourceReadersFactory"/>
+ 	<bean id="resourcesReader"
+      factory-bean="readersFactory"
+      factory-method="getResourceReader"
+    />
+	
+	<bean id="urlIeratorFactory" class="infrascructure.data.crawl.LocalIteratorFactory"/> 	  
+  	<bean id="iterator"
+      factory-bean="urlIeratorFactory"
+      factory-method="getURLItarator"
+    /> 
  	
+ 	<!-- <bean id="iterator" class="infrascructure.data.crawl.LocalIterator">
+ 	    <constructor-arg  value="${rawdocs_dir}"></constructor-arg>
+ 	</bean> -->
  	
+ 	    	    
+  	
+  	<bean id="resourcesRepository" class="infrascructure.data.readers.ResourcesRepository"/>	
+ 	<bean id="plainDocsRepository" class="infrascructure.data.parse.PlainDocsRepository">
+ 	    <constructor-arg  ref="resourcesRepository"></constructor-arg>
+ 	</bean>
 	
 	
 </beans>

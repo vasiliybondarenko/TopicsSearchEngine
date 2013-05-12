@@ -55,6 +55,7 @@ public class OnlineLDALauncher {
 
     
     private static void process() {
+	//TO DO: get instance of reader from annotation context
 	final ResourcesRepository reader = new ResourcesRepository();
 	    try {
 		

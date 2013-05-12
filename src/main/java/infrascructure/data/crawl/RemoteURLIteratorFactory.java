@@ -26,17 +26,8 @@ import infrascructure.data.parse.WikiParser;
  * @author shredinger
  *
  */
-public class DefaultURLIteratorFactory extends URLIteratorFactory{
-
+public class RemoteURLIteratorFactory extends URLIteratorFactory{ 
     
-    private static DefaultURLIteratorFactory instance;
-    
-    public static DefaultURLIteratorFactory getInstance() {
-	if(instance == null) {
-	    instance = new DefaultURLIteratorFactory();
-	}
-	return instance;	
-    }
     
     /* (non-Javadoc)
      * @see infrascructure.data.crawl.URLIteratorFactory#getURLItarator()

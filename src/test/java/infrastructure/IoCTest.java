@@ -20,16 +20,17 @@
  */
 package infrastructure;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import infrascructure.data.SpringConfiguration;
+import infrascructure.data.crawl.URLIterator;
 import infrascructure.data.parse.Parser;
 import infrascructure.data.parse.ParserFactory;
-import infrascructure.data.readers.DefaultResourceReadersFactory;
-import infrascructure.data.readers.ResourceReadersFactory;
+import infrascructure.data.parse.PlainDocsRepository;
+import infrascructure.data.readers.ResourceReader;
+import infrascructure.data.readers.ResourcesRepository;
 
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 /**
@@ -40,17 +41,23 @@ public class IoCTest {
 
     @Test
     public void testIoC() {
-	AnnotationConfigApplicationContext appContext = null;		
+	AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);		
 	String testConfigPath = "META-INF/testconfig.xml";	
-	ApplicationContext context = new ClassPathXmlApplicationContext(testConfigPath);
+	//ApplicationContext context = new ClassPathXmlApplicationContext(testConfigPath);
 	//appContext = new AnnotationConfigApplicationContext("infrascructure.data");
+		
+	Parser parser = context.getBean(Parser.class);	
+	URLIterator iterator = context.getBean(URLIterator.class);
+	ResourceReader reader = context.getBean(ResourceReader.class);	
 	
-	ParserFactory fact = (ParserFactory)context.getBean("parserFactory");
-	Parser parser = fact.createParser();
+	ResourcesRepository repo = context.getBean(ResourcesRepository.class);
+	PlainDocsRepository docsRepo = context.getBean(PlainDocsRepository.class);	
 	
-	//ResourceReadersFactory fact = (ResourceReadersFactory)context.getBean("readersFactory");
-	
-	assertNotNull(fact);
+	assertNotNull(iterator);
+	assertNotNull(reader);
+	assertNotNull(parser);
+	assertNotNull(repo);
+	assertNotNull(docsRepo);
 	
 	//AnnotationConfigApplicationContext acc = new AnnotationConfigApplicationContext("my.test.spring.core");
     }

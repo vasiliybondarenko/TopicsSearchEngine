@@ -22,6 +22,8 @@ package infrascructure.data.parse;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import infrascructure.data.Config;
 import infrascructure.data.PlainTextResource;
 import infrascructure.data.Resource;
@@ -47,8 +49,11 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource>{
     private final int MAX_DOCS_COUNT = Integer.parseInt(Config.getProperty("required_docs_count"));;
     
     private String sourceDir;        
-    private volatile BigList<PlainTextResource> docs;    
+    private volatile BigList<PlainTextResource> docs;
+        
+    @Autowired
     private Parser parser;
+    
     private CacheableReader<Resource> resourcesRepository;
     
     /**
@@ -59,7 +64,6 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource>{
 	String tittlesFileName = Config.getProperty("tittles_path");
 	PlainTextResourceSerializer serializer = SerializersFactory.createPlainTextSerializer(sourceDir, tittlesFileName);
 	docs = new SimpleCachedList<PlainTextResource>(sourceDir, MAX_CACHE_SIZE, serializer);	
-	parser = new DefaultParserFactory().createParser();
 	this.resourcesRepository = resourcesRepository;
     }
     

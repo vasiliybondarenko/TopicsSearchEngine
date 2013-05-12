@@ -21,6 +21,9 @@
 package infrascructure.data.readers;
 
 import java.io.IOException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import infrascructure.data.Config;
 import infrascructure.data.Resource;
 import infrascructure.data.crawl.LocalIteratorFactory;
@@ -38,19 +41,19 @@ public class ResourcesRepository extends CacheableReader<Resource>{
     private final int MAX_CACHE_SIZE = 100;
     private final int MAX_DOCS_COUNT = Integer.parseInt(Config.getProperty("required_docs_count"));;
     
+    @Autowired
     private URLIterator urlIterator;
+    
+    @Autowired
     private ResourceReader reader;
+    
     private String sourceDir;
-    private ResourceReadersFactory resourceReadersfactory;        
     private volatile BigList<Resource> rawdocs;
     
     /**
      * 
      */
-    public ResourcesRepository() {
-	urlIterator = new LocalIteratorFactory().getURLItarator();//DefaultURLIteratorFactory.getInstance().getURLItarator();
-	resourceReadersfactory = new DefaultResourceReadersFactory();
-	reader = resourceReadersfactory.getResourceReader();
+    public ResourcesRepository() {	
 	sourceDir = Config.getProperty("rawdocs_repository");	
 	SimpleResourceSerializer serializer = SerializersFactory.createSimpleSerializer(sourceDir);
 	rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
