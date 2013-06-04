@@ -73,7 +73,8 @@ public class Documents {
                     .replaceAll("[^a-z ]", "")
                     .replaceAll(" +", " ");
             Map<Integer,Integer> counts = new LinkedHashMap<Integer, Integer>();
-            for(String token:  extractTokens(doc)){
+            List<String> tokens = extractTokens(doc);
+            for(String token: tokens){
                 if(vocab.contains(token)){
                     int tokenId = vocab.getId(token);
                     if(!counts.containsKey(tokenId)){
