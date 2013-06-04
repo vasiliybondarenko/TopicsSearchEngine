@@ -31,6 +31,7 @@ import infrascructure.data.crawl.URLIterator;
 import infrascructure.data.list.BigList;
 import infrascructure.data.serialize.SerializersFactory;
 import infrascructure.data.serialize.SimpleResourceSerializer;
+import infrascructure.data.util.Trace;
 
 /**
  * @author shredinger
@@ -75,9 +76,14 @@ public class ResourcesRepository extends CacheableReader<Resource>{
 	    url = urlIterator.getNextURL();
 	    if(url == null) {
 		break;
-	    }
+	    }	    	    
 	    Resource resourse = reader.read(url);
-	    rawdocs.add(resourse);	    
+	    if(resourse == null) {
+		Trace.trace("Skipping resource ...");
+		continue;
+	    }
+	    rawdocs.add(resourse);
+	    Trace.trace("Doc " + i + " was read");
 	}
     }
 }

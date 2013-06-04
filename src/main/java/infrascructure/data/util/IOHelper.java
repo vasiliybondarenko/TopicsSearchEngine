@@ -25,9 +25,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -84,5 +87,22 @@ public class IOHelper {
 	    }
 	}
 	return lines;	
+    }
+    
+    public static List<String> getFiles(String sourceDirPath, FilenameFilter filter) throws IOException{
+	File file = new File(sourceDirPath);
+	if(!file.exists()) {
+	    throw new IOException("Directory " + sourceDirPath + " does not exist");
+	}
+	if(!file.isDirectory()) {
+	    throw new IOException("File " + sourceDirPath + " is not a directory");
+	}
+	String[] files = file.list(filter);
+	List<String> fullPathes = new LinkedList<>();
+	for(int i = 0; i < files.length; i ++) {
+	    String fullPath = sourceDirPath + FILE_SEPARATOR + files[i];	    
+	    fullPathes.add(fullPath);
+	}
+	return fullPathes;
     }
 }

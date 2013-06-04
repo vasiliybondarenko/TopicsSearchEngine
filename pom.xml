@@ -68,11 +68,17 @@
 		<version>2.2.2</version>
 	  </dependency>
 	  
-		
+	  <!-- Guava -->
+	  <dependency>
+		<groupId>com.google.guava</groupId>
+		<artifactId>guava</artifactId>
+		<version>r09</version>
+	  </dependency>	
+	  	
     </dependencies>
 
 
-   <build>
+	<build>
 	  <plugins>
 	    <plugin>
 		<artifactId>maven-compiler-plugin</artifactId>
@@ -80,8 +86,24 @@
 			<source>1.7</source>
 			<target>1.7</target>
 		</configuration>
+	    </plugin>  
+	      
+	    <plugin>
+	      <artifactId>maven-assembly-plugin</artifactId>
+	      <configuration>
+	          <source>1.7</source>			  
+		        <archive>
+		          <manifest>
+		            <mainClass>infrascructure.data.OnlineLDALauncher</mainClass>
+		          </manifest>
+		        </archive>
+		        <descriptorRefs>
+		          <descriptorRef>jar-with-dependencies</descriptorRef>
+		        </descriptorRefs>
+	      </configuration>
 	    </plugin>
 	  </plugins>
 	</build>
+    
     
 </project>

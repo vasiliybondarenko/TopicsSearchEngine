@@ -7,21 +7,24 @@
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
           
-    <context:property-placeholder location="classpath:META-INF/crawler.properties"/>		
+    <!-- <context:property-placeholder location="classpath:META-INF/crawler.properties"/> -->		
  	<!-- <context:component-scan base-package="infrastructure.data" /> -->	
  	
  	<!-- cuurrently factory is not used  -->
  	<bean id="parserFactory" class="infrascructure.data.parse.DefaultParserFactory"/>	
  	
- 	<bean id="parser" class="infrascructure.data.parse.DoNothingParser"/>
+ 	<!-- <bean id="parser" class="infrascructure.data.parse.DoNothingParser"/> -->
+ 	<bean id="parser" class="infrascructure.data.parse.DOMParser"/>
  	
- 	<bean id="readersFactory" class="infrascructure.data.readers.DefaultResourceReadersFactory"/>
+ 	<!-- <bean id="readersFactory" class="infrascructure.data.readers.DefaultResourceReadersFactory"/> -->
+ 	<bean id="readersFactory" class="infrascructure.data.readers.RemoteResourceReadersFactory"/> 	
  	<bean id="resourcesReader"
       factory-bean="readersFactory"
       factory-method="getResourceReader"
     />
 	
-	<bean id="urlIeratorFactory" class="infrascructure.data.crawl.LocalIteratorFactory"/> 	  
+	<!-- <bean id="urlIeratorFactory" class="infrascructure.data.crawl.LocalIteratorFactory"/> -->
+	<bean id="urlIeratorFactory" class="infrascructure.data.crawl.RemoteURLIteratorFactory"/> 	  
   	<bean id="iterator"
       factory-bean="urlIeratorFactory"
       factory-method="getURLItarator"

@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import infrascructure.data.SpringConfiguration;
 import infrascructure.data.crawl.URLIterator;
 import infrascructure.data.parse.Parser;
-import infrascructure.data.parse.ParserFactory;
 import infrascructure.data.parse.PlainDocsRepository;
 import infrascructure.data.readers.ResourceReader;
 import infrascructure.data.readers.ResourcesRepository;

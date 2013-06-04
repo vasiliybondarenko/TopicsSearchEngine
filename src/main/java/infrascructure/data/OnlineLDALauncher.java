@@ -25,16 +25,13 @@ import infrascructure.data.readers.ResourcesRepository;
 import infrascructure.data.util.Trace;
 import infrascructure.data.vocabulary.SimpleVocabularyBuider;
 import infrascructure.data.vocabulary.Vocabulary;
-import infrascructure.data.vocabulary.VocabularyBuilder;
-
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * @author shredinger
@@ -48,25 +45,26 @@ public class OnlineLDALauncher {
      * @param args
      */
     public static void main(String[] args) {
-	
+	Trace.trace("starting ..");
 	process();
 
     }
 
     
-    private static void process() {
-	//TO DO: get instance of reader from annotation context
-	final ResourcesRepository reader = new ResourcesRepository();
-	    try {
-		
-		//example
+    private static void process() {	
+	AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+	
+	final ResourcesRepository reader = context.getBean(ResourcesRepository.class);
+	    try {		
 		ExecutorService pool = Executors.newCachedThreadPool();
-		final PlainDocsRepository docsRepo = new PlainDocsRepository(reader);
-		Future future = pool.submit(new Runnable() {
+			
+		final PlainDocsRepository docsRepo = context.getBean(PlainDocsRepository.class);
+		pool.submit(new Runnable() {
 		    
 		    @Override
 		    public void run() {
 			try {
+			    Trace.trace("reading docs ..");
 			    reader.readAll();
 			} catch (IOException e) {
 			    // TODO Auto-generated catch block
@@ -76,28 +74,37 @@ public class OnlineLDALauncher {
 		    }
 		});
 		
-		Future future1 = pool.submit(new Runnable() {
+		
+		Future<?> parseResult = pool.submit(new Runnable() {
 		    
 		    @Override
 		    public void run() {
 			try {
+			    Trace.trace("parsing ..");
 			    docsRepo.readAll();
+			    Trace.trace("parsed ..");
 			} catch (IOException e) {
 			    // TODO Auto-generated catch block
 			    e.printStackTrace();
 			}
 			
 		    }
+		});	
+		
+		//TO DO: test!
+		
+		parseResult.get();
+		Future<Vocabulary> vocabularyResult = pool.submit(new Callable<Vocabulary>() {
+		   /* (non-Javadoc)
+		     * @see java.util.concurrent.Callable#call()
+		     */
+		    @Override
+		    public Vocabulary call() throws Exception {
+			return SimpleVocabularyBuider.createInstance(docsRepo).buildVocabulary();		        
+		    } 
 		});
-		
-		
-		
-		//TO DO: run in separated threads using Executers
-//		reader.readAll();		
-//		PlainDocsRepository docsRepo = new PlainDocsRepository(reader);
-//		docsRepo.readAll();
-		
-		Vocabulary vocabulary = SimpleVocabularyBuider.createInstance(docsRepo).buildVocabulary();		
+		Vocabulary vocabulary = vocabularyResult.get();
+				
 		//TO DO: launch ONLINE DATA for prepared data
 		
 	    } catch (Exception e) {

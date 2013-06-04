@@ -40,28 +40,28 @@ public class DOMParser implements Parser{
      */
     @Override
     public PlainTextResource parse(Resource r) {
-	String html = r.getData();
-	Document doc = Jsoup.parse(html);
+	try {
+	    String html = r.getData();
+		Document doc = Jsoup.parse(html);
+		
+		String query = "div.mw-content-ltr";
+		Element e = doc.select(query).first();		
+		
+		if(e == null) {
+		    return null;
+		}
+		
+		String tittle = doc.title();
+		String data = e.text();
+		
+		PlainTextResource resource = new PlainTextResource(data);
+		resource.setTittle(tittle);
+		return resource;
+	}catch(Exception ex){
+	    Trace.trace(ex);
+	}
+	return null;
 	
-	String query = "div.mw-content-ltr";
-	Element e = doc.select(query).first();
-	Elements children = e.children().select("p");
-	
-	String tittle = doc.title();
-	String data = e.text();
-	
-//	for(Element el: children) {
-//	    //Trace.trace(el.data());
-//	    String text = el.html();
-//	    String planeText = text.replaceFirst("<(.*)>", "");
-//	    String txt = el.text();
-//	    Trace.trace(el.html());
-//	    
-//	}
-	
-	PlainTextResource resource = new PlainTextResource(data);
-	resource.setTittle(tittle);
-	return resource;
     }
 
 }

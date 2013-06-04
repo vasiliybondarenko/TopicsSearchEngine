@@ -46,7 +46,7 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource>{
 
     
     private final int MAX_CACHE_SIZE = 100;
-    private final int MAX_DOCS_COUNT = Integer.parseInt(Config.getProperty("required_docs_count"));;
+    private final int MAX_DOCS_COUNT = Integer.parseInt(Config.getProperty("required_docs_count"));
     
     private String sourceDir;        
     private volatile BigList<PlainTextResource> docs;
@@ -84,8 +84,12 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource>{
 	while(i < MAX_DOCS_COUNT) {	    
 	    Resource resource = resourcesRepository.get(i);	    
 	    PlainTextResource data = parser.parse(resource);
-	    docs.add(data);
-	    Trace.trace("Doc " + i + " parsed");
+	    if(data != null) {
+		docs.add(data);
+		Trace.trace("Doc " + i + " parsed");		
+	    }else {
+		Trace.trace("Doc " + i + " cannot be parsed");
+	    }    
 	    i ++;
 	}
 	
