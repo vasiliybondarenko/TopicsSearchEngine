@@ -20,6 +20,8 @@
  */
 package vagueobjects.ir.lda.tokens;
 
+import infrascructure.data.util.Trace;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,10 +41,12 @@ public class QuickVocabulary implements Vocabulary{
     private final BiMap<String, Integer> words = HashBiMap.create(); 
 
     public QuickVocabulary(Collection<String> strings) {
+	long start = System.nanoTime();
 	int i = 0;
 	for(String word: strings) {
 	    words.put(word, i ++);
 	}        
+	Trace.trace("[QuickVocabulary]: " + (System.nanoTime() - start));	
     }
 
     public QuickVocabulary(String path ) throws IOException {	
@@ -60,7 +64,7 @@ public class QuickVocabulary implements Vocabulary{
      */
     @Override
     public boolean contains(String token) {
-	return words.containsKey(words);
+	return words.containsKey(token);
     }
 
     /* (non-Javadoc)

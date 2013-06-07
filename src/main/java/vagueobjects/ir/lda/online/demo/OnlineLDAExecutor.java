@@ -23,6 +23,7 @@ package vagueobjects.ir.lda.online.demo;
 import infrascructure.data.Config;
 import infrascructure.data.launch.DocsRepository;
 import infrascructure.data.launch.DocsRepositoryFactory;
+import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 
 import java.io.File;
@@ -72,14 +73,21 @@ public class OnlineLDAExecutor {
         Trace.trace("Online LDA initializing ...");
         
         OnlineLDA lda = new OnlineLDA(vocabulary.size(),K, D, alpha, eta, tau, kappa);
+        int batch = 0;
         do {
+            Trace.trace("==================== Batch " + batch + " ========================");
             Trace.trace("Reading docs ...");
             docs = docsRepository.getBatchDocs(batchSize);
             if(docs != null) {
         	Trace.trace("Read " + docs.size() + " docs");
         	Documents documents = new Documents(docs, vocabulary);
+        	Trace.trace("OnlineLDA os starting ...");
                 Result result = lda.workOn(documents);
-                System.out.println(result);
+                String data = result.getWordsTopicsDistribution();
+                IOHelper.saveToFile(Config.getProperty("onlinelds.results"), data);
+                System.out.println(data);
+            }else {
+        	Trace.trace("Stopped. No docs available");
             }
             
         }while(docs != null);       

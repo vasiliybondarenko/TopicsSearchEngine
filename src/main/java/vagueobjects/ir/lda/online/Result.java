@@ -35,6 +35,7 @@ public class Result {
     /**Number of terms per each tokens to show*/
     static int NUMBER_OF_TOKENS = 15;
     private final Matrix lambda;
+    private final Matrix gamma;
     private final double perplexity;
     private final Documents documents; 
     private final int totalTokenCount;
@@ -45,9 +46,11 @@ public class Result {
      * @param D   - total number of documents in corpus
      * @param bound  - variational bound
      * @param lambda   - variational distribution q(beta|lambda)
+     * @param gamma 
      */
-    public Result(Documents docs, int D, double bound, Matrix lambda) {
+    public Result(Documents docs, int D, double bound, Matrix lambda, Matrix gamma) {
         this.lambda = lambda; 
+        this.gamma = gamma;
         this.documents = docs;
         this.totalTokenCount = docs.getTokenCount();
         double perWordBound = (bound * docs.size())  / D / totalTokenCount;
@@ -73,6 +76,30 @@ public class Result {
         return sb.toString();
     }
 
+    public String getWordsTopicsDistribution() {
+	StringBuilder sb = new StringBuilder();
+        sb.append("Perplexity estimate: ").append(perplexity).append("\n");
+        int numTopics = lambda.getNumberOfRows();
+        int numTerms = Math.min(NUMBER_OF_TOKENS, lambda.getNumberOfColumns());
+        for (int k = 0; k < numTopics; ++k) {
+            Vector termScores = lambda.getRow(k);
+
+            sb.append("[TOPIC " + k + "]: \n");
+            for(Tuple tuple:  sortTopicTerms(termScores,  numTerms )){        	
+                tuple.addToString(sb, documents);                
+            }
+
+            sb.append('\n');
+        }
+        sb.append("\n");
+        return sb.toString();	
+    }
+    
+    public String getDocsDistribution() {
+	//TO DO: implement!!!
+	return null;
+    }
+    
     private Collection<Tuple> sortTopicTerms(Vector termScores, int numTerms ) {
         Set<Tuple> tuples = new TreeSet<Tuple>();
         double sum=0d;

@@ -19,6 +19,10 @@ package vagueobjects.ir.lda.online;
  * under the License.
  *
  */
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+import com.sun.swing.internal.plaf.synth.resources.synth;
+
+import infrascructure.data.util.Trace;
 import vagueobjects.ir.lda.online.matrix.Matrix;
 import vagueobjects.ir.lda.online.matrix.Vector;
 import vagueobjects.ir.lda.tokens.Documents;
@@ -57,6 +61,8 @@ public class OnlineLDA {
      */
     public OnlineLDA(int W, int K, int D, double alpha,
                      double eta, double tau , double kappa) {
+	long start = System.nanoTime();
+	
         this.K = K;
         this.D = D;
         this.W = W;
@@ -70,6 +76,8 @@ public class OnlineLDA {
         //posterior over topics -beta is parameterized by lambda
         this.eLogBeta = dirichletExpectation(lambda);
         this.expELogBeta = exp(eLogBeta);
+        
+        Trace.trace("[OnlineLDA]: " + (System.nanoTime() - start));
     }
 
     private void expectationStep(Documents docs) {
@@ -142,7 +150,7 @@ public class OnlineLDA {
 
 
         this.batchCount++;
-        return new Result(docs, D, bound, lambda);
+        return new Result(docs, D, bound, lambda, gamma);
     }
 
 

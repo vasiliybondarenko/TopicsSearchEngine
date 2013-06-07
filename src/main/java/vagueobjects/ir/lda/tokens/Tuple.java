@@ -40,7 +40,7 @@ public class Tuple implements Comparable<Tuple> {
         return value < o.value ? 1 : -1;
     }
     public void addToString(StringBuilder stringBuilder,Documents documents){
-        stringBuilder.append("[").append(documents.getToken(position))
-                .append("->").append(NF.format(value)).append("] ");
+        stringBuilder.append("").append(documents.getToken(position))
+                .append("->").append(NF.format(value)).append("\n");
     }
 }

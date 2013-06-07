@@ -21,8 +21,12 @@ package vagueobjects.ir.lda.tokens;
  */
 
 
+import infrascructure.data.util.Trace;
+
 import java.text.BreakIterator;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parses a document into a list of token ids and a list of counts,
@@ -66,16 +70,26 @@ public class Documents {
         this.wordIds = new int[numDocs][];
         this.tokenCts = new int[numDocs][];
 
-        for(int docId=0; docId<docs.size();++docId){
+        for(int docId=0; docId<docs.size();++docId){            
             String doc = docs.get(docId);
-            doc = doc.toLowerCase()
-                    .replaceAll("-", " ")
-                    .replaceAll("[^a-z ]", "")
-                    .replaceAll(" +", " ");
-            Map<Integer,Integer> counts = new LinkedHashMap<Integer, Integer>();
-            List<String> tokens = extractTokens(doc);
+            Map<Integer,Integer> counts = new LinkedHashMap<Integer, Integer>();                       
+            List<String> tokens = extractTokens(doc);           
+                
+            String wordPattern = "[a-zA-Z]+";
+            Pattern pattern = Pattern.compile(wordPattern,  Pattern.CASE_INSENSITIVE);            
+            Matcher matcher = pattern.matcher(doc);
+            
+          
+            
+    	    while(matcher.find()) {
+    		String word = matcher.group().toLowerCase();	    
+        	if(!tokens.contains(word)) {
+        	    tokens.add(word);
+        	}	    
+    	    }    	    
+            
             for(String token: tokens){
-                if(vocab.contains(token)){
+                if(vocab.contains(token)){                    
                     int tokenId = vocab.getId(token);
                     if(!counts.containsKey(tokenId)){
                         counts.put(tokenId, 1);
@@ -85,6 +99,7 @@ public class Documents {
                     }
                 }
             }
+            
             int tokenCount = counts.size();
             wordIds[docId] = new int[tokenCount];
             tokenCts[docId] = new int[tokenCount];
