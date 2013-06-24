@@ -82,8 +82,12 @@ public class SimpleDocsRepository extends DocsRepository{
      */
     @Override
     public List<String> getCurrentVocabulary() throws IOException {
+	long startTime = System.nanoTime();
 	String path = Config.getProperty("vocabulary_path");	
-	return IOHelper.readLinesFromoFile(path);
+	List<String> result = IOHelper.readLinesFromoFile(path);
+	long diff = System.nanoTime() - startTime;
+	Trace.trace("[getCurrentVocabulary]: " + diff);
+	return result;
     }
     
     public void init() {
@@ -142,10 +146,9 @@ public class SimpleDocsRepository extends DocsRepository{
 	
 	private void store() throws IOException {	
 	    try(PrintWriter writer = new PrintWriter(path)){
-		 while(!this.files.isEmpty()) {
-		     String entry = files.poll();
-		     writer.println(entry);		     
-		 }	    
+		for(String entry: files) {
+		    writer.println(entry);
+		}		
 	    }	    
 	}
 

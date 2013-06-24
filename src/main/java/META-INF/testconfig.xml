@@ -36,7 +36,8 @@
  	
  	    	    
   	
-  	<bean id="resourcesRepository" class="infrascructure.data.readers.ResourcesRepository"/>	
+  	<bean id="resourcesRepository" class="infrascructure.data.readers.AdvancedResourcesRepository"/>
+  	<!-- <bean id="resourcesRepository" class="infrascructure.data.readers.ResourcesRepository"/>	 -->
  	<bean id="plainDocsRepository" class="infrascructure.data.parse.PlainDocsRepository">
  	    <constructor-arg  ref="resourcesRepository"></constructor-arg>
  	</bean>

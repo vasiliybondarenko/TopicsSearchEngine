@@ -40,16 +40,14 @@ import infrascructure.data.util.Trace;
 public class ResourcesRepository extends CacheableReader<Resource>{
 
     private final int MAX_CACHE_SIZE = 100;
-    private final int MAX_DOCS_COUNT = Integer.parseInt(Config.getProperty("required_docs_count"));;
+    final int MAX_DOCS_COUNT = Integer.parseInt(Config.getProperty("required_docs_count"));;
     
-    @Autowired
-    private URLIterator urlIterator;
+    @Autowired protected URLIterator urlIterator;
     
-    @Autowired
-    private ResourceReader reader;
+    @Autowired protected ResourceReader reader;
     
     private String sourceDir;
-    private volatile BigList<Resource> rawdocs;
+    protected BigList<Resource> rawdocs;
     
     /**
      * 
@@ -70,8 +68,8 @@ public class ResourcesRepository extends CacheableReader<Resource>{
     
     @Override
     public void readAll() throws IOException {	
-	String url;
-	int i = rawdocs.size();
+	String url;	
+	int i = rawdocs.size();	
 	while(i++ < MAX_DOCS_COUNT){	    
 	    url = urlIterator.getNextURL();
 	    if(url == null) {
