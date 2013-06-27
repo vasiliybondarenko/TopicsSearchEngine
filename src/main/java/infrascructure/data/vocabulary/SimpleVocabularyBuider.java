@@ -24,15 +24,10 @@ import infrascructure.data.Config;
 import infrascructure.data.PlainTextResource;
 import infrascructure.data.readers.CacheableReader;
 import infrascructure.data.util.IOHelper;
-import infrascructure.data.util.Trace;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,22 +56,20 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder{
     }
     
     public Vocabulary buildVocabulary() {
-	words = createVocabulary();
-	//TO DO: init vocabulary instance
+	return createVocabulary();
+	
 	
 	//FOR TEST!
-	try {
-	   
-	    Collections.sort(words);
-	    IOHelper.writeLinesToFile(Config.getProperty("vocabulary_path"), words);
-	    
-	    Trace.trace("Vocabulary has been created successfully");
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-	
-	return null;
+//	try {
+//	   
+//	    Collections.sort(words);
+//	    IOHelper.writeLinesToFile(Config.getProperty("vocabulary_path"), words);
+//	    
+//	    Trace.trace("Vocabulary has been created successfully");
+//	} catch (IOException e) {
+//	    // TODO Auto-generated catch block
+//	    e.printStackTrace();
+//	}
     }
     
     /**
@@ -89,26 +82,32 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder{
 	this.to_doc = REQUIRED_DOCS_COUNT - 1;
     }
     
-    protected List<String> createVocabulary(){
-	//TO DO: CHANGE: we need to get docs count for particular word!
-	Set<String> stopWords = getStopWords();
+    protected Vocabulary createVocabulary(){	
+	Set<String> stopWords = getStopWords();	
 	
-	List<String> vocabulary = new LinkedList<String>();
 	Map<String, Integer> allWords = new HashMap<String, Integer>();	
 	for(int i = from_doc; i <= to_doc; i ++) {	    
 	    Map<String, Integer> words = retrieveAllWordCounts(i);	    
 	    for(String word: words.keySet()) {
 		 int docsCount = allWords.containsKey(word) ? allWords.get(word) : 0;
-		 allWords.put(word, docsCount + 1);
+		 if(!stopWords.contains(word)) {
+		     allWords.put(word, docsCount + 1);
+		 }		 
 	    }
 	}	
+	Map<String, Integer> wordCounts = new HashMap<>();
+	Map<String, Integer> wordIds = new HashMap<>();
+	int id = 0;
 	int max = REQUIRED_DOCS_COUNT / 3;
 	for(String word: allWords.keySet()) {
 	    int docsCount = allWords.get(word);
-	    if(!stopWords.contains(word) && docsCount >= min_count && docsCount <= max) {
-		vocabulary.add(word);
+	    if(docsCount >= min_count && docsCount <= max) {
+		wordCounts.put(word, docsCount);
+		wordIds.put(word, id ++);		
 	    }
 	}
+	
+	Vocabulary vocabulary = new VocabularyImpl(wordIds, wordCounts);
 	return vocabulary;
     }
 

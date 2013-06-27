@@ -22,10 +22,18 @@ package infrascructure.data;
 
 import infrascructure.data.parse.PlainDocsRepository;
 import infrascructure.data.readers.ResourcesRepository;
+import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 import infrascructure.data.vocabulary.SimpleVocabularyBuider;
 import infrascructure.data.vocabulary.Vocabulary;
+import infrascructure.data.vocabulary.Word;
+
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -89,9 +97,7 @@ public class OnlineLDALauncher {
 			}
 			
 		    }
-		});	
-		
-		//TO DO: test!
+		});
 		
 		parseResult.get();
 		Future<Vocabulary> vocabularyResult = pool.submit(new Callable<Vocabulary>() {
@@ -104,6 +110,8 @@ public class OnlineLDALauncher {
 		    } 
 		});
 		Vocabulary vocabulary = vocabularyResult.get();
+		saveVocabulary(vocabulary);
+		
 				
 		//TO DO: launch ONLINE DATA for prepared data
 		
@@ -111,4 +119,29 @@ public class OnlineLDALauncher {
 		e.printStackTrace();
 	    }
     }
+    
+    private static void saveVocabulary(Vocabulary v) throws IOException {
+	String vocabularyPath = Config.getProperty("vocabulary_path");
+	String wordCountsPath = Config.getProperty("wordCounts_path");
+	Set<String> words = v.getWords().keySet();
+	Map<String, Integer> wordCounts = v.getWordCounts();	
+	
+	//Replace with lambdas as soon as possible!
+	Queue<Word> sortedWordCounts = new PriorityQueue<>();
+	for(String word: wordCounts.keySet()) {
+	    Integer count = wordCounts.get(word);
+	    sortedWordCounts.add(new Word(word, count));
+	}
+	
+	IOHelper.writeLinesToFile(vocabularyPath, words);
+	try(PrintWriter pw = new PrintWriter(wordCountsPath)){
+	    while (!sortedWordCounts.isEmpty()) {
+		Word w = sortedWordCounts.poll();
+		String line = w.getWord() + "\t" + w.getCount();
+		pw.println(line);
+	    }
+	}
+    }
+    
+    
 }

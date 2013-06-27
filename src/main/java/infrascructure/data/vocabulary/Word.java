@@ -20,14 +20,45 @@
  */
 package infrascructure.data.vocabulary;
 
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
-
 /**
  * @author shredinger
  *
  */
-public interface Vocabulary {
-    ImmutableBiMap<String, Integer> getWords();
-    ImmutableMap<String, Integer> getWordCounts();
+public class Word implements Comparable<Word>{
+    private String word;
+    private Integer count;
+    
+    /**
+     * @return the word
+     */
+    public String getWord() {
+	return word;
+    }
+    
+    /**
+     * @return the count
+     */
+    public Integer getCount() {
+	return count;
+    }
+    
+    /**
+     * 
+     */
+    public Word(String word, Integer count) {
+	this.word = word;
+	this.count = count;	
+    }  
+
+    /* (non-Javadoc)
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    @Override
+    public int compareTo(Word o) {
+	if(this.count != o.count) {
+	    return this.count - o.count;
+	}
+	return this.word.compareTo(o.word);
+    }
+
 }

@@ -23,13 +23,13 @@ package infrascructure.data.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,10 +54,12 @@ public class IOHelper {
    	
     }
     
-    public static void writeLinesToFile(String path, List<String> lines) throws IOException {
+    public static void writeLinesToFile(String path, Collection<String> lines) throws IOException {
    	try(PrintWriter writer = new PrintWriter(path)){
-   	    for(int i = 0; i < lines.size(); i ++) {
-   		writer.println(lines.get(i));
+   	    Iterator<String> it = lines.iterator();
+   	    while(it.hasNext()) {
+   		String line = it.next();
+   		writer.println(line);
    	    }   	    
    	}   	
     }
