@@ -20,12 +20,11 @@
  */
 package infrascructure.data.readers;
 
+import infrascructure.data.Config;
 import infrascructure.data.Resource;
 import infrascructure.data.util.Trace;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AdvancedResourcesRepository extends ResourcesRepository implements Runnable{
 
-    public final static int THREADS = 2;
+    public final static int THREADS = Integer.parseInt(Config.getProperty("crawl_threads", "2"));
     private volatile AtomicInteger index;
     
     /* (non-Javadoc)

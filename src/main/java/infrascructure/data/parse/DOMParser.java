@@ -24,7 +24,7 @@ import infrascructure.data.PlainTextResource;
 import infrascructure.data.Resource;
 import infrascructure.data.util.Trace;
 
-import org.jsoup.*;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -51,8 +51,15 @@ public class DOMParser implements Parser{
 		    return null;
 		}
 		
+		Elements els = e.getElementsByTag("p");
+		StringBuilder sb = new StringBuilder("");
+		for(Element el: els) {		    
+		    String text = el.text();
+		    sb.append(text).append("\n");
+		}		
+		
 		String tittle = doc.title();
-		String data = e.text();
+		String data = sb.toString();
 		
 		PlainTextResource resource = new PlainTextResource(data);
 		resource.setTittle(tittle);

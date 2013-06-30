@@ -130,16 +130,16 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder{
     protected Map<String, Integer> retrieveAllWordCounts(int i) {
 	Map<String, Integer> allWordCounts = new HashMap<String, Integer>();	
 	PlainTextResource r = reader.get(i);
-	    Set<String> wordCounts = retrieveWordCounts(r);
-	    for(String word: wordCounts) {
-		Integer count = allWordCounts.containsKey(word) ? allWordCounts.get(word) : 0;
-		allWordCounts.put(word, count + 1);
-	    }
+	Set<String> wordCounts = retrieveWords(r);
+	for(String word: wordCounts) {
+	    Integer count = allWordCounts.containsKey(word) ? allWordCounts.get(word) : 0;
+	    allWordCounts.put(word, count + 1);
+	}
 	return allWordCounts;
     }  
 
     
-    protected Set<String> retrieveWordCounts(PlainTextResource resource) {
+    protected Set<String> retrieveWords(PlainTextResource resource) {
 	String wordPattern = "[a-zA-Z]+";
         Pattern pattern = Pattern.compile(wordPattern,  Pattern.CASE_INSENSITIVE);
         String source = resource.getText();
