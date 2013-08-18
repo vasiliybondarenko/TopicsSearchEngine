@@ -20,14 +20,11 @@
  */
 package infrascructure.data.serialize;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import infrascructure.data.Data;
 import infrascructure.data.PlainTextResource;
-import infrascructure.data.Resource;
 import infrascructure.data.util.IOHelper;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author shredinger
@@ -38,9 +35,7 @@ public class PlainTextResourceSerializer extends FileResourceSerializer<PlainTex
     protected String titlesFilePath;
     protected List<String> tittles;
     
-    /**
-     * @param dataDirectory
-     */
+
     public PlainTextResourceSerializer(String dataDirectory, String titlesFile) {
 	super(dataDirectory);	
 	this.titlesFilePath = titlesFile;
@@ -80,7 +75,7 @@ public class PlainTextResourceSerializer extends FileResourceSerializer<PlainTex
 	    IOHelper.saveToFile(path, data.getData());
 	    tittles.add(data.getTittle());    
 	    String titlesFullFilePath = getTittlesPath();
-	    IOHelper.writeLinesToFile(titlesFullFilePath , tittles);    
+        IOHelper.appendLineToFile(titlesFullFilePath, data.getTittle());
 	} catch (IOException e) {	    
 	    e.printStackTrace();
 	}

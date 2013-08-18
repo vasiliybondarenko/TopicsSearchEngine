@@ -23,7 +23,6 @@ package infrascructure.data.parse;
 import infrascructure.data.PlainTextResource;
 import infrascructure.data.Resource;
 import infrascructure.data.util.Trace;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -59,6 +58,11 @@ public class DOMParser implements Parser{
 		}		
 		
 		String tittle = doc.title();
+        String wikiEnd = "- Wikipedia, the free encyclopedia";
+        tittle = tittle.lastIndexOf(wikiEnd) > 0 ?
+                tittle.substring(0, tittle.lastIndexOf(wikiEnd) - 1)
+                : tittle;
+
 		String data = sb.toString();
 		
 		PlainTextResource resource = new PlainTextResource(data);

@@ -21,17 +21,8 @@
 package infrascructure.data.util;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 /**
  * @author shredinger
@@ -62,6 +53,12 @@ public class IOHelper {
    		writer.println(line);
    	    }   	    
    	}   	
+    }
+
+    public static void appendLineToFile(String path, String line) throws IOException {
+        try(FileWriter writer = new FileWriter(path, true)){
+            writer.append(line).append("\n");
+        }
     }
     
     public static String readFromoFile(String path) throws IOException {
