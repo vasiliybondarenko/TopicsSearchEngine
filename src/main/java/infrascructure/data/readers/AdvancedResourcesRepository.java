@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author shredinger
  *
  */
+
 public class AdvancedResourcesRepository extends ResourcesRepository implements Runnable{
 
     public final static int THREADS = Integer.parseInt(Config.getProperty("crawl_threads", "2"));
@@ -58,22 +59,23 @@ public class AdvancedResourcesRepository extends ResourcesRepository implements 
     @Override
     public void run() {
 	String url;	
-	while(index.getAndIncrement() < MAX_DOCS_COUNT){	    
+	while(index.get() < MAX_DOCS_COUNT){
 	    url = urlIterator.getNextURL();
 	    if(url == null) {
 		break;
 	    }	    	    
-	    Resource resourse = reader.read(url);
-	    if(resourse == null) {
+	    Resource resource = reader.read(url);
+	    if(resource == null) {
 		Trace.trace("Skipping resource " + index + " ...");
 		continue;
 	    }
 	    try {
-		rawdocs.add(resourse);
+		rawdocs.add(resource);
 		Trace.trace("Doc " + index + " was read");
 	    } catch (IOException e) {		
 		e.printStackTrace();
 	    }
+        index.incrementAndGet();
 	    
 	}        
     }
