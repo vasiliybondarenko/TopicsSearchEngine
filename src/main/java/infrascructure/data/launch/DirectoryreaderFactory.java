@@ -21,15 +21,18 @@
 package infrascructure.data.launch;
 
 import infrascructure.data.Config;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author shredinger
- *
  */
 public class DirectoryreaderFactory {
-    
+
+    @Autowired
+    private Config config;
+
     public DirectoryReader getDirectoryReader() {
-	String sourceDirPath = Config.getProperty("batches_dir", ".");
-	return new DefaultDirectoryReader(sourceDirPath);
+        String sourceDirPath = config.getProperty(Config.BATCHES_DIR, ".");
+        return new DefaultDirectoryReader(sourceDirPath);
     }
 }

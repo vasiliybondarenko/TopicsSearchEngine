@@ -20,16 +20,20 @@
  */
 package infrastructure;
 
-import static org.junit.Assert.assertNotNull;
-import infrascructure.data.SpringConfiguration;
+import infrascructure.data.Config;
+import infrascructure.data.crawl.RandomWikiCrawler;
 import infrascructure.data.crawl.URLIterator;
 import infrascructure.data.parse.Parser;
 import infrascructure.data.parse.PlainDocsRepository;
 import infrascructure.data.readers.ResourceReader;
 import infrascructure.data.readers.ResourcesRepository;
-
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+
+import java.io.File;
+
+import static org.junit.Assert.assertNotNull;
 
 
 /**
@@ -40,11 +44,14 @@ public class IoCTest {
 
     @Test
     public void testIoC() {
-	AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);		
-	String testConfigPath = "META-INF/testconfig.xml";	
-	//ApplicationContext context = new ClassPathXmlApplicationContext(testConfigPath);
+	//AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+
+	String testConfigPath = "src/main/resources/custombeans.xml";
+	ApplicationContext context = new FileSystemXmlApplicationContext(testConfigPath);
 	//appContext = new AnnotationConfigApplicationContext("infrascructure.data");
-		
+
+    Config config = context.getBean(Config.class);
+
 	Parser parser = context.getBean(Parser.class);	
 	URLIterator iterator = context.getBean(URLIterator.class);
 	ResourceReader reader = context.getBean(ResourceReader.class);	
@@ -59,5 +66,22 @@ public class IoCTest {
 	assertNotNull(docsRepo);
 	
 	//AnnotationConfigApplicationContext acc = new AnnotationConfigApplicationContext("my.test.spring.core");
+    }
+
+    @Test
+    public void testCustomBeans(){
+        String customBeansPath = "src/main/resources/custombeans.xml";
+        //String customBeansPath = "custombeans.xml";
+        File f = new File(customBeansPath);
+        System.out.println(f.getPath());
+
+
+        FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext(customBeansPath);
+        RandomWikiCrawler crawler = context.getBean(RandomWikiCrawler.class);
+        assertNotNull(crawler);
+
+
+
+
     }
 }

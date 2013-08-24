@@ -3,7 +3,10 @@ package infrascructure.data.readers;
 import infrascructure.data.Config;
 import infrascructure.data.Resource;
 import infrascructure.data.util.Trace;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,13 +16,18 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.commons.io.IOUtils;
-
 public class RemoteReader implements ResourceReader {
 
-	private final int timeout = Integer.parseInt(Config.getProperty("readtimeout", "5000"));
+    @Autowired
+    private Config config;
+	private int timeout;
 
-	@Override
+    @PostConstruct
+    private void init() {
+        timeout = config.getPropertyInt(Config.SOCKET_READ_TIMEOUT, 5000);
+    }
+
+    @Override
 	public Resource read(String location) {		
 		try {	    
 		    String body = readUrl(location);		

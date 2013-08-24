@@ -31,55 +31,53 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author shredinger
- *
  */
 
-public class AdvancedResourcesRepository extends ResourcesRepository implements Runnable{
+public class AdvancedResourcesRepository extends ResourcesRepository implements Runnable {
 
-    public final static int THREADS = Integer.parseInt(Config.getProperty("crawl_threads", "2"));
     private volatile AtomicInteger index;
-    
+
     /* (non-Javadoc)
      * @see infrascructure.data.readers.ResourcesRepository#readAll()
      */
     @Override
     public void readAll() throws IOException {
-	int i = rawdocs.size();
-	index = new AtomicInteger(i);
-	
-	ExecutorService pool = Executors.newCachedThreadPool();
-	for(int t = 0; t < THREADS; t ++) {
-	    pool.submit(this);
-	}	
+        int threads = config.getPropertyInt(Config.CRAWL_THREADS, 1);
+        int i = rawdocs.size();
+        index = new AtomicInteger(i);
+
+        ExecutorService pool = Executors.newCachedThreadPool();
+        for (int t = 0; t < threads; t++) {
+            pool.submit(this);
+        }
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */
     @Override
     public void run() {
-	String url;	
-	while(index.get() < MAX_DOCS_COUNT){
-	    url = urlIterator.getNextURL();
-	    if(url == null) {
-		break;
-	    }	    	    
-	    Resource resource = reader.read(url);
-	    if(resource == null) {
-		Trace.trace("Skipping resource " + index + " ...");
-		continue;
-	    }
-	    try {
-		rawdocs.add(resource);
-		Trace.trace("Doc " + index + " was read");
-	    } catch (IOException e) {		
-		e.printStackTrace();
-	    }
-        index.incrementAndGet();
-	    
-	}        
-    }
-    
+        String url;
+        while (index.get() < max_docs_count) {
+            url = urlIterator.getNextURL();
+            if (url == null) {
+                break;
+            }
+            Resource resource = reader.read(url);
+            if (resource == null) {
+                Trace.trace("Skipping resource " + index + " ...");
+                continue;
+            }
+            try {
+                rawdocs.add(resource);
+                Trace.trace("Doc " + index + " was read");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            index.incrementAndGet();
 
-   
+        }
+    }
+
+
 }

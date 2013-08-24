@@ -20,15 +20,16 @@
  */
 package infrascructure.data;
 
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * @author shredinger
  *
  */
+//Currently we use scan package instead this. Should be deleted
 @Configuration
-@ImportResource("classpath:META-INF/testconfig.xml")
+//@ImportResource("classpath:META-INF/testconfig.xml")//REMOVE!!! (for standalone use only)
 public class SpringConfiguration {
 
 }
+//@ImportResource("classpath:META-INF/testconfig.xml")

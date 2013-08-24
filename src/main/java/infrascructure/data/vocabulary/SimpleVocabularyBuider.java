@@ -24,42 +24,35 @@ import infrascructure.data.Config;
 import infrascructure.data.PlainTextResource;
 import infrascructure.data.readers.CacheableReader;
 import infrascructure.data.util.IOHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 /**
  * @author shredinger
- *
  */
-public class SimpleVocabularyBuider extends BaseVocabularyBuilder{    
-    
+public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
+
     protected final static int LOWER_BOUND = 1;
-    protected final static int REQUIRED_DOCS_COUNT = Integer.parseInt(Config.getProperty("required_docs_count"));
-    
-    protected CacheableReader<PlainTextResource> reader;    
-    protected int min_count; 
+
+    @Autowired
+    private Config config;
+
+    protected CacheableReader<PlainTextResource> reader;
+    protected int min_count;
     protected int from_doc;
     protected int to_doc;
     protected List<String> words;
-    
-    public static SimpleVocabularyBuider createInstance(CacheableReader<PlainTextResource> reader) {
-	int min = Integer.parseInt(Config.getProperty("min_docs_count", String.valueOf(LOWER_BOUND)));
-	return new SimpleVocabularyBuider(reader, min);
-    }
-    
+
     public Vocabulary buildVocabulary() {
-	return createVocabulary();
-	
-	
-	//FOR TEST!
+        return createVocabulary();
+
+
+        //FOR TEST!
 //	try {
 //	   
 //	    Collections.sort(words);
@@ -71,88 +64,88 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder{
 //	    e.printStackTrace();
 //	}
     }
-    
+
     /**
-     * 
+     *
      */
-    protected SimpleVocabularyBuider(CacheableReader<PlainTextResource> reader, int min_count) {
-	this.reader = reader;
-	this.min_count = min_count;
-	this.from_doc = 0;
-	this.to_doc = REQUIRED_DOCS_COUNT - 1;
-    }
-    
-    protected Vocabulary createVocabulary(){	
-	Set<String> stopWords = getStopWords();	
-	
-	Map<String, Integer> allWords = new HashMap<String, Integer>();	
-	for(int i = from_doc; i <= to_doc; i ++) {	    
-	    Map<String, Integer> words = retrieveAllWordCounts(i);	    
-	    for(String word: words.keySet()) {
-		 int docsCount = allWords.containsKey(word) ? allWords.get(word) : 0;
-		 if(!stopWords.contains(word)) {
-		     allWords.put(word, docsCount + 1);
-		 }		 
-	    }
-	}	
-	Map<String, Integer> wordCounts = new HashMap<>();
-	Map<String, Integer> wordIds = new HashMap<>();
-	int id = 0;
-	int max = REQUIRED_DOCS_COUNT / 3;
-	for(String word: allWords.keySet()) {
-	    int docsCount = allWords.get(word);
-	    if(docsCount >= min_count && docsCount <= max) {
-		wordCounts.put(word, docsCount);
-		wordIds.put(word, id ++);		
-	    }
-	}
-	
-	Vocabulary vocabulary = new VocabularyImpl(wordIds, wordCounts);
-	return vocabulary;
+    public SimpleVocabularyBuider(CacheableReader<PlainTextResource> reader, int min_count) {
+        this.reader = reader;
+        this.min_count = min_count;
+        this.from_doc = 0;
+        this.to_doc = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT) - 1;
     }
 
-    
-    private Set<String> getStopWords() {	
-	String stopWordsPath = Config.getProperty("stop_words_path");
-	try {
-	    List<String> words = IOHelper.readLinesFromoFile(stopWordsPath);
-	    Set<String> stopWords = new HashSet<String>();
-	    for(String word: words) {
-		stopWords.add(word);
-	    }
-	    return stopWords;
-	} catch (IOException e) {	    
-	    e.printStackTrace();
-	}
-	return new HashSet<String>();
-    }  
-    
+    protected Vocabulary createVocabulary() {
+        Set<String> stopWords = getStopWords();
+
+        Map<String, Integer> allWords = new HashMap<String, Integer>();
+        for (int i = from_doc; i <= to_doc; i++) {
+            Map<String, Integer> words = retrieveAllWordCounts(i);
+            for (String word : words.keySet()) {
+                int docsCount = allWords.containsKey(word) ? allWords.get(word) : 0;
+                if (!stopWords.contains(word)) {
+                    allWords.put(word, docsCount + 1);
+                }
+            }
+        }
+        Map<String, Integer> wordCounts = new HashMap<>();
+        Map<String, Integer> wordIds = new HashMap<>();
+        int id = 0;
+        int max = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT) / 3;
+        for (String word : allWords.keySet()) {
+            int docsCount = allWords.get(word);
+            if (docsCount >= min_count && docsCount <= max) {
+                wordCounts.put(word, docsCount);
+                wordIds.put(word, id++);
+            }
+        }
+
+        Vocabulary vocabulary = new VocabularyImpl(wordIds, wordCounts);
+        return vocabulary;
+    }
+
+
+    private Set<String> getStopWords() {
+        String stopWordsPath = config.getProperty(Config.STOP_WORDS_PATH);
+        try {
+            List<String> words = IOHelper.readLinesFromoFile(stopWordsPath);
+            Set<String> stopWords = new HashSet<String>();
+            for (String word : words) {
+                stopWords.add(word);
+            }
+            return stopWords;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new HashSet<String>();
+    }
+
     protected Map<String, Integer> retrieveAllWordCounts(int i) {
-	Map<String, Integer> allWordCounts = new HashMap<String, Integer>();	
-	PlainTextResource r = reader.get(i);
-	Set<String> wordCounts = retrieveWords(r);
-	for(String word: wordCounts) {
-	    Integer count = allWordCounts.containsKey(word) ? allWordCounts.get(word) : 0;
-	    allWordCounts.put(word, count + 1);
-	}
-	return allWordCounts;
-    }  
+        Map<String, Integer> allWordCounts = new HashMap<String, Integer>();
+        PlainTextResource r = reader.get(i);
+        Set<String> wordCounts = retrieveWords(r);
+        for (String word : wordCounts) {
+            Integer count = allWordCounts.containsKey(word) ? allWordCounts.get(word) : 0;
+            allWordCounts.put(word, count + 1);
+        }
+        return allWordCounts;
+    }
 
-    
+
     protected Set<String> retrieveWords(PlainTextResource resource) {
-	String wordPattern = "[a-zA-Z]+";
-        Pattern pattern = Pattern.compile(wordPattern,  Pattern.CASE_INSENSITIVE);
+        String wordPattern = "[a-zA-Z]+";
+        Pattern pattern = Pattern.compile(wordPattern, Pattern.CASE_INSENSITIVE);
         String source = resource.getText();
         Matcher matcher = pattern.matcher(source);
         Set<String> tokens = new HashSet<String>();
-	while(matcher.find()) {
-	    String word = matcher.group().toLowerCase();	    
-	    if(!tokens.contains(word)) {
-		tokens.add(word);
-	    }	    
-	}
-	
-	return tokens;
-    }    
-   
+        while (matcher.find()) {
+            String word = matcher.group().toLowerCase();
+            if (!tokens.contains(word)) {
+                tokens.add(word);
+            }
+        }
+
+        return tokens;
+    }
+
 }

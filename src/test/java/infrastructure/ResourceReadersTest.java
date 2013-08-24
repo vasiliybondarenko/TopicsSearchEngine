@@ -1,30 +1,11 @@
 package infrastructure;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
-import junit.framework.Assert;
-import infrascructure.data.list.BigList;
-import infrascructure.data.list.ResourceFactory;
-import infrascructure.data.list.SimpleResourceFactory;
-import infrascructure.data.parse.DOMParser;
-import infrascructure.data.readers.DefaultResourceReadersFactory;
-import infrascructure.data.parse.HTMLParser;
-import infrascructure.data.parse.Parser;
-import infrascructure.data.parse.PlainDocsRepository;
-import infrascructure.data.Config;
-import infrascructure.data.PlainTextResource;
 import infrascructure.data.Resource;
-import infrascructure.data.readers.ResourcesRepository;
-import infrascructure.data.readers.CachedList;
+import infrascructure.data.parse.DOMParser;
+import infrascructure.data.parse.Parser;
+import infrascructure.data.readers.RemoteReader;
 import infrascructure.data.readers.ResourceReader;
-import infrascructure.data.readers.ResourceReadersFactory;
-import infrascructure.data.readers.SimpleCachedList;
-import infrascructure.data.serialize.SerializersFactory;
-import infrascructure.data.serialize.SimpleResourceSerializer;
 import infrascructure.data.util.Trace;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,9 +14,8 @@ public class ResourceReadersTest {
 	private ResourceReader reader;
 	
 	@Before
-	public void prepare() {
-		ResourceReadersFactory factory = new DefaultResourceReadersFactory();
-		reader = factory.getResourceReader();
+	public void prepare() {		
+		reader = new RemoteReader();
 	}
 	
 	@Test
@@ -67,14 +47,14 @@ public class ResourceReadersTest {
 	@Test
 	public void testDOMTarser() {
 		
-//		String url = "http://en.wikipedia.org/wiki/Latent_Dirichlet_allocation";
-//		Resource resource = reader.read(url);
-//		
-//		String unparsedData = resource.getData();
-//		
-//		Parser parser = new DOMParser();
-//		String parsedData = parser.parse(resource);
-//		Trace.trace(parsedData);
+		String url = "http://en.wikipedia.org/wiki/Alfred_Potier";
+		Resource resource = reader.read(url);
+		
+		String unparsedData = resource.getData();
+		
+		Parser parser = new DOMParser();
+		String parsedData = parser.parse(resource).getData();
+		Trace.trace(parsedData);
 		
 		
 	}

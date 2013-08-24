@@ -20,47 +20,58 @@
  */
 package infrascructure.data;
 
-import infrascructure.data.util.Trace;
-
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
 /**
  * @author shredinger
- *
  */
 public class Config {
-    
-    private final static String PROPS_PATH = "crawler.properties";
+
+    public final static String REQUIRED_DOCS_COUNT = "required_docs_count";
+    public final static String RAWDOCS_REPOSITORY = "rawdocs_repository";
+    public final static String CRAWL_THREADS = "crawl_threads";
+    public final static String BATCHES_DIR = "batches_dir";
+    public final static String SOCKET_READ_TIMEOUT = "readtimeout";
+    public final static String VOCABULARY_PATH = "vocabulary_path";
+    public final static String WORDCOUNTS_PATH = "wordCounts_path";
+    public final static String PLAINDOCS_DIR = "plaindocs_dir";
+    public final static String TITTLES_PATH = "tittles_path";
+    public final static String MIN_DOCS_COUNT = "min_docs_count";
+    public final static String QUEUE_DOCS_PATH = "queue_docs";
+    public final static String STOP_WORDS_PATH = "stop_words_path";
+    public final static String RAWDOCS_DIR = "rawdocs_dir";
+
+
+
+
     private Properties props;
-    
-    /**
-     * @throws IOException 
-     * @throws FileNotFoundException 
-     * 
-     */
-    protected Config() throws IOException {
-	props = new Properties();
-	props.load(new FileInputStream(PROPS_PATH));
+
+    public Config(String path) throws IOException {
+        props = new Properties();
+        props.load(new FileInputStream(path));
     }
-    
-    private static Config instance;
-    
-    public static String getProperty(String key) {
-	try {
-    	   if(instance == null) {
-    	       instance = new Config();
-    	   }
-	}catch(IOException ex) {
-	    Trace.trace(ex);
-	}
-	return instance.props.getProperty(key);
+
+    public String getProperty(String key) {
+        return props.getProperty(key);
     }
-    
-    public static String getProperty(String key, String defaultValue) {
-	String result = getProperty(key);
-	return result == null ? defaultValue : result;
+
+    public String getProperty(String key, String defaultValue) {
+        String result = getProperty(key);
+        return result == null ? defaultValue : result;
+    }
+
+    public int getPropertyInt(String key, int defaultValue){
+        String resultStr = getProperty(key);
+        if(resultStr == null){
+            return defaultValue;
+        }
+        return getPropertyInt(key);
+    }
+
+    public int getPropertyInt(String key){
+        String resultStr = getProperty(key);
+        return Integer.parseInt(resultStr);
     }
 }

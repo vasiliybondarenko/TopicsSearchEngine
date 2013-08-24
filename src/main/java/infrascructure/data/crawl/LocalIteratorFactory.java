@@ -21,6 +21,7 @@
 package infrascructure.data.crawl;
 
 import infrascructure.data.Config;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author shredinger
@@ -28,13 +29,16 @@ import infrascructure.data.Config;
  */
 public class LocalIteratorFactory extends URLIteratorFactory{
 
+    @Autowired
+    private Config config;
+
     /* (non-Javadoc)
      * @see infrascructure.data.crawl.URLIteratorFactory#getURLItarator()
      */
     @Override
     public URLIterator getURLItarator() {
 	
-	String sourceDir = Config.getProperty("rawdocs_dir");	
+	String sourceDir = config.getProperty(Config.RAWDOCS_DIR);
 	return new LocalIterator(sourceDir);
     }
 

@@ -29,30 +29,29 @@ import java.util.List;
 
 /**
  * @author shredinger
- *
  */
-public class DefaultDirectoryReader implements DirectoryReader{
+public class DefaultDirectoryReader implements DirectoryReader {
 
     private String sourceDirPath;
-    
+
     /**
-     * 
+     *
      */
     public DefaultDirectoryReader(String sourceDirPath) {
-	this.sourceDirPath = sourceDirPath;
+        this.sourceDirPath = sourceDirPath;
     }
-    
-    public List<String> getFiles() throws IOException{
-	
-	final String pattern = "[\\d+]+\\.txt";
-	FilenameFilter filter = new FilenameFilter() {
-	    
-	    @Override
-	    public boolean accept(File dir, String name) {		
-		return name.matches(pattern);
-	    }
-	};
-	List<String> files = IOHelper.getFiles(sourceDirPath, filter );		
-	return files;
+
+    public List<String> getFiles() throws IOException {
+
+        final String pattern = "[\\d+]+\\.txt";
+        FilenameFilter filter = new FilenameFilter() {
+
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.matches(pattern);
+            }
+        };
+        List<String> files = IOHelper.getFiles(sourceDirPath, filter);
+        return files;
     }
 }
