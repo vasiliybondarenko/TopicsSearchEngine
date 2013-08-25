@@ -33,7 +33,7 @@ import java.util.*;
  */
 public class Result {
     /**Number of terms per each tokens to show*/
-    static int NUMBER_OF_TOKENS = 15;
+    static int NUMBER_OF_TOKENS = 30;
     private final Matrix lambda;
     private final Matrix gamma;
     private final double perplexity;

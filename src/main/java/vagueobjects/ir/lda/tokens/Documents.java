@@ -21,10 +21,12 @@ package vagueobjects.ir.lda.tokens;
  */
 
 
-import infrascructure.data.util.Trace;
-
-import java.text.BreakIterator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,7 +75,7 @@ public class Documents {
         for(int docId=0; docId<docs.size();++docId){            
             String doc = docs.get(docId);
             Map<Integer,Integer> counts = new LinkedHashMap<Integer, Integer>();                       
-            List<String> tokens = extractTokens(doc);           
+            Set<String> tokens = new HashSet<>();           
                 
             String wordPattern = "[a-zA-Z]+";
             Pattern pattern = Pattern.compile(wordPattern,  Pattern.CASE_INSENSITIVE);            
@@ -142,20 +144,5 @@ public class Documents {
             }
         }
         return total;
-    }
-    private List<String> extractTokens(String doc ) {
-        List<String> result = new ArrayList<String>();
-        BreakIterator boundary = BreakIterator.getWordInstance( );
-        boundary.setText(doc);
-        int start = boundary.first();
-        for (int end = boundary.next();
-             end != BreakIterator.DONE;
-             start = end, end = boundary.next()) {
-            String s = doc.substring(start, end);
-            if (s.trim().length() > 0) {
-                result.add(s.toLowerCase( ));
-            }
-        }
-        return result;
     }
 }

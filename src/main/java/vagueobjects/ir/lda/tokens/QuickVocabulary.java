@@ -34,61 +34,59 @@ import com.google.common.collect.HashBiMap;
 
 /**
  * @author shredinger
- *
  */
-public class QuickVocabulary implements Vocabulary{
-        
-    private final BiMap<String, Integer> words = HashBiMap.create(); 
+public class QuickVocabulary implements Vocabulary {
+
+    private final BiMap<String, Integer> words = HashBiMap.create();
 
     public QuickVocabulary(Collection<String> strings) {
-	long start = System.nanoTime();
-	int i = 0;
-	for(String word: strings) {
-	    words.put(word, i ++);
-	}        
-	Trace.trace("[QuickVocabulary]: " + (System.nanoTime() - start));	
+        long start = System.nanoTime();
+        int i = 0;
+        for (String word : strings) {
+            words.put(word, i++);
+        }
     }
 
-    public QuickVocabulary(String path ) throws IOException {	
-        try(Scanner scanner = new Scanner(new File(path))){
+    public QuickVocabulary(String path) throws IOException {
+        try (Scanner scanner = new Scanner(new File(path))) {
             int i = 0;
-            while (scanner.hasNextLine()){
-        	String word = scanner.nextLine().trim();
-                words.put(word, i ++);                
+            while (scanner.hasNextLine()) {
+                String word = scanner.nextLine().trim();
+                words.put(word, i++);
             }
         }
     }
-    
+
     /* (non-Javadoc)
      * @see vagueobjects.ir.lda.tokens.Vocabulary#contains(java.lang.String)
      */
     @Override
     public boolean contains(String token) {
-	return words.containsKey(token);
+        return words.containsKey(token);
     }
 
     /* (non-Javadoc)
      * @see vagueobjects.ir.lda.tokens.Vocabulary#size()
      */
     @Override
-    public int size() {	
-	return words.size();
+    public int size() {
+        return words.size();
     }
 
     /* (non-Javadoc)
      * @see vagueobjects.ir.lda.tokens.Vocabulary#getId(java.lang.String)
      */
     @Override
-    public int getId(String token) {	
-	return words.get(token);
+    public int getId(String token) {
+        return words.get(token);
     }
 
     /* (non-Javadoc)
      * @see vagueobjects.ir.lda.tokens.Vocabulary#getToken(int)
      */
     @Override
-    public String getToken(int id) {	
-	return words.inverse().get(id);
+    public String getToken(int id) {
+        return words.inverse().get(id);
     }
 
 }

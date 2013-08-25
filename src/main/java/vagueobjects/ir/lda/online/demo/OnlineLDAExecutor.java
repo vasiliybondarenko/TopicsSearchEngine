@@ -20,7 +20,7 @@
  */
 package vagueobjects.ir.lda.online.demo;
 
-import infrascructure.data.Config;
+
 import infrascructure.data.launch.DocsRepository;
 import infrascructure.data.launch.DocsRepositoryFactory;
 import infrascructure.data.util.IOHelper;
@@ -36,10 +36,10 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
+import vagueobjects.ir.lda.online.Config;
 import vagueobjects.ir.lda.online.OnlineLDA;
 import vagueobjects.ir.lda.online.Result;
 import vagueobjects.ir.lda.tokens.Documents;
-import vagueobjects.ir.lda.tokens.PlainVocabulary;
 import vagueobjects.ir.lda.tokens.QuickVocabulary;
 import vagueobjects.ir.lda.tokens.Vocabulary;
 
@@ -49,13 +49,20 @@ import vagueobjects.ir.lda.tokens.Vocabulary;
  */
 public class OnlineLDAExecutor {
 
+    public static void main(String[] args) {
+	try {
+	    start();
+	} catch (Exception e) {	 
+	    e.printStackTrace();
+	}
+    }
+    
     /**
-     * @param args
      */
-    public static void main(String[] args) throws Exception{          
+    public static void start() throws Exception{
 
         int D=  10800;
-        int K = 50;
+        int K = 100;
         int batchSize= Integer.parseInt(Config.getProperty("batch_size", "1024"));
 
         double tau =  1d;
@@ -75,7 +82,7 @@ public class OnlineLDAExecutor {
         OnlineLDA lda = new OnlineLDA(vocabulary.size(),K, D, alpha, eta, tau, kappa);
         int batch = 0;
         do {
-            Trace.trace("==================== Batch " + batch + " ========================");
+            Trace.trace("==================== Batch " + batch ++ + " ========================");
             Trace.trace("Reading docs ...");
             docs = docsRepository.getBatchDocs(batchSize);
             if(docs != null) {
@@ -84,8 +91,7 @@ public class OnlineLDAExecutor {
         	Trace.trace("OnlineLDA os starting ...");
                 Result result = lda.workOn(documents);
                 String data = result.getWordsTopicsDistribution();
-                IOHelper.saveToFile(Config.getProperty("onlinelds.results"), data);
-                System.out.println(data);
+                IOHelper.saveToFile(Config.getProperty("onlinelds.results"), data);                
             }else {
         	Trace.trace("Stopped. No docs available");
             }

@@ -41,6 +41,6 @@ public class Tuple implements Comparable<Tuple> {
     }
     public void addToString(StringBuilder stringBuilder,Documents documents){
         stringBuilder.append("").append(documents.getToken(position))
-                .append("->").append(NF.format(value)).append("\n");
+                .append("\t->").append(NF.format(value)).append("\n");
     }
 }
