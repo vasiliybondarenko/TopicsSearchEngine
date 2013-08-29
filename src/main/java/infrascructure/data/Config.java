@@ -42,6 +42,7 @@ public class Config {
     public final static String QUEUE_DOCS_PATH = "queue_docs";
     public final static String STOP_WORDS_PATH = "stop_words_path";
     public final static String RAWDOCS_DIR = "rawdocs_dir";
+    public final static String PARSE_DOCS_NOW = "parse_docs_now";
 
 
 

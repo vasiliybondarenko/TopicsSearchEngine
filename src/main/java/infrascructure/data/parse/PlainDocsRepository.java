@@ -85,6 +85,11 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
      */
     @Override
     public void readAll() throws IOException {
+        Boolean parse = Boolean.parseBoolean(config.getProperty(Config.PARSE_DOCS_NOW, "true"));
+        if(!parse) {
+            Trace.trace("Property " + Config.PARSE_DOCS_NOW + " is false. Parsing disabled.");
+            return;
+        }
         int i = docs.size();
         while (i < max_docs_count) {
             Resource resource = resourcesRepository.get(i);

@@ -24,7 +24,7 @@ import infrascructure.data.parse.PlainDocsRepository;
 import infrascructure.data.readers.ResourcesRepository;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
-import infrascructure.data.vocabulary.SimpleVocabularyBuider;
+import infrascructure.data.vocabulary.BaseVocabularyBuilder;
 import infrascructure.data.vocabulary.Vocabulary;
 import infrascructure.data.vocabulary.Word;
 import org.springframework.context.ApplicationContext;
@@ -53,22 +53,29 @@ public class OnlineLDALauncher {
      */
     public static void main(String[] args) {
         Trace.trace("starting ..");
-        new OnlineLDALauncher().process();
+        String appContextPath = null;
+        if(args.length > 0) {
+            appContextPath = args[0];
+        }
+        new OnlineLDALauncher().process(appContextPath);
 
     }
 
 
-    public void process() {
+    public void process(String appContextPath) {
         //AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
 
-        String testConfigPath = "src/main/resources/custombeans.xml";
-        ApplicationContext context = new FileSystemXmlApplicationContext(testConfigPath);
+        String testConfigPath = appContextPath == null ? "src/main/resources/custombeans.xml" : appContextPath;
+        final ApplicationContext context = new FileSystemXmlApplicationContext(testConfigPath);
 
         final ResourcesRepository reader = context.getBean(ResourcesRepository.class);
         try {
+            config = context.getBean(Config.class);
+
             ExecutorService pool = Executors.newCachedThreadPool();
 
             final PlainDocsRepository docsRepo = context.getBean(PlainDocsRepository.class);
+            
             pool.submit(new Runnable() {
 
                 @Override
@@ -107,13 +114,13 @@ public class OnlineLDALauncher {
                   */
                 @Override
                 public Vocabulary call() throws Exception {
-                    int minDocsCount = config.getPropertyInt("min_docs_count", 3);
-                    return new SimpleVocabularyBuider(docsRepo, minDocsCount).buildVocabulary();
+                    Trace.trace("Building vocabulary ...");
+                    return context.getBean(BaseVocabularyBuilder.class).buildVocabulary();
                 }
             });
             Vocabulary vocabulary = vocabularyResult.get();
             saveVocabulary(vocabulary);
-
+            Trace.trace("Building vocabulary - done");
 
             //TODO: to use in IntelligentSearch we need to notify all consumers
 
