@@ -22,26 +22,19 @@ package vagueobjects.ir.lda.online.demo;
 
 
 import infrascructure.data.launch.DocsRepository;
-import infrascructure.data.launch.DocsRepositoryFactory;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.io.IOUtils;
-
 import vagueobjects.ir.lda.online.Config;
 import vagueobjects.ir.lda.online.OnlineLDA;
 import vagueobjects.ir.lda.online.Result;
 import vagueobjects.ir.lda.tokens.Documents;
 import vagueobjects.ir.lda.tokens.QuickVocabulary;
 import vagueobjects.ir.lda.tokens.Vocabulary;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author shredinger
@@ -62,7 +55,7 @@ public class OnlineLDAExecutor {
     public static void start() throws Exception{
 
         int D=  10800;
-        int K = 100;
+        int K = Integer.parseInt(Config.getProperty("topics"));
         int batchSize= Integer.parseInt(Config.getProperty("batch_size", "1024"));
 
         double tau =  1d;
@@ -73,11 +66,14 @@ public class OnlineLDAExecutor {
 
         Trace.trace("Loading ...");
         
-        DocsRepository docsRepository = DocsRepositoryFactory.getDocsRepository();       
+        DocsRepository docsRepository = new SimpleDocsRepository();
         Vocabulary vocabulary = new QuickVocabulary(docsRepository.getCurrentVocabulary());
         List<String> docs;
         
         Trace.trace("Online LDA initializing ...");
+        Trace.trace("Topics: " + K);
+        Trace.trace("Vocabulary size: " + vocabulary.size());
+        Trace.trace("Batch size: " + batchSize);
         
         OnlineLDA lda = new OnlineLDA(vocabulary.size(),K, D, alpha, eta, tau, kappa);
         int batch = 0;
@@ -89,8 +85,10 @@ public class OnlineLDAExecutor {
         	Trace.trace("Read " + docs.size() + " docs");
         	Documents documents = new Documents(docs, vocabulary);
         	Trace.trace("OnlineLDA os starting ...");
+        	long startTime = System.nanoTime();
                 Result result = lda.workOn(documents);
                 String data = result.getWordsTopicsDistribution();
+                Trace.trace("Writing results... Batch execution time: " + (System.nanoTime() - startTime) / 1000000 + "sec");
                 IOHelper.saveToFile(Config.getProperty("onlinelds.results"), data);                
             }else {
         	Trace.trace("Stopped. No docs available");

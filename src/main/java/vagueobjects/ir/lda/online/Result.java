@@ -25,7 +25,10 @@ import vagueobjects.ir.lda.online.matrix.Vector;
 import vagueobjects.ir.lda.tokens.Documents;
 import vagueobjects.ir.lda.tokens.Tuple;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Displays topics discovered by Online LDA. Topics are sorted by
@@ -33,7 +36,7 @@ import java.util.*;
  */
 public class Result {
     /**Number of terms per each tokens to show*/
-    static int NUMBER_OF_TOKENS = 30;
+    static int NUMBER_OF_TOKENS = 50;
     private final Matrix lambda;
     private final Matrix gamma;
     private final double perplexity;
