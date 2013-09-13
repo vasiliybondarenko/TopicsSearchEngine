@@ -71,6 +71,7 @@ public class OnlineLDALauncher {
         final ResourcesRepository reader = context.getBean(ResourcesRepository.class);
         try {
             config = context.getBean(Config.class);
+            Trace.trace("configuration path: " + testConfigPath);
 
             ExecutorService pool = Executors.newCachedThreadPool();
 
@@ -107,20 +108,24 @@ public class OnlineLDALauncher {
                 }
             });
 
-            parseResult.get();
-            Future<Vocabulary> vocabularyResult = pool.submit(new Callable<Vocabulary>() {
-                /* (non-Javadoc)
-                  * @see java.util.concurrent.Callable#call()
-                  */
-                @Override
-                public Vocabulary call() throws Exception {
-                    Trace.trace("Building vocabulary ...");
-                    return context.getBean(BaseVocabularyBuilder.class).buildVocabulary();
-                }
-            });
-            Vocabulary vocabulary = vocabularyResult.get();
-            saveVocabulary(vocabulary);
-            Trace.trace("Building vocabulary - done");
+            Boolean parse = Boolean.parseBoolean(config.getProperty(Config.PARSE_DOCS_NOW, "true"));
+            if(parse){
+                parseResult.get();
+                Future<Vocabulary> vocabularyResult = pool.submit(new Callable<Vocabulary>() {
+                    /* (non-Javadoc)
+                      * @see java.util.concurrent.Callable#call()
+                      */
+                    @Override
+                    public Vocabulary call() throws Exception {
+                        Trace.trace("Building vocabulary ...");
+                        return context.getBean(BaseVocabularyBuilder.class).buildVocabulary();
+                    }
+                });
+                Vocabulary vocabulary = vocabularyResult.get();
+                saveVocabulary(vocabulary);
+                Trace.trace("Building vocabulary - done");
+            }
+
 
             //TODO: to use in IntelligentSearch we need to notify all consumers
 

@@ -27,6 +27,9 @@ import infrascructure.data.parse.Parser;
 import infrascructure.data.parse.PlainDocsRepository;
 import infrascructure.data.readers.ResourceReader;
 import infrascructure.data.readers.ResourcesRepository;
+import infrascructure.data.stripping.Stemmer;
+import infrascructure.data.vocabulary.BaseVocabularyBuilder;
+import infrascructure.data.vocabulary.VocabularyBuilder;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -57,14 +60,19 @@ public class IoCTest {
 	ResourceReader reader = context.getBean(ResourceReader.class);	
 	
 	ResourcesRepository repo = context.getBean(ResourcesRepository.class);
-	PlainDocsRepository docsRepo = context.getBean(PlainDocsRepository.class);	
-	
+	PlainDocsRepository docsRepo = context.getBean(PlainDocsRepository.class);
+
+    VocabularyBuilder vb = context.getBean(BaseVocabularyBuilder.class);
+    Stemmer stemmer = context.getBean(Stemmer.class);
+
 	assertNotNull(iterator);
 	assertNotNull(reader);
 	assertNotNull(parser);
 	assertNotNull(repo);
 	assertNotNull(docsRepo);
-	
+    assertNotNull(vb);
+    assertNotNull(stemmer);
+
 	//AnnotationConfigApplicationContext acc = new AnnotationConfigApplicationContext("my.test.spring.core");
     }
 

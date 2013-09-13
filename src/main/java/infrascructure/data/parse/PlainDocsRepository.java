@@ -95,6 +95,7 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
             Resource resource = resourcesRepository.get(i);
             PlainTextResource data = parser.parse(resource);
             if (data != null) {
+                //TODO: check unique tittles, if not unique then throw exception!!!
                 docs.add(data);
                 Trace.trace("Doc " + i + " parsed");
             } else {

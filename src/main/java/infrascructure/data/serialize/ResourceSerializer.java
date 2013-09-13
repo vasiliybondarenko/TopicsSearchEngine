@@ -22,11 +22,13 @@ package infrascructure.data.serialize;
 
 import infrascructure.data.Data;
 
+import java.io.IOException;
+
 /**
  * @author shredinger
  *
  */
 public interface ResourceSerializer<T extends Data> {
     T read(Integer id);
-    void write(T data, Integer id);
+    void write(T data, Integer id) throws IOException;
 }

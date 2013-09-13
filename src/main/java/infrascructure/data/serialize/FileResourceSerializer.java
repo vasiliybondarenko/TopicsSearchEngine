@@ -20,35 +20,34 @@
  */
 package infrascructure.data.serialize;
 
-import java.io.File;
-
 import infrascructure.data.Data;
 import infrascructure.data.util.IOHelper;
 
+import java.io.File;
+
 /**
  * @author shredinger
- *
  */
-public abstract class FileResourceSerializer<T extends Data> implements ResourceSerializer<T>{
+public abstract class FileResourceSerializer<T extends Data> implements ResourceSerializer<T> {
 
     protected String dataDirectory;
-    
+
     /**
-     * 
+     *
      */
     public FileResourceSerializer(String dataDirectory) {
-	if(dataDirectory == null || dataDirectory.equals("")) {
-	    throw new IllegalArgumentException("source directory cannot be empty");
-	}
-	File f = new File(dataDirectory);
-	if(!f.isDirectory()) {
-	    throw new IllegalArgumentException("source directory '" + dataDirectory + "' is invalid");
-	}
-	this.dataDirectory = dataDirectory;
-    }   
+        if (dataDirectory == null || dataDirectory.equals("")) {
+            throw new IllegalArgumentException("source directory cannot be empty");
+        }
+        File f = new File(dataDirectory);
+        if (!f.isDirectory()) {
+            throw new IllegalArgumentException("source directory '" + dataDirectory + "' is invalid");
+        }
+        this.dataDirectory = dataDirectory;
+    }
 
     protected String getPath(Integer id) {
-	return dataDirectory + IOHelper.FILE_SEPARATOR + id + ".txt";
+        return dataDirectory + IOHelper.FILE_SEPARATOR + id + ".txt";
     }
-    
+
 }

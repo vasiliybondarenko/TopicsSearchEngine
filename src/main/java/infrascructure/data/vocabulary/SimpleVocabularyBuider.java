@@ -23,9 +23,11 @@ package infrascructure.data.vocabulary;
 import infrascructure.data.Config;
 import infrascructure.data.PlainTextResource;
 import infrascructure.data.readers.CacheableReader;
+import infrascructure.data.stripping.Stemmer;
 import infrascructure.data.util.IOHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -41,6 +43,9 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
 
     @Autowired
     private Config config;
+
+    @Autowired
+    private Stemmer stemmer;
 
     protected CacheableReader<PlainTextResource> reader;
     protected int min_count;
@@ -72,6 +77,10 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
         this.reader = reader;
         this.min_count = min_count;
         this.from_doc = 0;
+    }
+
+    @PostConstruct
+    private void init() {
         this.to_doc = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT) - 1;
     }
 
@@ -140,6 +149,7 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
         Set<String> tokens = new HashSet<String>();
         while (matcher.find()) {
             String word = matcher.group().toLowerCase();
+            word = stemmer.getCanonicalForm(word);
             if (!tokens.contains(word)) {
                 tokens.add(word);
             }
