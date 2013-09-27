@@ -5,12 +5,17 @@ import infrascructure.data.launch.DirectoryReader;
 import infrascructure.data.launch.DocsRepository;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
-import vagueobjects.ir.lda.online.Config;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import vagueobjects.ir.lda.online.Config;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,7 +50,7 @@ public class SimpleDocsRepository extends DocsRepository {
                     return null;
                 }
                 String path = files.getNextEntry();
-                String data = IOHelper.readFromoFile(path);
+                String data = IOHelper.readFromFile(path);
                 batch.add(data);
             }
             return batch;
@@ -62,7 +67,7 @@ public class SimpleDocsRepository extends DocsRepository {
     public List<String> getCurrentVocabulary() throws IOException {
         long startTime = System.nanoTime();
         String path = Config.getProperty("vocabulary_path");
-        List<String> result = IOHelper.readLinesFromoFile(path);
+        List<String> result = IOHelper.readLinesFromFile(path);
         long diff = System.nanoTime() - startTime;
         Trace.trace("[getCurrentVocabulary]: " + diff);
         return result;
@@ -115,17 +120,20 @@ public class SimpleDocsRepository extends DocsRepository {
         private void restore() throws IOException {
             File f = new File(path);
             if (f.exists()) {
-                List<String> files = IOHelper.readLinesFromoFile(path);
+                List<String> files = IOHelper.readLinesFromFile(path);
                 this.files.addAll(files);
             }
         }
 
         private void store() throws IOException {
-            try (PrintWriter writer = new PrintWriter(path)) {
+            PrintWriter writer = new PrintWriter(path);
+            try {
                 for (String entry : files) {
                     writer.println(entry);
                 }
-            }
+            } finally {
+        	writer.close();
+	    }
         }
 
         public void flush() throws IOException {

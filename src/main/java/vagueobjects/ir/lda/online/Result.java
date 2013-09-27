@@ -20,15 +20,15 @@ package vagueobjects.ir.lda.online;
  *
  */
 
-import vagueobjects.ir.lda.online.matrix.Matrix;
-import vagueobjects.ir.lda.online.matrix.Vector;
-import vagueobjects.ir.lda.tokens.Documents;
-import vagueobjects.ir.lda.tokens.Tuple;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
+
+import vagueobjects.ir.lda.online.matrix.Matrix;
+import vagueobjects.ir.lda.online.matrix.Vector;
+import vagueobjects.ir.lda.tokens.Documents;
+import vagueobjects.ir.lda.tokens.Tuple;
 
 /**
  * Displays topics discovered by Online LDA. Topics are sorted by
@@ -99,6 +99,18 @@ public class Result {
     }
     
     public String getDocsDistribution() {
+	StringBuilder sb = new StringBuilder();
+	int topics = gamma.getNumberOfColumns();
+	int batchSize = gamma.getNumberOfRows();
+	for(int d = 0; d < batchSize; d ++) {
+	    sb.append(d).append(": ");
+	    Vector row = gamma.getRow(d);
+	    for(int k = 0; k < topics; k ++) {
+		sb.append(row.elementAt(k)).append(" ");
+	    }
+	    sb.append("\n");
+	}
+	
 	//TO DO: implement!!!
 	return null;
     }
