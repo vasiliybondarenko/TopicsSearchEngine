@@ -2,11 +2,12 @@ package vagueobjects.ir.lda.online.demo;
 
 import infrascructure.data.launch.DefaultDirectoryReader;
 import infrascructure.data.launch.DirectoryReader;
-import infrascructure.data.launch.DocsRepository;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Queue;
 
 import vagueobjects.ir.lda.online.Config;
+import vagueobjects.ir.lda.tokens.Document;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,10 +26,11 @@ import vagueobjects.ir.lda.online.Config;
  * Time: 12:31 AM
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleDocsRepository extends DocsRepository {
+public class SimpleDocsRepository implements AutoCloseable{
 
     private FilesQueue files;
     private String[] tittles;
+    private BufferedReader titlesReader;
 
     /**
      *
@@ -36,22 +39,24 @@ public class SimpleDocsRepository extends DocsRepository {
         init();
     }
 
-    /* (non-Javadoc)
-     * @see vagueobjects.ir.lda.online.DocsRepository#getBatchDocs()
-     */
-    @Override
-    public List<String> getBatchDocs(int batchSize) throws IOException {
+    
+    public List<Document> getBatchDocs(int batchSize) throws IOException {
 
         int count = 0;
         try {
-            ArrayList<String> batch = new ArrayList<>(batchSize);
+            ArrayList<Document> batch = new ArrayList<>(batchSize);
             while (count++ < batchSize) {
                 if (!files.hasNext()) {
                     return null;
                 }
                 String path = files.getNextEntry();
                 String data = IOHelper.readFromFile(path);
-                batch.add(data);
+                String idStr = path.substring(path.lastIndexOf(IOHelper.FILE_SEPARATOR) + 1);
+                idStr = idStr.substring(0, idStr.lastIndexOf("."));
+                int id = Integer.parseInt(idStr);
+                String title = titlesReader.readLine();
+                Document doc = new Document(id, title, data);                
+                batch.add(doc);
             }
             return batch;
         } finally {
@@ -60,10 +65,6 @@ public class SimpleDocsRepository extends DocsRepository {
 
     }
 
-    /* (non-Javadoc)
-     * @see vagueobjects.ir.lda.online.DocsRepository#getCurrentVocabulary()
-     */
-    @Override
     public List<String> getCurrentVocabulary() throws IOException {
         long startTime = System.nanoTime();
         String path = Config.getProperty("vocabulary_path");
@@ -73,6 +74,15 @@ public class SimpleDocsRepository extends DocsRepository {
         return result;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.AutoCloseable#close()
+     */
+    @Override
+    public void close() throws Exception {
+	titlesReader.close();
+	
+    }
+    
     public void init() {
 
         try {
@@ -84,6 +94,9 @@ public class SimpleDocsRepository extends DocsRepository {
                 Trace.trace("Files: " + allFiles.size());
                 files = FilesQueue.createFilesQueue(allFiles, path);
             }
+            
+            titlesReader = new BufferedReader(new FileReader(path));
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,5 +154,7 @@ public class SimpleDocsRepository extends DocsRepository {
         }
 
     }
+
+    
 
 }

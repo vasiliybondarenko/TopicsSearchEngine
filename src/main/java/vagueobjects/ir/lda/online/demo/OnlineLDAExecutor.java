@@ -21,7 +21,6 @@
 package vagueobjects.ir.lda.online.demo;
 
 
-import infrascructure.data.launch.DocsRepository;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 
@@ -38,6 +37,7 @@ import org.apache.commons.io.IOUtils;
 import vagueobjects.ir.lda.online.Config;
 import vagueobjects.ir.lda.online.OnlineLDA;
 import vagueobjects.ir.lda.online.Result;
+import vagueobjects.ir.lda.tokens.Document;
 import vagueobjects.ir.lda.tokens.Documents;
 import vagueobjects.ir.lda.tokens.QuickVocabulary;
 import vagueobjects.ir.lda.tokens.Vocabulary;
@@ -72,9 +72,9 @@ public class OnlineLDAExecutor {
 
         Trace.trace("Loading ...");
         
-        DocsRepository docsRepository = new SimpleDocsRepository();
+        SimpleDocsRepository docsRepository = new SimpleDocsRepository();
         Vocabulary vocabulary = new QuickVocabulary(docsRepository.getCurrentVocabulary());
-        List<String> docs;
+        List<Document> docs;
         
         Trace.trace("Online LDA initializing ...");
         Trace.trace("Topics: " + K);
@@ -93,13 +93,13 @@ public class OnlineLDAExecutor {
         	Trace.trace("OnlineLDA os starting ...");
         	long startTime = System.nanoTime();
                 Result result = lda.workOn(documents);
+                
                 String topWords = result.getWordsTopicsDistribution();
-                String docsDistribution = result.getDocsDistribution();
+                String docsDistribution = result.getDocsDistribution(docs);
                 Trace.trace("Writing results... Batch execution time: " + (System.nanoTime() - startTime) / 1000000 + "sec");
                 IOHelper.saveToFile(Config.getProperty("onlinelds.results"), topWords);
                 IOHelper.saveToFile(Config.getProperty("onlinelds.results.docs") + "_batch=" + batch + ".txt", docsDistribution);
-                
-                //onlinelds.results.docs
+                                
             }else {
         	Trace.trace("Stopped. No docs available");
             }

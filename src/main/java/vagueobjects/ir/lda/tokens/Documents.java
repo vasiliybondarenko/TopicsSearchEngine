@@ -24,7 +24,12 @@ package vagueobjects.ir.lda.tokens;
 import infrascructure.data.stripping.EnglishSuffixStripper;
 import infrascructure.data.stripping.Stemmer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,18 +50,11 @@ public class Documents {
      */
     private int[][] tokenCts;
 
-    public Documents(List<String> docs, Vocabulary vocab) {
+    public Documents(List<Document> docs, Vocabulary vocab) {
         stemmer = new EnglishSuffixStripper();
         this.vocabulary = vocab;
         build(docs, vocab);
-    }
-
-    public Documents(String doc, Vocabulary vocab) {
-        this.vocabulary = vocab;
-        List<String> docs = new ArrayList<String>();
-        docs.add(doc);
-        build(docs, vocab);
-    }
+    }    
 
     public List<String> toString(List<Tuple> tuples) {
         List<String> list = new ArrayList<String>();
@@ -66,14 +64,14 @@ public class Documents {
         return list;
     }
 
-    private void build(List<String> docs, Vocabulary vocab) {
+    private void build(List<Document> docs, Vocabulary vocab) {
 
         int numDocs = docs.size();
         this.wordIds = new int[numDocs][];
         this.tokenCts = new int[numDocs][];
 
         for (int docId = 0; docId < docs.size(); ++docId) {
-            String doc = docs.get(docId);
+            String doc = docs.get(docId).getText();
             Map<Integer, Integer> counts = new LinkedHashMap<Integer, Integer>();
             Set<String> tokens = new HashSet<>();
 

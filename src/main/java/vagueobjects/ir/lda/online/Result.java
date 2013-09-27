@@ -22,11 +22,13 @@ package vagueobjects.ir.lda.online;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import vagueobjects.ir.lda.online.matrix.Matrix;
 import vagueobjects.ir.lda.online.matrix.Vector;
+import vagueobjects.ir.lda.tokens.Document;
 import vagueobjects.ir.lda.tokens.Documents;
 import vagueobjects.ir.lda.tokens.Tuple;
 
@@ -98,21 +100,26 @@ public class Result {
         return sb.toString();	
     }
     
-    public String getDocsDistribution() {
+    public String getDocsDistribution(List<Document> docs) {
 	StringBuilder sb = new StringBuilder();
 	int topics = gamma.getNumberOfColumns();
 	int batchSize = gamma.getNumberOfRows();
 	for(int d = 0; d < batchSize; d ++) {
-	    sb.append(d).append(": ");
+ 	    int docId = docs.get(d).getId();
+ 	    String title = docs.get(d).getTitle();
+	    sb.append(docId).append(": ");
+	    sb.append(title).append(": ");
 	    Vector row = gamma.getRow(d);
-	    for(int k = 0; k < topics; k ++) {
+	    for(int k = 0; k < topics; k ++) {		
 		sb.append(row.elementAt(k)).append(" ");
 	    }
 	    sb.append("\n");
-	}
-	
-	//TO DO: implement!!!
-	return null;
+	}	
+	return sb.toString();
+    }
+    
+    public Matrix getGamma() {
+	return gamma;
     }
     
     private Collection<Tuple> sortTopicTerms(Vector termScores, int numTerms ) {
