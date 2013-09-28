@@ -43,7 +43,7 @@ public class PlainTextResourceSerializer extends FileResourceSerializer<PlainTex
         this.titlesFilePath = titlesFile;
         String fullTittlesPath = dataDirectory + IOHelper.FILE_SEPARATOR + titlesFilePath;
         try {
-            tittles = IOHelper.readLinesFromoFile(fullTittlesPath);
+            tittles = IOHelper.readLinesFromFile(fullTittlesPath);
             tittlesItems = new HashSet<>(tittles);
             if(tittles.size() != tittlesItems.size()){
                 Trace.trace("THERE ARE DUPLICATED ITEMS IN TITTLES FILE!!!!!");
@@ -60,7 +60,7 @@ public class PlainTextResourceSerializer extends FileResourceSerializer<PlainTex
     public PlainTextResource read(Integer id) {
         String path = getPath(id);
         try {
-            String data = IOHelper.readFromoFile(path);
+            String data = IOHelper.readFromFile(path);
             PlainTextResource resource = new PlainTextResource(data);
             String tittle = tittles.get(id);
             resource.setTittle(tittle);
@@ -76,11 +76,11 @@ public class PlainTextResourceSerializer extends FileResourceSerializer<PlainTex
      */
     @Override
     public void write(PlainTextResource data, Integer id) throws IOException{
-        String path = getPath(id);
-//        if(tittlesItems.contains(data.getTittle())){
-//            throw new IOException("UNABLE TO WRITE DOC: DUPLICATE TITTLE!!!");
-//        }
+        if(tittles.size() != id){
+            throw new IOException("Inconsistent Titles file: titles count = " + tittles.size() + " but doc id =  " + id);
+        }
         try {
+            String path = getPath(id);
             IOHelper.saveToFile(path, data.getData());
             tittles.add(data.getTittle());
             String titlesFullFilePath = getTittlesPath();

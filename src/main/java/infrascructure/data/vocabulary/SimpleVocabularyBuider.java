@@ -117,7 +117,7 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     private Set<String> getStopWords() {
         String stopWordsPath = config.getProperty(Config.STOP_WORDS_PATH);
         try {
-            List<String> words = IOHelper.readLinesFromoFile(stopWordsPath);
+            List<String> words = IOHelper.readLinesFromFile(stopWordsPath);
             Set<String> stopWords = new HashSet<String>();
             for (String word : words) {
                 stopWords.add(word);

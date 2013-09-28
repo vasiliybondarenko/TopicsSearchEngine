@@ -28,51 +28,53 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.Objects;
+
 /**
  * @author shredinger
- *
  */
-public class DOMParser implements Parser{
+public class DOMParser implements Parser {
 
     /* (non-Javadoc)
      * @see infrascructure.data.Parser#parse(infrascructure.data.Resource)
      */
     @Override
     public PlainTextResource parse(Resource r) {
-	try {
-	    String html = r.getData();
-		Document doc = Jsoup.parse(html);
-		
-		String query = "div.mw-content-ltr";
-		Element e = doc.select(query).first();		
-		
-		if(e == null) {
-		    return null;
-		}
-		
-		Elements els = e.getElementsByTag("p");
-		StringBuilder sb = new StringBuilder("");
-		for(Element el: els) {		    
-		    String text = el.text();
-		    sb.append(text).append("\n");
-		}		
-		
-		String tittle = doc.title();
-        String wikiEnd = "- Wikipedia, the free encyclopedia";
-        tittle = tittle.lastIndexOf(wikiEnd) > 0 ?
-                tittle.substring(0, tittle.lastIndexOf(wikiEnd) - 1)
-                : tittle;
+        Objects.requireNonNull(r);
+        try {
+            String html = r.getData();
+            Document doc = Jsoup.parse(html);
 
-		String data = sb.toString();
-		
-		PlainTextResource resource = new PlainTextResource(data);
-		resource.setTittle(tittle);
-		return resource;
-	}catch(Exception ex){
-	    Trace.trace(ex);
-	}
-	return null;
-	
+            String query = "div.mw-content-ltr";
+            Element e = doc.select(query).first();
+
+            if (e == null) {
+                return null;
+            }
+
+            Elements els = e.getElementsByTag("p");
+            StringBuilder sb = new StringBuilder("");
+            for (Element el : els) {
+                String text = el.text();
+                sb.append(text).append("\n");
+            }
+
+            String tittle = doc.title();
+            String wikiEnd = "- Wikipedia, the free encyclopedia";
+            tittle = tittle.lastIndexOf(wikiEnd) > 0 ?
+                    tittle.substring(0, tittle.lastIndexOf(wikiEnd) - 1)
+                    : tittle;
+
+            String data = sb.toString();
+
+            PlainTextResource resource = new PlainTextResource(data);
+            resource.setTittle(tittle);
+            return resource;
+        } catch (Exception ex) {
+            Trace.trace(ex);
+        }
+        return null;
+
     }
 
 }

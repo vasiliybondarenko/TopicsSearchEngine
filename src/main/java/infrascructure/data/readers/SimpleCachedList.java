@@ -168,7 +168,7 @@ public class SimpleCachedList<T extends Data> implements BigList<T> {
             String path = sourceDir + IOHelper.FILE_SEPARATOR + DATA_FILE;
             File f = new File(path);
             if (f.exists()) {
-                String data = IOHelper.readFromoFile(path).replaceAll("\\n", "");
+                String data = IOHelper.readFromFile(path).replaceAll("\\n", "");
                 index = Integer.parseInt(data);
             }
         } catch (IOException e) {

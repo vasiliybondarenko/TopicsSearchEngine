@@ -59,14 +59,14 @@ public class ResourcesRepository extends CacheableReader<Resource> {
 
     @PostConstruct
     private void init(){
-        max_docs_count = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT);
+        max_docs_count = config.getPropertyInt(Config.MAX_DOCS_COUNT);
         sourceDir = config.getProperty(Config.RAWDOCS_REPOSITORY);
         SimpleResourceSerializer serializer = SerializersFactory.createSimpleSerializer(sourceDir);
         rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
     }
 
     /**
-     * @return the rawdocs
+     * @return the Resource object or null if index is out of range
      */
     @Override
     public Resource get(Integer i) {
@@ -82,12 +82,12 @@ public class ResourcesRepository extends CacheableReader<Resource> {
             if (url == null) {
                 break;
             }
-            Resource resourse = reader.read(url);
-            if (resourse == null) {
+            Resource resource = reader.read(url);
+            if (resource == null) {
                 Trace.trace("Skipping resource ...");
                 continue;
             }
-            rawdocs.add(resourse);
+            rawdocs.add(resource);
             Trace.trace("Doc " + i + " was read");
         }
     }

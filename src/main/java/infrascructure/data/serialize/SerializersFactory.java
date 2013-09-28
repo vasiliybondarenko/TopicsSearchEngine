@@ -20,19 +20,16 @@
  */
 package infrascructure.data.serialize;
 
-import infrascructure.data.Resource;
-
 /**
  * @author shredinger
- *
  */
 public class SerializersFactory {
-    
+
     public static SimpleResourceSerializer createSimpleSerializer(String dataDir) {
-	return new SimpleResourceSerializer(dataDir);
+        return new SimpleResourceSerializer(dataDir);
     }
-    
+
     public static PlainTextResourceSerializer createPlainTextSerializer(String dataDir, String tittlesFile) {
-	return new PlainTextResourceSerializer(dataDir, tittlesFile);
+        return new PlainTextResourceSerializer(dataDir, tittlesFile);
     }
 }

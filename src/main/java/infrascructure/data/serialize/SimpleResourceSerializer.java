@@ -20,11 +20,10 @@
  */
 package infrascructure.data.serialize;
 
-import java.io.IOException;
-
 import infrascructure.data.Resource;
-import infrascructure.data.readers.ResourcesRepository;
 import infrascructure.data.util.IOHelper;
+
+import java.io.IOException;
 
 /**
  *
@@ -46,7 +45,7 @@ public class SimpleResourceSerializer extends FileResourceSerializer<Resource>{
     public Resource read(Integer id) {
 	String path = getPath(id);
 	try {
-	    String data = IOHelper.readFromoFile(path);
+	    String data = IOHelper.readFromFile(path);
 	    return new Resource(data);
 	} catch (IOException e) {
 	    e.printStackTrace();

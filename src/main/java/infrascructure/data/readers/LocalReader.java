@@ -20,10 +20,10 @@
  */
 package infrascructure.data.readers;
 
-import java.io.IOException;
-
 import infrascructure.data.Resource;
 import infrascructure.data.util.IOHelper;
+
+import java.io.IOException;
 
 /**
  * @author shredinger
@@ -37,7 +37,7 @@ public class LocalReader implements ResourceReader{
     @Override
     public Resource read(String location) {
 	try {
-	    String data = IOHelper.readFromoFile(location);
+	    String data = IOHelper.readFromFile(location);
 	    return new Resource(data);
 	} catch (IOException e) {	    
 	    e.printStackTrace();

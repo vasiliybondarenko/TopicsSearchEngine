@@ -25,6 +25,7 @@ import infrascructure.data.util.IOHelper;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -51,7 +52,17 @@ public class DefaultDirectoryReader implements DirectoryReader {
                 return name.matches(pattern);
             }
         };
-        List<String> files = IOHelper.getFiles(sourceDirPath, filter);
+        
+        Comparator<String> filesComparator = new Comparator<String>() {
+
+	    @Override
+	    public int compare(String o1, String o2) {
+		return Integer.parseInt(o1.substring(0, o1.lastIndexOf("."))) - Integer.parseInt(o2.substring(0, o2.lastIndexOf(".")));
+		
+	    }
+	};
+        
+        List<String> files = IOHelper.getFiles(sourceDirPath, filter, filesComparator);
         return files;
     }
 }

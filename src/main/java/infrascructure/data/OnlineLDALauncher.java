@@ -93,37 +93,45 @@ public class OnlineLDALauncher {
             });
 
 
-            Future<?> parseResult = pool.submit(new Runnable() {
+            Future<Throwable> parseResult = pool.submit(new Callable<Throwable>() {
 
                 @Override
-                public void run() {
+                public Throwable call() {
                     try {
                         Trace.trace("parsing ..");
                         docsRepo.readAll();
                         Trace.trace("parsed ..");
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        return e;
                     }
+                    return null;
 
                 }
             });
 
             Boolean parse = Boolean.parseBoolean(config.getProperty(Config.PARSE_DOCS_NOW, "true"));
             if(parse){
-                parseResult.get();
-                Future<Vocabulary> vocabularyResult = pool.submit(new Callable<Vocabulary>() {
-                    /* (non-Javadoc)
-                      * @see java.util.concurrent.Callable#call()
-                      */
-                    @Override
-                    public Vocabulary call() throws Exception {
-                        Trace.trace("Building vocabulary ...");
-                        return context.getBean(BaseVocabularyBuilder.class).buildVocabulary();
-                    }
-                });
-                Vocabulary vocabulary = vocabularyResult.get();
-                saveVocabulary(vocabulary);
-                Trace.trace("Building vocabulary - done");
+                Throwable parseException = parseResult.get();
+                if(parseException == null){
+                    Trace.trace("Waiting for building vocabulary...");
+                    Future<Vocabulary> vocabularyResult = pool.submit(new Callable<Vocabulary>() {
+                        /* (non-Javadoc)
+                          * @see java.util.concurrent.Callable#call()
+                          */
+                        @Override
+                        public Vocabulary call() throws Exception {
+                            return context.getBean(BaseVocabularyBuilder.class).buildVocabulary();
+
+                        }
+                    });
+                    Vocabulary vocabulary = vocabularyResult.get();
+                    Trace.trace("Building vocabulary - done");
+                    saveVocabulary(vocabulary);
+                }else{
+                    Trace.trace("Parsing failed: ");
+                    parseException.printStackTrace();
+                }
+
             }
 
 

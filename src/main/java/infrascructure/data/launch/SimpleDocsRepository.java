@@ -62,7 +62,7 @@ public class SimpleDocsRepository extends DocsRepository {
                     return null;
                 }
                 String path = files.getNextEntry();
-                String data = IOHelper.readFromoFile(path);
+                String data = IOHelper.readFromFile(path);
                 batch.add(data);
             }
             return batch;
@@ -79,7 +79,7 @@ public class SimpleDocsRepository extends DocsRepository {
     public List<String> getCurrentVocabulary() throws IOException {
         long startTime = System.nanoTime();
         String path = config.getProperty(Config.VOCABULARY_PATH);
-        List<String> result = IOHelper.readLinesFromoFile(path);
+        List<String> result = IOHelper.readLinesFromFile(path);
         long diff = System.nanoTime() - startTime;
         Trace.trace("[getCurrentVocabulary]: " + diff);
         return result;
@@ -133,7 +133,7 @@ public class SimpleDocsRepository extends DocsRepository {
         private void restore() throws IOException {
             File f = new File(path);
             if (f.exists()) {
-                List<String> files = IOHelper.readLinesFromoFile(path);
+                List<String> files = IOHelper.readLinesFromFile(path);
                 this.files.addAll(files);
             }
         }

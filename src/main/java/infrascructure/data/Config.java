@@ -30,6 +30,7 @@ import java.util.Properties;
 public class Config {
 
     public final static String REQUIRED_DOCS_COUNT = "required_docs_count";
+    public final static String MAX_DOCS_COUNT = "max_docs_count";
     public final static String RAWDOCS_REPOSITORY = "rawdocs_repository";
     public final static String CRAWL_THREADS = "crawl_threads";
     public final static String BATCHES_DIR = "batches_dir";
@@ -43,6 +44,7 @@ public class Config {
     public final static String STOP_WORDS_PATH = "stop_words_path";
     public final static String RAWDOCS_DIR = "rawdocs_dir";
     public final static String PARSE_DOCS_NOW = "parse_docs_now";
+    //public final static String PARSE_DOCS_NOW = "parse_docs_now";
 
 
 
