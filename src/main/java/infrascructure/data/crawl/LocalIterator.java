@@ -20,6 +20,7 @@
  */
 package infrascructure.data.crawl;
 
+import com.google.common.base.Preconditions;
 import infrascructure.data.util.IOHelper;
 
 import java.io.File;
@@ -27,43 +28,41 @@ import java.io.FilenameFilter;
 
 /**
  * @author shredinger
- *
  */
-public class LocalIterator implements URLIterator{
+public class LocalIterator implements URLIterator {
 
     private String[] files;
     private String sourceDir;
     private int index;
-    
+
+
     /**
-     * 
+     *
      */
     public LocalIterator(String sourceDirectory) {
-	this.sourceDir = sourceDirectory;
-	File file = new File(sourceDirectory);
-	if(!file.isDirectory()) {
-	    throw new IllegalArgumentException(sourceDirectory + " is not a directory");
-	}
-	files = file.list(new FilenameFilter() {
-	    
-	    @Override
-	    public boolean accept(File dir, String name) {		
-		return name.endsWith(".txt");
-	    }
-	});
-	index = 0;
+        this.sourceDir = sourceDirectory;
+        File file = new File(sourceDirectory);
+        Preconditions.checkArgument(file.isDirectory(), sourceDirectory + " is not a directory");
+        files = file.list(new FilenameFilter() {
+
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".txt");
+            }
+        });
+        index = 0;
     }
-    
+
     /* (non-Javadoc)
      * @see infrascructure.data.crawl.URLIterator#getNextURL()
      */
     @Override
     public String getNextURL() {
-	if(index >= files.length) {
-	    return null;
-	}
-	String path = sourceDir + IOHelper.FILE_SEPARATOR + files[index ++]; 
-	return path;
+        if (index >= files.length) {
+            return null;
+        }
+        String path = sourceDir + IOHelper.FILE_SEPARATOR + files[index++];
+        return path;
     }
 
 }

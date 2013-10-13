@@ -25,18 +25,17 @@ import infrascructure.data.Resource;
 
 /**
  * @author shredinger
- *
  */
-public class DoNothingParser implements Parser{
+public class DoNothingParser implements Parser {
 
     /* (non-Javadoc)
      * @see infrascructure.data.parse.Parser#parse(infrascructure.data.Resource)
      */
     @Override
     public PlainTextResource parse(Resource r) {
-	PlainTextResource ptr = new PlainTextResource(r.getData());
-	ptr.setTittle("");
-	return ptr;
+        PlainTextResource ptr = new PlainTextResource(r.getData());
+        ptr.setTittle(r.getIdentifier() != null ? r.getIdentifier() : "");
+        return ptr;
     }
 
 }

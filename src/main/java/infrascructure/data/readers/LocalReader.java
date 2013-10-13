@@ -24,25 +24,27 @@ import infrascructure.data.Resource;
 import infrascructure.data.util.IOHelper;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author shredinger
- *
  */
-public class LocalReader implements ResourceReader{
+public class LocalReader implements ResourceReader {
 
     /* (non-Javadoc)
      * @see infrascructure.data.readers.ResourceReader#read(java.lang.String)
      */
     @Override
     public Resource read(String location) {
-	try {
-	    String data = IOHelper.readFromFile(location);
-	    return new Resource(data);
-	} catch (IOException e) {	    
-	    e.printStackTrace();
-	}
-	return null;
+        Objects.requireNonNull(location);
+        try {
+            String data = IOHelper.readFromFile(location);
+            String identifier = location.substring(location.lastIndexOf(IOHelper.FILE_SEPARATOR) + 1, location.lastIndexOf("."));
+            return new Resource(data, identifier);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

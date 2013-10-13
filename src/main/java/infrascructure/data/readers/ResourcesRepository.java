@@ -24,8 +24,8 @@ import infrascructure.data.Config;
 import infrascructure.data.Resource;
 import infrascructure.data.crawl.URLIterator;
 import infrascructure.data.list.BigList;
-import infrascructure.data.serialize.SerializersFactory;
-import infrascructure.data.serialize.SimpleResourceSerializer;
+import infrascructure.data.serialize.RawResourceSerializer;
+import infrascructure.data.serialize.RawSerializersFactory;
 import infrascructure.data.util.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,9 +47,13 @@ public class ResourcesRepository extends CacheableReader<Resource> {
     @Autowired
     protected ResourceReader reader;
 
+    @Autowired
+    private RawSerializersFactory serializersFactory;
+
     protected String sourceDir;
     protected int max_docs_count;
     protected BigList<Resource> rawdocs;
+
 
     /**
      *
@@ -61,7 +65,7 @@ public class ResourcesRepository extends CacheableReader<Resource> {
     private void init(){
         max_docs_count = config.getPropertyInt(Config.MAX_DOCS_COUNT);
         sourceDir = config.getProperty(Config.RAWDOCS_REPOSITORY);
-        SimpleResourceSerializer serializer = SerializersFactory.createSimpleSerializer(sourceDir);
+        RawResourceSerializer serializer = serializersFactory.createSimpleSerializer(sourceDir);
         rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
     }
 

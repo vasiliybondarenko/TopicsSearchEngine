@@ -25,6 +25,7 @@ import infrascructure.data.util.IOHelper;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,12 +35,18 @@ import java.util.List;
 public class DefaultDirectoryReader implements DirectoryReader {
 
     private String sourceDirPath;
+    private boolean shuffleInputFiles;
 
     /**
      *
      */
     public DefaultDirectoryReader(String sourceDirPath) {
         this.sourceDirPath = sourceDirPath;
+    }
+
+    public DefaultDirectoryReader(String sourceDirPath, boolean shuffleInputFiles) {
+        this(sourceDirPath);
+        this.shuffleInputFiles = shuffleInputFiles;
     }
 
     public List<String> getFiles() throws IOException {
@@ -52,17 +59,21 @@ public class DefaultDirectoryReader implements DirectoryReader {
                 return name.matches(pattern);
             }
         };
-        
+
         Comparator<String> filesComparator = new Comparator<String>() {
 
-	    @Override
-	    public int compare(String o1, String o2) {
-		return Integer.parseInt(o1.substring(0, o1.lastIndexOf("."))) - Integer.parseInt(o2.substring(0, o2.lastIndexOf(".")));
-		
-	    }
-	};
-        
-        List<String> files = IOHelper.getFiles(sourceDirPath, filter, filesComparator);
+            @Override
+            public int compare(String o1, String o2) {
+                return Integer.parseInt(o1.substring(0, o1.lastIndexOf("."))) - Integer.parseInt(o2.substring(0, o2.lastIndexOf(".")));
+
+            }
+        };
+
+        List<String> files = IOHelper.getFiles(sourceDirPath, filter, null);
+        if(shuffleInputFiles){
+            Collections.shuffle(files);
+        }
+
         return files;
     }
 }

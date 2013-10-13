@@ -43,6 +43,9 @@
     </bean> -->
 
 
+    <bean id="rawSerializersFactory" class="infrascructure.data.serialize.DefaultRawSerializersFactory"/>
+    <bean id="plainDocsSerializersFactory" class="infrascructure.data.serialize.DefaultPlainDocsSerializersFactory"/>
+
 
     <bean id="resourcesRepository" class="infrascructure.data.readers.AdvancedResourcesRepository"/>
     <!-- <bean id="resourcesRepository" class="infrascructure.data.readers.ResourcesRepository"/>	 -->

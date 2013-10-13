@@ -25,9 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author shredinger
- *
  */
-public class LocalIteratorFactory extends URLIteratorFactory{
+public class LocalIteratorFactory extends URLIteratorFactory {
 
     @Autowired
     private Config config;
@@ -37,9 +36,9 @@ public class LocalIteratorFactory extends URLIteratorFactory{
      */
     @Override
     public URLIterator getURLItarator() {
-	
-	String sourceDir = config.getProperty(Config.RAWDOCS_DIR);
-	return new LocalIterator(sourceDir);
+
+        String sourceDir = config.getProperty(Config.RAWDOCS_DIR);
+        return new LocalIterator(sourceDir);
     }
 
 }

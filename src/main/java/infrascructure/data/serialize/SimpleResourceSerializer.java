@@ -26,16 +26,15 @@ import infrascructure.data.util.IOHelper;
 import java.io.IOException;
 
 /**
- *
  * @author shredinger
  */
-public class SimpleResourceSerializer extends FileResourceSerializer<Resource>{
+public class SimpleResourceSerializer extends FileResourceSerializer<Resource> implements RawResourceSerializer{
 
     /**
      * @param dataDirectory
      */
     public SimpleResourceSerializer(String dataDirectory) {
-	super(dataDirectory);	
+        super(dataDirectory);
     }
 
     /* (non-Javadoc)
@@ -43,14 +42,14 @@ public class SimpleResourceSerializer extends FileResourceSerializer<Resource>{
      */
     @Override
     public Resource read(Integer id) {
-	String path = getPath(id);
-	try {
-	    String data = IOHelper.readFromFile(path);
-	    return new Resource(data);
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    return null;
-	}
+        String path = getPath(id);
+        try {
+            String data = IOHelper.readFromFile(path);
+            return new Resource(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /* (non-Javadoc)
@@ -58,13 +57,13 @@ public class SimpleResourceSerializer extends FileResourceSerializer<Resource>{
      */
     @Override
     public void write(Resource data, Integer id) {
-	String path = getPath(id);
-	try {
-	    IOHelper.saveToFile(path, data.getData());
-	} catch (IOException e) {	    
-	    e.printStackTrace();
-	}
-	
+        String path = getPath(id);
+        try {
+            IOHelper.saveToFile(path, data.getData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

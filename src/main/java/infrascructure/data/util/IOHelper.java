@@ -28,7 +28,7 @@ import java.util.*;
  * @author shredinger
  */
 public class IOHelper {
-    public static final String FILE_SEPARATOR = "/";
+    public static final String FILE_SEPARATOR = File.separator;
 
     public static void saveToFile(String path, String data) throws IOException {
         try (PrintWriter writer = new PrintWriter(path)) {
@@ -96,19 +96,8 @@ public class IOHelper {
             throw new IOException("File " + sourceDirPath + " is not a directory");
         }
         String[] files = file.list(filter);
-        
-        //just a hack!!!
-        Arrays.sort(files, new Comparator<String>() {
-
-	    @Override
-	    public int compare(String o1, String o2) {
-		return Integer.parseInt(o1.substring(0, o1.lastIndexOf("."))) - Integer.parseInt(o2.substring(0, o2.lastIndexOf(".")));
-		
-	    }
-	});
-       
         Arrays.sort(files, comparator);
-        
+
         List<String> fullPathes = new LinkedList<>();
         for (int i = 0; i < files.length; i++) {
             String fullPath = sourceDirPath + FILE_SEPARATOR + files[i];

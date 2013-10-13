@@ -85,16 +85,12 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     }
 
     protected Vocabulary createVocabulary() {
-        Set<String> stopWords = getStopWords();
-
         Map<String, Integer> allWords = new HashMap<String, Integer>();
         for (int i = from_doc; i <= to_doc; i++) {
             Map<String, Integer> words = retrieveAllWordCounts(i);
             for (String word : words.keySet()) {
                 int docsCount = allWords.containsKey(word) ? allWords.get(word) : 0;
-                if (!stopWords.contains(word)) {
-                    allWords.put(word, docsCount + 1);
-                }
+                allWords.put(word, docsCount + 1);
             }
         }
         Map<String, Integer> wordCounts = new HashMap<>();
@@ -142,6 +138,7 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
 
 
     protected Set<String> retrieveWords(PlainTextResource resource) {
+        Set<String> stopWords = getStopWords();
         String wordPattern = "[a-zA-Z]+";
         Pattern pattern = Pattern.compile(wordPattern, Pattern.CASE_INSENSITIVE);
         String source = resource.getText();
@@ -149,9 +146,11 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
         Set<String> tokens = new HashSet<String>();
         while (matcher.find()) {
             String word = matcher.group().toLowerCase();
-            word = stemmer.getCanonicalForm(word);
-            if (!tokens.contains(word)) {
-                tokens.add(word);
+            if (!stopWords.contains(word)) {
+                word = stemmer.getCanonicalForm(word);
+                if (!tokens.contains(word)) {
+                    tokens.add(word);
+                }
             }
         }
 
