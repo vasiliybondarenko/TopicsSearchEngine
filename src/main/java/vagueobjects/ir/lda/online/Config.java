@@ -16,13 +16,34 @@ public class Config {
     private final static String PROPS_PATH = "onlinelda.properties";
     private Properties props;
 
+    public static void load(Properties properties){
+        instance = new Config(properties);
+    }
+
+    public static void load(String path) throws IOException {
+        instance = new Config(path);
+    }
+
+    public static String getProperty(String key) {
+        return instance.props.getProperty(key);
+    }
+
+    public static boolean getBooleanProperty(String key){
+        return Boolean.parseBoolean(getProperty(key));
+    }
+
+    public static String getProperty(String key, String defaultValue) {
+        String result = getProperty(key);
+        return result == null ? defaultValue : result;
+    }
+
     /**
      * @throws java.io.IOException
      * @throws java.io.FileNotFoundException
      */
-    protected Config() throws IOException {
+    protected Config(String path) throws IOException {
         props = new Properties();
-        props.load(new FileInputStream(PROPS_PATH));
+        props.load(new FileInputStream(path));
     }
 
     protected  Config(Properties properties){
@@ -31,23 +52,5 @@ public class Config {
 
     private static Config instance;
 
-    public static void load(Properties properties){
-        instance = new Config(properties);
-    }
 
-    public static String getProperty(String key) {
-        try {
-            if (instance == null) {
-                instance = new Config();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return instance.props.getProperty(key);
-    }
-
-    public static String getProperty(String key, String defaultValue) {
-        String result = getProperty(key);
-        return result == null ? defaultValue : result;
-    }
 }

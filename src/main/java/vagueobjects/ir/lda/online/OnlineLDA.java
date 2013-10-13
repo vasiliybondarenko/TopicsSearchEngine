@@ -19,8 +19,6 @@ package vagueobjects.ir.lda.online;
  * under the License.
  *
  */
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
-import com.sun.swing.internal.plaf.synth.resources.synth;
 
 import infrascructure.data.util.Trace;
 import vagueobjects.ir.lda.online.matrix.Matrix;
@@ -28,8 +26,6 @@ import vagueobjects.ir.lda.online.matrix.Vector;
 import vagueobjects.ir.lda.tokens.Documents;
 
 import static vagueobjects.ir.lda.online.matrix.MatrixUtil.*;
-import static vagueobjects.ir.lda.online.matrix.MatrixUtil.dirichletExpectation;
-import static vagueobjects.ir.lda.online.matrix.MatrixUtil.sum;
 
 public class OnlineLDA {
     public final static double MEAN_CHANGE_THRESHOLD = 1e-5;
@@ -78,6 +74,27 @@ public class OnlineLDA {
         this.expELogBeta = exp(eLogBeta);
         
         Trace.trace("[OnlineLDA]: " + (System.nanoTime() - start));
+    }
+
+
+
+    public Result workOn(Documents docs) {
+        this.rhot = Math.pow(this.tau0 + this.batchCount, -this.kappa);
+        expectationStep(docs );
+
+        double bound = approxBound( docs);
+
+        Matrix a = this.lambda.product(1 - rhot);
+        Matrix b = (stats.product( (double )D/ docs.size())).add(eta);
+        b = b.product(rhot);
+        this.lambda = a.add(b);
+
+        this.eLogBeta = dirichletExpectation(lambda);
+        this.expELogBeta = exp(eLogBeta);
+
+
+        this.batchCount++;
+        return new Result(docs, D, bound, lambda, gamma);
     }
 
     private void expectationStep(Documents docs) {
@@ -131,26 +148,6 @@ public class OnlineLDA {
 
         stats = stats.product(this.expELogBeta);
 
-    }
-
-
-    public Result workOn(Documents docs) {
-        this.rhot = Math.pow(this.tau0 + this.batchCount, -this.kappa);
-        expectationStep(docs );
-
-        double bound = approxBound( docs);
-
-        Matrix a = this.lambda.product(1 - rhot);
-        Matrix b = (stats.product( (double )D/ docs.size())).add(eta);
-        b = b.product(rhot);
-        this.lambda = a.add(b);
-
-        this.eLogBeta = dirichletExpectation(lambda);
-        this.expELogBeta = exp(eLogBeta);
-
-
-        this.batchCount++;
-        return new Result(docs, D, bound, lambda, gamma);
     }
 
 

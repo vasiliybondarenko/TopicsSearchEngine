@@ -20,45 +20,42 @@ package vagueobjects.ir.lda.online;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import vagueobjects.ir.lda.online.matrix.Matrix;
 import vagueobjects.ir.lda.online.matrix.Vector;
 import vagueobjects.ir.lda.tokens.Document;
 import vagueobjects.ir.lda.tokens.Documents;
 import vagueobjects.ir.lda.tokens.Tuple;
 
+import java.util.*;
+
 /**
  * Displays topics discovered by Online LDA. Topics are sorted by
  * their statistical importance.
  */
 public class Result {
-    /**Number of terms per each tokens to show*/
+    /**
+     * Number of terms per each tokens to show
+     */
     static int NUMBER_OF_TOKENS = 50;
     private final Matrix lambda;
     private final Matrix gamma;
     private final double perplexity;
-    private final Documents documents; 
+    private final Documents documents;
     private final int totalTokenCount;
 
     /**
-     *
-     * @param docs  - documents in the batch
-     * @param D   - total number of documents in corpus
+     * @param docs   - documents in the batch
+     * @param D      - total number of documents in corpus
      * @param bound  - variational bound
-     * @param lambda   - variational distribution q(beta|lambda)
-     * @param gamma 
+     * @param lambda - variational distribution q(beta|lambda)
+     * @param gamma
      */
     public Result(Documents docs, int D, double bound, Matrix lambda, Matrix gamma) {
-        this.lambda = lambda; 
+        this.lambda = lambda;
         this.gamma = gamma;
         this.documents = docs;
         this.totalTokenCount = docs.getTokenCount();
-        double perWordBound = (bound * docs.size())  / D / totalTokenCount;
+        double perWordBound = (bound * docs.size()) / D / totalTokenCount;
         this.perplexity = Math.exp(-perWordBound);
     }
 
@@ -71,7 +68,7 @@ public class Result {
         for (int k = 0; k < numTopics; ++k) {
             Vector termScores = lambda.getRow(k);
 
-            for(Tuple tuple:  sortTopicTerms(termScores,  numTerms )){
+            for (Tuple tuple : sortTopicTerms(termScores, numTerms)) {
                 tuple.addToString(sb, documents);
             }
 
@@ -82,7 +79,7 @@ public class Result {
     }
 
     public String getWordsTopicsDistribution() {
-	StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("Perplexity estimate: ").append(perplexity).append("\n");
         int numTopics = lambda.getNumberOfRows();
         int numTerms = Math.min(NUMBER_OF_TOKENS, lambda.getNumberOfColumns());
@@ -90,52 +87,52 @@ public class Result {
             Vector termScores = lambda.getRow(k);
 
             sb.append("[TOPIC " + k + "]: \n");
-            for(Tuple tuple:  sortTopicTerms(termScores,  numTerms )){        	
-                tuple.addToString(sb, documents);                
+            for (Tuple tuple : sortTopicTerms(termScores, numTerms)) {
+                tuple.addToString(sb, documents);
             }
 
             sb.append('\n');
         }
         sb.append("\n");
-        return sb.toString();	
+        return sb.toString();
     }
-    
+
     public String getDocsDistribution(List<Document> docs) {
-	StringBuilder sb = new StringBuilder();
-	int topics = gamma.getNumberOfColumns();
-	int batchSize = gamma.getNumberOfRows();
-	for(int d = 0; d < batchSize; d ++) {
- 	    int docId = docs.get(d).getId();
- 	    String title = docs.get(d).getTitle();
-	    sb.append(docId).append(": ");
-	    sb.append(title).append(": ");
-	    Vector row = gamma.getRow(d);
-	    for(int k = 0; k < topics; k ++) {		
-		sb.append(row.elementAt(k)).append(" ");
-	    }
-	    sb.append("\n");
-	}	
-	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        int topics = gamma.getNumberOfColumns();
+        int batchSize = gamma.getNumberOfRows();
+        for (int d = 0; d < batchSize; d++) {
+            int docId = docs.get(d).getId();
+            String title = docs.get(d).getTitle();
+            sb.append(docId).append(": ");
+            sb.append(title).append(": ");
+            Vector row = gamma.getRow(d);
+            for (int k = 0; k < topics; k++) {
+                sb.append(row.elementAt(k)).append(" ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
-    
+
     public Matrix getGamma() {
-	return gamma;
+        return gamma;
     }
-    
-    private Collection<Tuple> sortTopicTerms(Vector termScores, int numTerms ) {
+
+    private Collection<Tuple> sortTopicTerms(Vector termScores, int numTerms) {
         Set<Tuple> tuples = new TreeSet<Tuple>();
-        double sum=0d;
-        for(int i=0; i< termScores.getLength();++i){
+        double sum = 0d;
+        for (int i = 0; i < termScores.getLength(); ++i) {
             sum += termScores.elementAt(i);
         }
 
-        double [] p = new double[termScores.getLength()];
-        for(int i=0; i< termScores.getLength();++i){
-            p[i] = termScores.elementAt(i)/sum;
+        double[] p = new double[termScores.getLength()];
+        for (int i = 0; i < termScores.getLength(); ++i) {
+            p[i] = termScores.elementAt(i) / sum;
         }
 
 
-        for(int i=0; i< termScores.getLength();++i){
+        for (int i = 0; i < termScores.getLength(); ++i) {
             Tuple tuple = new Tuple(i, p[i]);
             tuples.add(tuple);
         }

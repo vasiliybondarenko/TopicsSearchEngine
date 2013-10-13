@@ -23,17 +23,7 @@ package vagueobjects.ir.lda.online.demo;
 
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.io.IOUtils;
-
 import vagueobjects.ir.lda.online.Config;
 import vagueobjects.ir.lda.online.OnlineLDA;
 import vagueobjects.ir.lda.online.Result;
@@ -41,6 +31,10 @@ import vagueobjects.ir.lda.tokens.Document;
 import vagueobjects.ir.lda.tokens.Documents;
 import vagueobjects.ir.lda.tokens.QuickVocabulary;
 import vagueobjects.ir.lda.tokens.Vocabulary;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author shredinger
@@ -50,6 +44,8 @@ public class OnlineLDAExecutor {
 
     public static void main(String[] args) {
 	try {
+        String path = args.length > 0 ? args[0] : "/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/OnlineLDA/jolda/onlinelda.properties";
+        Config.load(path);
 	    start();
 	} catch (Exception e) {	 
 	    e.printStackTrace();
@@ -73,38 +69,41 @@ public class OnlineLDAExecutor {
         Trace.trace("Loading ...");
         
         SimpleDocsRepository docsRepository = new SimpleDocsRepository();
-        Vocabulary vocabulary = new QuickVocabulary(docsRepository.getCurrentVocabulary());
-        List<Document> docs;
-        
-        Trace.trace("Online LDA initializing ...");
-        Trace.trace("Topics: " + K);
-        Trace.trace("Vocabulary size: " + vocabulary.size());
-        Trace.trace("Batch size: " + batchSize);
-        
-        OnlineLDA lda = new OnlineLDA(vocabulary.size(),K, D, alpha, eta, tau, kappa);
-        int batch = 0;
-        do {
-            Trace.trace("==================== Batch " + batch ++ + " ========================");
-            Trace.trace("Reading docs ...");
-            docs = docsRepository.getBatchDocs(batchSize);
-            if(docs != null) {
-        	Trace.trace("Read " + docs.size() + " docs");
-        	Documents documents = new Documents(docs, vocabulary);
-        	Trace.trace("OnlineLDA os starting ...");
-        	long startTime = System.nanoTime();
-                Result result = lda.workOn(documents);
-                
-                String topWords = result.getWordsTopicsDistribution();
-                String docsDistribution = result.getDocsDistribution(docs);
-                Trace.trace("Writing results... Batch execution time: " + (System.nanoTime() - startTime) / 1000000 + "sec");
-                IOHelper.saveToFile(Config.getProperty("onlinelds.results"), topWords);
-                IOHelper.saveToFile(Config.getProperty("onlinelds.results.docs") + "_batch=" + batch + ".txt", docsDistribution);
-                                
-            }else {
-        	Trace.trace("Stopped. No docs available");
-            }
-            
-        }while(docs != null);       
+        try {	    
+	    Vocabulary vocabulary = new QuickVocabulary(docsRepository.getCurrentVocabulary());
+	    List<Document> docs;
+	    
+	    Trace.trace("Online LDA initializing ...");
+	    Trace.trace("Topics: " + K);
+	    Trace.trace("Vocabulary size: " + vocabulary.size());
+	    Trace.trace("Batch size: " + batchSize);
+	    
+	    OnlineLDA lda = new OnlineLDA(vocabulary.size(),K, D, alpha, eta, tau, kappa);
+	    int batch = 0;
+	    do {
+	        Trace.trace("==================== Batch " + batch ++ + " ========================");
+	        Trace.trace("Reading docs ...");
+	        docs = docsRepository.getBatchDocs(batchSize);
+	        if(docs != null) {
+        	    	Trace.trace("Read " + docs.size() + " docs");
+        	    	Documents documents = new Documents(docs, vocabulary);
+        	    	Trace.trace("OnlineLDA os starting ...");
+        	    	long startTime = System.nanoTime();
+        	        Result result = lda.workOn(documents);
+        	            
+        	        String topWords = result.getWordsTopicsDistribution();
+        	        String docsDistribution = result.getDocsDistribution(docs);
+        	        Trace.trace("Writing results... Batch execution time: " + (System.nanoTime() - startTime) / 1000000000 + "sec");
+        	        IOHelper.saveToFile(Config.getProperty("onlinelds.results"), topWords);
+        	        IOHelper.saveToFile(Config.getProperty("onlinelds.results.docs") + "_batch=" + batch + ".txt", docsDistribution);	                            
+	        }else {
+	    	    Trace.trace("Stopped. No docs available");
+	        }
+	        
+	    }while(docs != null);
+	} finally{
+	    docsRepository.close();
+	}       
        
     }
  
