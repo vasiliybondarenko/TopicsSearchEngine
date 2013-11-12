@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-3.0.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <context:property-placeholder location="//Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/localSampleOnlinelda.properties"/>
+
+    <context:component-scan base-package="infrascructure.data"/>
+
+    <bean id="config" class="infrascructure.data.Config">
+        <constructor-arg value="/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/localSampleOnlinelda.properties"></constructor-arg>
+    </bean>
+
+    <!-- <context:property-placeholder location="classpath:META-INF/crawler.properties"/> -->
+    <!-- <context:component-scan base-package="infrastructure.data" /> -->
+
+    <!-- cuurrently factory is not used  -->
+    <bean id="parserFactory" class="infrascructure.data.parse.DefaultParserFactory"/>
+
+    <!-- we parse plain text docs, not html -->
+    <bean id="parser" class="infrascructure.data.parse.DoNothingParser"/>
+
+    <bean id="readersFactory" class="infrascructure.data.readers.DefaultResourceReadersFactory"/>
+    <bean id="resourcesReader"
+          factory-bean="readersFactory"
+          factory-method="getResourceReader"
+            />
+
+    <bean id="urlIeratorFactory" class="infrascructure.data.crawl.LocalIteratorFactory"/>
+    <bean id="iterator"
+          factory-bean="urlIeratorFactory"
+          factory-method="getURLItarator"
+            />
+
+    <bean id="rawSerializersFactory" class="infrascructure.data.serialize.SampleRawSerializersFactory"/>
+    <bean id="plainDocsSerializersFactory" class="infrascructure.data.serialize.DefaultPlainDocsSerializersFactory"/>
+
+    <bean id="resourcesRepository" class="infrascructure.data.readers.AdvancedResourcesRepository"/>
+
+    <bean id="plainDocsRepository" class="infrascructure.data.parse.PlainDocsRepository">
+        <constructor-arg  ref="resourcesRepository"></constructor-arg>
+    </bean>
+
+    <bean id="stemmer" class="infrascructure.data.stripping.VoidStripper"/>
+
+    <bean id="plainDocsValidator" class="infrascructure.data.parse.PlainDocValidatorImpl"/>
+
+    <bean id="vocabularyBuilder" class="infrascructure.data.vocabulary.SimpleVocabularyBuider" depends-on="stemmer">
+        <constructor-arg ref="plainDocsRepository"></constructor-arg>
+        <constructor-arg value="${min_docs_count}"></constructor-arg>
+    </bean>
+
+
+</beans>
