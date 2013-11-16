@@ -3,7 +3,6 @@ package intelligence.core.dao;
 import intelligence.core.DocumentService;
 import intelligence.core.util.Document;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +22,6 @@ public class DocumentServiceImpl implements DocumentService{
 
     @Override
     public List<Document> getTopDocumentsForTopic(int topic) {
-        return documentsRepository.findAll(new Sort(Sort.Direction.DESC, "topicsDistribution"));
+        return null;
     }
 }
