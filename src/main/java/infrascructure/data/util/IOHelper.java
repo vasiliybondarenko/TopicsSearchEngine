@@ -98,11 +98,11 @@ public class IOHelper {
         String[] files = file.list(filter);
         Arrays.sort(files, comparator);
 
-        List<String> fullPathes = new LinkedList<>();
+        List<String> fullPaths = new LinkedList<>();
         for (int i = 0; i < files.length; i++) {
             String fullPath = sourceDirPath + FILE_SEPARATOR + files[i];
-            fullPathes.add(fullPath);
+            fullPaths.add(fullPath);
         }
-        return fullPathes;
+        return fullPaths;
     }
 }

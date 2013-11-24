@@ -65,7 +65,7 @@ public class OnlineLDALauncher {
     public void process(String appContextPath) {
         //AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
 
-        String testConfigPath = appContextPath == null ? "src/main/resources/custombeans.xml" : appContextPath;
+        String testConfigPath = appContextPath == null ? "src/main/resources/localSampleContext.xml" : appContextPath;
         final ApplicationContext context = new FileSystemXmlApplicationContext(testConfigPath);
 
         final ResourcesRepository reader = context.getBean(ResourcesRepository.class);

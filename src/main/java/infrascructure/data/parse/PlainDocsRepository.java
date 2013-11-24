@@ -26,8 +26,8 @@ import infrascructure.data.Resource;
 import infrascructure.data.list.BigList;
 import infrascructure.data.readers.CacheableReader;
 import infrascructure.data.readers.SimpleCachedList;
+import infrascructure.data.serialize.PlainDocsSerializersFactory;
 import infrascructure.data.serialize.PlainTextResourceSerializer;
-import infrascructure.data.serialize.SerializersFactory;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +54,9 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
     private Parser parser;
 
     @Autowired
+    private PlainDocsSerializersFactory serializersFactory;
+
+    @Autowired
     private Config config;
 
     private HashSet<String> uniqueTitles;
@@ -74,7 +77,7 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
         required_docs_count = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT);
         sourceDir = config.getProperty(Config.PLAINDOCS_DIR);
         String tittlesFileName = config.getProperty(Config.TITTLES_PATH);
-        PlainTextResourceSerializer serializer = SerializersFactory.createPlainTextSerializer(sourceDir, tittlesFileName);
+        PlainTextResourceSerializer serializer = serializersFactory.createPlainTextSerializer(sourceDir, tittlesFileName);
         docs = new SimpleCachedList<PlainTextResource>(sourceDir, MAX_CACHE_SIZE, serializer);
         initTitles();
     }
