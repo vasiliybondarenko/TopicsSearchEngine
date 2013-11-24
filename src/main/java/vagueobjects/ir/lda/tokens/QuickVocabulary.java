@@ -20,17 +20,13 @@
  */
 package vagueobjects.ir.lda.tokens;
 
-import infrascructure.data.util.Trace;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Scanner;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 
 /**
  * @author shredinger
@@ -82,7 +78,7 @@ public class QuickVocabulary implements Vocabulary {
     }
 
     /* (non-Javadoc)
-     * @see vagueobjects.ir.lda.tokens.Vocabulary#getToken(int)
+     * @see vagueobjects.ir.lda.tokens.Vocabulary#getTokenById(int)
      */
     @Override
     public String getToken(int id) {

@@ -4,20 +4,12 @@ import infrascructure.data.launch.DefaultDirectoryReader;
 import infrascructure.data.launch.DirectoryReader;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
+import vagueobjects.ir.lda.online.Config;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-
-import vagueobjects.ir.lda.online.Config;
-import vagueobjects.ir.lda.tokens.Document;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,11 +18,10 @@ import vagueobjects.ir.lda.tokens.Document;
  * Time: 12:31 AM
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleDocsRepository implements AutoCloseable{
+public class SimpleDocsRepository implements BatchesReader {
 
     private FilesQueue files;
-    private String[] tittles;
-    private BufferedReader titlesReader;
+    private List<String> tittles;
 
     /**
      *
@@ -39,12 +30,13 @@ public class SimpleDocsRepository implements AutoCloseable{
         init();
     }
 
-    
-    public List<Document> getBatchDocs(int batchSize) throws IOException {
+
+    @Override
+    public List<DocumentData> getNextBatch(int batchSize) throws IOException {
 
         int count = 0;
         try {
-            ArrayList<Document> batch = new ArrayList<>(batchSize);
+            ArrayList<DocumentData> batch = new ArrayList<>(batchSize);
             while (count++ < batchSize) {
                 if (!files.hasNext()) {
                     return null;
@@ -54,8 +46,8 @@ public class SimpleDocsRepository implements AutoCloseable{
                 String idStr = path.substring(path.lastIndexOf(IOHelper.FILE_SEPARATOR) + 1);
                 idStr = idStr.substring(0, idStr.lastIndexOf("."));
                 int id = Integer.parseInt(idStr);
-                String title = titlesReader.readLine();
-                Document doc = new Document(id, title, data);                
+                String title = tittles.get(id);
+                DocumentData doc = new DocumentData(id, title, data);
                 batch.add(doc);
             }
             return batch;
@@ -65,38 +57,30 @@ public class SimpleDocsRepository implements AutoCloseable{
 
     }
 
-    public List<String> getCurrentVocabulary() throws IOException {
-        long startTime = System.nanoTime();
-        String path = Config.getProperty("vocabulary_path");
-        List<String> result = IOHelper.readLinesFromFile(path);
-        long diff = System.nanoTime() - startTime;
-        Trace.trace("[getCurrentVocabulary]: " + diff);
-        return result;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.AutoCloseable#close()
      */
     @Override
     public void close() throws Exception {
-	titlesReader.close();
-	
+
     }
-    
+
     public void init() {
 
         try {
             String path = Config.getProperty("queue_docs");
             files = FilesQueue.createFilesQueue(null, path);
             if (!files.hasNext()) {
-                DirectoryReader directoryReader = new DefaultDirectoryReader(Config.getProperty("batches_dir"));
+                DirectoryReader directoryReader = new DefaultDirectoryReader(
+                        Config.getProperty("batches_dir"),
+                        Config.getBooleanProperty("shuffle_input_files"));
                 List<String> allFiles = directoryReader.getFiles();
                 Trace.trace("Files: " + allFiles.size());
                 files = FilesQueue.createFilesQueue(allFiles, path);
             }
-            
-            titlesReader = new BufferedReader(new FileReader(path));
-            
+            String titlesPath = Config.getProperty("batches_dir") + IOHelper.FILE_SEPARATOR + Config.getProperty("tittles_path");
+            tittles = IOHelper.readLinesFromFile(titlesPath);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -145,8 +129,8 @@ public class SimpleDocsRepository implements AutoCloseable{
                     writer.println(entry);
                 }
             } finally {
-        	writer.close();
-	    }
+                writer.close();
+            }
         }
 
         public void flush() throws IOException {
@@ -155,6 +139,5 @@ public class SimpleDocsRepository implements AutoCloseable{
 
     }
 
-    
 
 }

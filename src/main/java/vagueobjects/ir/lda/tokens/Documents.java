@@ -21,15 +21,11 @@ package vagueobjects.ir.lda.tokens;
  */
 
 
-import infrascructure.data.stripping.EnglishSuffixStripper;
 import infrascructure.data.stripping.Stemmer;
+import infrascructure.data.stripping.VoidStripper;
+import vagueobjects.ir.lda.online.demo.DocumentData;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,9 +33,11 @@ import java.util.regex.Pattern;
  * Parses a document into a list of token ids and a list of counts,
  * and builds  document representation as  2D arrays of token ids and counts.
  */
-public class Documents {
+public class Documents implements OnlineLDASource{
     private final Vocabulary vocabulary;
     private Stemmer stemmer;
+    private final List<DocumentData> docs;
+
     /**
      * wordIds[i][j] gives the jth unique token present in document i
      */
@@ -50,11 +48,18 @@ public class Documents {
      */
     private int[][] tokenCts;
 
-    public Documents(List<Document> docs, Vocabulary vocab) {
-        stemmer = new EnglishSuffixStripper();
+    public Documents(List<DocumentData> docs, Vocabulary vocab) {
+        //stemmer = new EnglishSuffixStripper();
+        stemmer = new VoidStripper();
         this.vocabulary = vocab;
+        this.docs = docs;
         build(docs, vocab);
-    }    
+    }
+
+    @Override
+    public List<DocumentData> getDocumentsData() {
+        return docs;
+    }
 
     public List<String> toString(List<Tuple> tuples) {
         List<String> list = new ArrayList<String>();
@@ -64,7 +69,7 @@ public class Documents {
         return list;
     }
 
-    private void build(List<Document> docs, Vocabulary vocab) {
+    private void build(List<DocumentData> docs, Vocabulary vocab) {
 
         int numDocs = docs.size();
         this.wordIds = new int[numDocs][];
@@ -113,11 +118,13 @@ public class Documents {
     }
 
 
-    public String getToken(int i) {
+    @Override
+    public String getTokenById(int i) {
         return vocabulary.getToken(i);
     }
 
 
+    @Override
     public int[][] getTokenIds() {
         return wordIds;
     }
@@ -127,14 +134,17 @@ public class Documents {
      *
      * @return
      */
-    public int[][] getTokenCts() {
+    @Override
+    public int[][] getTokenCounts() {
         return tokenCts;
     }
 
+    @Override
     public int size() {
         return tokenCts.length;
     }
 
+    @Override
     public int getTokenCount() {
         int total = 0;
         for (int[] d : tokenCts) {

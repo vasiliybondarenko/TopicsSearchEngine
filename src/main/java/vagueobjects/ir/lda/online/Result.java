@@ -20,10 +20,15 @@ package vagueobjects.ir.lda.online;
  *
  */
 
+import infrascructure.data.dom.Document;
+import infrascructure.data.dom.DocumentImpl;
+import vagueobjects.ir.lda.online.demo.DocumentData;
+import vagueobjects.ir.lda.online.demo.OnlineLDAResult;
+import vagueobjects.ir.lda.online.demo.Topic;
+import vagueobjects.ir.lda.online.demo.WordTuple;
 import vagueobjects.ir.lda.online.matrix.Matrix;
 import vagueobjects.ir.lda.online.matrix.Vector;
-import vagueobjects.ir.lda.tokens.Document;
-import vagueobjects.ir.lda.tokens.Documents;
+import vagueobjects.ir.lda.tokens.OnlineLDASource;
 import vagueobjects.ir.lda.tokens.Tuple;
 
 import java.util.*;
@@ -32,15 +37,11 @@ import java.util.*;
  * Displays topics discovered by Online LDA. Topics are sorted by
  * their statistical importance.
  */
-public class Result {
-    /**
-     * Number of terms per each tokens to show
-     */
-    static int NUMBER_OF_TOKENS = 50;
+public class Result implements OnlineLDAResult {
     private final Matrix lambda;
     private final Matrix gamma;
     private final double perplexity;
-    private final Documents documents;
+    private final OnlineLDASource documents;
     private final int totalTokenCount;
 
     /**
@@ -50,7 +51,7 @@ public class Result {
      * @param lambda - variational distribution q(beta|lambda)
      * @param gamma
      */
-    public Result(Documents docs, int D, double bound, Matrix lambda, Matrix gamma) {
+    public Result(OnlineLDASource docs, int D, double bound, Matrix lambda, Matrix gamma) {
         this.lambda = lambda;
         this.gamma = gamma;
         this.documents = docs;
@@ -97,7 +98,7 @@ public class Result {
         return sb.toString();
     }
 
-    public String getDocsDistribution(List<Document> docs) {
+    public String getDocsDistribution(List<DocumentData> docs) {
         StringBuilder sb = new StringBuilder();
         int topics = gamma.getNumberOfColumns();
         int batchSize = gamma.getNumberOfRows();
@@ -115,12 +116,56 @@ public class Result {
         return sb.toString();
     }
 
-    public Matrix getGamma() {
-        return gamma;
+    @Override
+    public List<Document> getDocuments(){
+        int topics = gamma.getNumberOfColumns();
+        int batchSize = gamma.getNumberOfRows();
+        List<Document> resultDocuments = new ArrayList<>(batchSize);
+        List<DocumentData> documentsData = documents.getDocumentsData();
+        for (int d = 0; d < batchSize; d++) {
+            int docId = documentsData.get(d).getId();
+            String title = documentsData.get(d).getTitle();
+            Vector row = gamma.getRow(d);
+            double[] topicsDistribution = normalizeProbabilities(row);
+            Document document = new DocumentImpl(docId, title, topicsDistribution);
+            resultDocuments.add(document);
+        }
+        return resultDocuments;
+    }
+
+    @Override
+    public List<Topic> getTopics(){
+        int numTopics = lambda.getNumberOfRows();
+        List<Topic> topics = new ArrayList<>(numTopics);
+        for(int k = 0; k < numTopics; k ++){
+            Vector termScores = lambda.getRow(k);
+            int wordsCount = termScores.getLength();
+            double[] termScoresNormalized = normalizeProbabilities(termScores);
+
+            List<WordTuple> words = new ArrayList<>(wordsCount);
+            for(int w = 0; w < wordsCount; w ++){
+                String word = documents.getTokenById(w);
+                words.add(new WordTuple(word, termScoresNormalized[w]));
+            }
+            Topic topic = new Topic(words);
+            topics.add(topic);
+        }
+
+        return topics;
     }
 
     private Collection<Tuple> sortTopicTerms(Vector termScores, int numTerms) {
         Set<Tuple> tuples = new TreeSet<Tuple>();
+        double[] p = normalizeProbabilities(termScores);
+
+        for (int i = 0; i < termScores.getLength(); ++i) {
+            Tuple tuple = new Tuple(i, p[i]);
+            tuples.add(tuple);
+        }
+        return new ArrayList<Tuple>(tuples).subList(0, numTerms);
+    }
+
+    private double[] normalizeProbabilities(Vector termScores) {
         double sum = 0d;
         for (int i = 0; i < termScores.getLength(); ++i) {
             sum += termScores.elementAt(i);
@@ -130,13 +175,7 @@ public class Result {
         for (int i = 0; i < termScores.getLength(); ++i) {
             p[i] = termScores.elementAt(i) / sum;
         }
-
-
-        for (int i = 0; i < termScores.getLength(); ++i) {
-            Tuple tuple = new Tuple(i, p[i]);
-            tuples.add(tuple);
-        }
-        return new ArrayList<Tuple>(tuples).subList(0, numTerms);
+        return p;
     }
 
 }

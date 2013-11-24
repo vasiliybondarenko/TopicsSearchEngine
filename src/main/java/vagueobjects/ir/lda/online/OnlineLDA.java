@@ -23,13 +23,11 @@ package vagueobjects.ir.lda.online;
 import infrascructure.data.util.Trace;
 import vagueobjects.ir.lda.online.matrix.Matrix;
 import vagueobjects.ir.lda.online.matrix.Vector;
-import vagueobjects.ir.lda.tokens.Documents;
+import vagueobjects.ir.lda.tokens.OnlineLDASource;
 
 import static vagueobjects.ir.lda.online.matrix.MatrixUtil.*;
 
-public class OnlineLDA {
-    public final static double MEAN_CHANGE_THRESHOLD = 1e-5;
-    public final static int NUM_ITERATIONS = 200;
+public class OnlineLDA implements TopicModelAlgorithm {
 
     private int batchCount;
     private final double kappa;
@@ -78,7 +76,8 @@ public class OnlineLDA {
 
 
 
-    public Result workOn(Documents docs) {
+    @Override
+    public Result workOn(OnlineLDASource docs) {
         this.rhot = Math.pow(this.tau0 + this.batchCount, -this.kappa);
         expectationStep(docs );
 
@@ -97,9 +96,9 @@ public class OnlineLDA {
         return new Result(docs, D, bound, lambda, gamma);
     }
 
-    private void expectationStep(Documents docs) {
+    private void expectationStep(OnlineLDASource docs) {
         int [][] wordIds = docs.getTokenIds();
-        int [][] wordCts = docs.getTokenCts();
+        int [][] wordCts = docs.getTokenCounts();
         int batchD = docs.size();
 
         //variational parameter over documents x topics
@@ -151,9 +150,9 @@ public class OnlineLDA {
     }
 
 
-    double approxBound( Documents docs) {
+    double approxBound( OnlineLDASource docs) {
         int[][] wordIds = docs.getTokenIds();
-        int[][] wordCts = docs.getTokenCts();
+        int[][] wordCts = docs.getTokenCounts();
         int batchD = docs.size();
 
         double score =0d;

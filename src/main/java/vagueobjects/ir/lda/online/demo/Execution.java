@@ -21,14 +21,13 @@ package vagueobjects.ir.lda.online.demo;
  */
 
 import org.apache.commons.io.IOUtils;
-import vagueobjects.ir.lda.tokens.Documents;
 import vagueobjects.ir.lda.online.OnlineLDA;
-import vagueobjects.ir.lda.online.Result;
+import vagueobjects.ir.lda.online.TopicModelAlgorithm;
 import vagueobjects.ir.lda.tokens.PlainVocabulary;
 import vagueobjects.ir.lda.tokens.Vocabulary;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Execution {
@@ -53,16 +52,17 @@ public class Execution {
         double eta = 1.d/K;
 
         Vocabulary vocabulary = new PlainVocabulary( dictPath);
-        OnlineLDA lda = new OnlineLDA(vocabulary.size(),K, D, alpha, eta, tau, kappa);
+        TopicModelAlgorithm lda = new OnlineLDA(vocabulary.size(),K, D, alpha, eta, tau, kappa);
         List<String> docs = readDocs(docPath);
         long delta=0;
-
-        for(int i=0; i*batchSize < docs.size();++i){
-            int max = Math.min((i+1)*batchSize, docs.size());
-            Documents documents = new Documents(docs.subList(i * batchSize, max), vocabulary);
-            Result result = lda.workOn(documents);
-            System.out.println(result);
-        }
+//IT's NOT USED
+        
+//        for(int i=0; i*batchSize < docs.size();++i){
+//            int max = Math.min((i+1)*batchSize, docs.size());
+//            Documents documents = new Documents(docs.subList(i * batchSize, max), vocabulary);
+//            Result result = lda.workOn(documents);
+//            System.out.println(result);
+//        }
         System.out.println("Time " + delta/1000);
     }
  
