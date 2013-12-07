@@ -1,10 +1,12 @@
-package vagueobjects.ir.lda.online.demo;
+package vagueobjects.ir.lda.online.execution;
 
 import infrascructure.data.launch.DefaultDirectoryReader;
 import infrascructure.data.launch.DirectoryReader;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 import vagueobjects.ir.lda.online.Config;
+import vagueobjects.ir.lda.online.demo.BatchesReader;
+import vagueobjects.ir.lda.online.demo.DocumentData;
 
 import java.io.File;
 import java.io.IOException;

@@ -38,7 +38,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>vagueobjects.ir.lda.online.demo.StandaloneOnlineLDAExecutor</mainClass>
+                            <mainClass>vagueobjects.ir.lda.online.execution.StandaloneOnlineLDAExecutor</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

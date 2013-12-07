@@ -1,5 +1,7 @@
 package vagueobjects.ir.lda.online.demo;
 
+import vagueobjects.ir.lda.online.execution.SimpleDocsRepository;
+
 import java.io.IOException;
 import java.util.List;
 

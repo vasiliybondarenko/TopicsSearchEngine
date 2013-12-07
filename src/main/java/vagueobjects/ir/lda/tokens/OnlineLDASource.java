@@ -12,6 +12,10 @@ import java.util.List;
  * Project: IntelligentSearch
  */
 public interface OnlineLDASource {
+    static OnlineLDASource createDocuments(List<DocumentData> docs, Vocabulary vocab){
+        return new Documents(docs, vocab);
+    }
+
     List<DocumentData> getDocumentsData();
 
     String getTokenById(int i);
