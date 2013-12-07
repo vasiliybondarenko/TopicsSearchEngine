@@ -1,7 +1,11 @@
 package intelligence.core.util;
 
+import infrascructure.data.dom.Document;
+import infrascructure.data.dom.DocumentImpl;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.CloseableStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,5 +15,7 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public interface DocumentsParser {
-    ArrayList<Document> readDocuments(String path) throws IOException;
+    ArrayList<Document> getDocumentsFromFile(String path) throws IOException;
+
+    CloseableStream<DocumentImpl> getDocumentsFromFileLazy(String path) throws IOException;
 }

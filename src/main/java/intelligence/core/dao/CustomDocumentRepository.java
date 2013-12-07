@@ -1,6 +1,6 @@
 package intelligence.core.dao;
 
-import intelligence.core.util.Document;
+import infrascructure.data.dom.Document;
 
 import java.util.List;
 

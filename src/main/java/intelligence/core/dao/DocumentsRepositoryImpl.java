@@ -1,6 +1,6 @@
 package intelligence.core.dao;
 
-import intelligence.core.util.Document;
+import infrascructure.data.dom.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;

@@ -1,7 +1,7 @@
 package intelligence.core.dao;
 
+import infrascructure.data.dom.Document;
 import intelligence.core.DocumentService;
-import intelligence.core.util.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
