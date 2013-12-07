@@ -44,7 +44,7 @@ import java.util.concurrent.Future;
 /**
  * @author shredinger
  */
-public class OnlineLDALauncher {
+public class Launcher {
 
     private Config config;
 
@@ -57,7 +57,7 @@ public class OnlineLDALauncher {
         if(args.length > 0) {
             appContextPath = args[0];
         }
-        new OnlineLDALauncher().process(appContextPath);
+        new Launcher().process(appContextPath);
 
     }
 
