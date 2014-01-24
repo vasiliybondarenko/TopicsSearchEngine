@@ -21,8 +21,14 @@
 package infrascructure.data.util;
 
 
+import com.google.common.base.Preconditions;
+
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.CloseableStream;
 
 /**
  * @author shredinger
@@ -61,11 +67,15 @@ public class IOHelper {
     }
 
     public static String readFromFile(String path) throws IOException {
+        Preconditions.checkArgument(Files.exists(Paths.get(path)), "File '" + path + "' does not exist");
         StringBuilder sb = new StringBuilder("");
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line = reader.readLine();
             while (line != null) {
-                sb.append(line).append("\n");
+                line = line.trim();
+                if(!"".equals(line)){
+                    sb.append(line).append("\n");
+                }
                 line = reader.readLine();
             }
             return sb.toString();
@@ -85,6 +95,10 @@ public class IOHelper {
             }
         }
         return lines;
+    }
+
+    public static CloseableStream<String> readLinesFromFileLazy(String path) throws IOException {
+        return Files.lines(Paths.get(path), Charset.defaultCharset());
     }
 
     public static List<String> getFiles(String sourceDirPath, FilenameFilter filter, Comparator<String> comparator) throws IOException {

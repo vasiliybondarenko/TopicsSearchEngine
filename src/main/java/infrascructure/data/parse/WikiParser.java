@@ -28,36 +28,32 @@ import java.util.regex.Pattern;
 
 /**
  * @author shredinger
- *
  */
-public class WikiParser implements Parser{
+public class WikiParser implements Parser {
 
     /* (non-Javadoc)
      * @see infrascructure.data.Parser#parse(infrascructure.data.Resource)
      */
     @Override
     public PlainTextResource parse(Resource r) {
-	
-	String html = r.getData();
-	int fromIndex = 0;
-	
-	
-	
 
-        
-	return null;
+        String html = r.getData();
+        int fromIndex = 0;
+
+
+        return null;
     }
-    
+
     private int findDiv(String source, String id) {
-	String reg = "<div(\\s)+id(\\s)*=(\\s)*\"" + id + "\".*>";
-        Pattern pattern = Pattern.compile(reg,  Pattern.CASE_INSENSITIVE);
+        String reg = "<div(\\s)+id(\\s)*=(\\s)*\"" + id + "\".*>";
+        Pattern pattern = Pattern.compile(reg, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(source);
         int startIndex = -1;
-	if(matcher.find()) {
-	    startIndex = matcher.start();
-	}
-	
-	return startIndex;
+        if (matcher.find()) {
+            startIndex = matcher.start();
+        }
+
+        return startIndex;
     }
 
 }

@@ -56,7 +56,7 @@ public class Word implements Comparable<Word>{
     @Override
     public int compareTo(Word o) {
 	if(this.count != o.count) {
-	    return this.count - o.count;
+	    return  o.count - this.count;
 	}
 	return this.word.compareTo(o.word);
     }
