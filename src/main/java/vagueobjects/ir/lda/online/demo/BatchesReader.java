@@ -1,6 +1,5 @@
 package vagueobjects.ir.lda.online.demo;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -10,6 +9,7 @@ import java.util.List;
  * Time: 12:58 AM
  * Project: IntelligentSearch
  */
-public interface BatchesReader extends AutoCloseable{
-    List<DocumentData> getNextBatch(int batchSize) throws IOException;
+public interface BatchesReader{
+    List<DocumentData> getNextBatch() throws Exception;
+    boolean hasNextBatch();
 }

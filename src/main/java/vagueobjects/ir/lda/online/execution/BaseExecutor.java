@@ -1,10 +1,9 @@
 package vagueobjects.ir.lda.online.execution;
 
-import infrascructure.data.TaskExecutor;
+import infrascructure.data.InferenceTaskExecutor;
 import vagueobjects.ir.lda.online.TopicModelAlgorithm;
 import vagueobjects.ir.lda.online.demo.*;
 import vagueobjects.ir.lda.tokens.OnlineLDASource;
-import vagueobjects.ir.lda.tokens.QuickVocabulary;
 import vagueobjects.ir.lda.tokens.Vocabulary;
 
 import java.io.IOException;
@@ -17,35 +16,37 @@ import java.util.List;
  * Time: 8:06 PM
  * Project: IntelligentSearch
  */
-public abstract class BaseExecutor implements TaskExecutor{
+public abstract class BaseExecutor implements InferenceTaskExecutor {
     protected final int topics;
     protected final int batchSize;
-    protected final BatchesReadersFactory batchesReaderFactory;
+    protected BatchesReader batchesReader;
 
-    protected BaseExecutor(int topics, int batchSize, BatchesReadersFactory batchesReadersFactory) {
+    protected BaseExecutor(int topics, int batchSize) {
         this.topics = topics;
         this.batchSize = batchSize;
-        this.batchesReaderFactory = batchesReadersFactory;
     }
 
     public final void start() throws Exception {
         preProcess();
-        try (BatchesReader batchesReader = batchesReaderFactory.createBatchesReader()){
-            Vocabulary vocabulary = new QuickVocabulary(StandaloneOnlineLDAExecutor.getCurrentVocabulary());
-            TopicsModelAlgorithmFactory algorithmFactory = new DefaultTopicsModelAlgorithmFactory();
-            processBatches(algorithmFactory, batchesReader, vocabulary);
-        }
+        Vocabulary vocabulary = getCurrentVocabulary();
+        TopicsModelAlgorithmFactory algorithmFactory = getTopicsModelAlgorithmFactory();
+        batchesReader = getBatchesReader();
+        processBatches(algorithmFactory, batchesReader, vocabulary);
+        postProcess();
     }
 
-    protected void processBatches(TopicsModelAlgorithmFactory algorithmFactory, BatchesReader batchesReader, Vocabulary vocabulary) throws IOException {
+    protected TopicsModelAlgorithmFactory getTopicsModelAlgorithmFactory() {
+        return new DefaultTopicsModelAlgorithmFactory();
+    }
+
+    protected void processBatches(TopicsModelAlgorithmFactory algorithmFactory, BatchesReader batchesReader, Vocabulary vocabulary) throws Exception {
         List<DocumentData> docs;
         TopicModelAlgorithm lda = algorithmFactory.createTopicModel(vocabulary.size(), topics);
         int batch = 0;
-        while((docs = batchesReader.getNextBatch(batchSize)) != null) {
+        while(!(docs = batchesReader.getNextBatch()).isEmpty()) {
             batch ++;
             processSingleBatch(vocabulary, docs, lda, batch);
         }
-        postProcess();
     }
 
     protected void processSingleBatch(Vocabulary vocabulary, List<DocumentData> docs, TopicModelAlgorithm lda, int batch) throws IOException {
@@ -54,7 +55,9 @@ public abstract class BaseExecutor implements TaskExecutor{
         postProcessBatch(batch, result);
     }
 
+    protected abstract BatchesReader getBatchesReader() throws Exception;
     protected abstract void preProcess();
+    protected abstract Vocabulary getCurrentVocabulary() throws IOException;
     protected abstract void postProcessBatch(int batch, OnlineLDAResult result) throws IOException;
-    protected abstract void postProcess();
+    protected abstract void postProcess() throws Exception;
 }

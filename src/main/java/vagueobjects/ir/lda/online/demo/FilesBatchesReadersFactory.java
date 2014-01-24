@@ -8,8 +8,14 @@ package vagueobjects.ir.lda.online.demo;
  * Project: IntelligentSearch
  */
 public class FilesBatchesReadersFactory implements BatchesReadersFactory {
+    private final int batchSize;
+
+    public FilesBatchesReadersFactory(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
     @Override
     public BatchesReader createBatchesReader() {
-        return new FileSystemBatchesReader();
+        return new FileSystemBatchesReader(batchSize);
     }
 }

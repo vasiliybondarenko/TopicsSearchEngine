@@ -15,18 +15,20 @@ import java.util.List;
 public class FileSystemBatchesReader implements BatchesReader{
 
     private SimpleDocsRepository docsRepository;
+    private final int batchSize;
 
-    public FileSystemBatchesReader() {
-        this.docsRepository = new SimpleDocsRepository();
+    public FileSystemBatchesReader(int batchSize) {
+        this.batchSize = batchSize;
+        this.docsRepository = new SimpleDocsRepository(batchSize);
     }
 
     @Override
-    public List<DocumentData> getNextBatch(int batchSize) throws IOException {
-        return docsRepository.getNextBatch(batchSize);
+    public List<DocumentData> getNextBatch() throws IOException {
+        return docsRepository.getNextBatch();
     }
 
     @Override
-    public void close() throws Exception {
-        docsRepository.close();
+    public boolean hasNextBatch(){
+        return docsRepository.hasNextBatch();
     }
 }

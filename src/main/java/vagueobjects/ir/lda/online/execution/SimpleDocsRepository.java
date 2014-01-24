@@ -24,48 +24,18 @@ public class SimpleDocsRepository implements BatchesReader {
 
     private FilesQueue files;
     private List<String> tittles;
+    private final int batchSize;
 
     /**
      *
+     * @param batchSize
      */
-    public SimpleDocsRepository() {
+    public SimpleDocsRepository(int batchSize) {
+        this.batchSize = batchSize;
         init();
     }
 
 
-    @Override
-    public List<DocumentData> getNextBatch(int batchSize) throws IOException {
-
-        int count = 0;
-        try {
-            ArrayList<DocumentData> batch = new ArrayList<>(batchSize);
-            while (count++ < batchSize) {
-                if (!files.hasNext()) {
-                    return null;
-                }
-                String path = files.getNextEntry();
-                String data = IOHelper.readFromFile(path);
-                String idStr = path.substring(path.lastIndexOf(IOHelper.FILE_SEPARATOR) + 1);
-                idStr = idStr.substring(0, idStr.lastIndexOf("."));
-                int id = Integer.parseInt(idStr);
-                String title = tittles.get(id);
-                DocumentData doc = new DocumentData(id, title, data);
-                batch.add(doc);
-            }
-            return batch;
-        } finally {
-            files.flush();
-        }
-
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.AutoCloseable#close()
-     */
-    @Override
-    public void close() throws Exception {
-
-    }
 
     public void init() {
 
@@ -86,6 +56,37 @@ public class SimpleDocsRepository implements BatchesReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<DocumentData> getNextBatch() throws IOException {
+
+        int count = 0;
+        try {
+            ArrayList<DocumentData> batch = new ArrayList<>(batchSize);
+            while (count++ < batchSize) {
+                if (!hasNextBatch()) {
+                    return new ArrayList<>();
+                }
+                String path = files.getNextEntry();
+                String data = IOHelper.readFromFile(path);
+                String idStr = path.substring(path.lastIndexOf(IOHelper.FILE_SEPARATOR) + 1);
+                idStr = idStr.substring(0, idStr.lastIndexOf("."));
+                int id = Integer.parseInt(idStr);
+                String title = tittles.get(id);
+                DocumentData doc = new DocumentData(id, title, data);
+                batch.add(doc);
+            }
+            return batch;
+        } finally {
+            files.flush();
+        }
+
+    }
+
+    @Override
+    public boolean hasNextBatch(){
+        return files.hasNext();
     }
 
     public static class FilesQueue {

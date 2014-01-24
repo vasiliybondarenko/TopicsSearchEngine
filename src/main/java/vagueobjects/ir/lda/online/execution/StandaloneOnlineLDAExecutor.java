@@ -21,16 +21,10 @@
 package vagueobjects.ir.lda.online.execution;
 
 
-import infrascructure.data.util.CloseableWriter;
-import infrascructure.data.util.DefaultFileWriter;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 import vagueobjects.ir.lda.online.Config;
-import vagueobjects.ir.lda.online.Result;
-import vagueobjects.ir.lda.online.TopicModelAlgorithm;
-import vagueobjects.ir.lda.online.demo.*;
-import vagueobjects.ir.lda.tokens.OnlineLDASource;
-import vagueobjects.ir.lda.tokens.Vocabulary;
+import vagueobjects.ir.lda.online.demo.FilesBatchesReadersFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,7 +43,8 @@ public class StandaloneOnlineLDAExecutor {
 
             int topics = Integer.parseInt(Config.getProperty("topics"));
             int batchSize = Integer.parseInt(Config.getProperty("batch_size", "1024"));
-            BaseExecutor executor = new Executor(topics, batchSize, new FilesBatchesReadersFactory());
+            //TODO: in non standalone version executor instance should be obtained from spring context
+            BaseExecutor executor = new LocalOnlineLDAExecutor(topics, batchSize, new FilesBatchesReadersFactory(batchSize));
             executor.start();
 
         } catch (Exception e) {
@@ -57,69 +52,6 @@ public class StandaloneOnlineLDAExecutor {
         }
     }
 
-
-    public static class Executor extends BaseExecutor{
-
-        public Executor(int topics, int batchSize, BatchesReadersFactory batchesReadersFactory) {
-            super(topics, batchSize, batchesReadersFactory);
-        }
-
-        @Override
-        protected void processBatches(TopicsModelAlgorithmFactory algorithmFactory, BatchesReader batchesReader, Vocabulary vocabulary) throws IOException {
-            Trace.trace("Online LDA initializing ...");
-            Trace.trace("Topics: " + topics);
-            Trace.trace("Vocabulary size: " + vocabulary.size());
-            Trace.trace("Batch size: " + batchSize);
-            List<DocumentData> docs;
-            TopicModelAlgorithm lda = algorithmFactory.createTopicModel(vocabulary.size(), topics);
-            int batch = 0;
-            while((docs = batchesReader.getNextBatch(batchSize)) != null) {
-                batch ++;
-                processSingleBatch(vocabulary, docs, lda, batch);
-            }
-            postProcess();
-        }
-
-        @Override
-        protected void processSingleBatch(Vocabulary vocabulary, List<DocumentData> docs, TopicModelAlgorithm lda, int batch) throws IOException {
-            Trace.trace("==================== Batch " + batch++ + " ========================");
-            Trace.trace("Read " + docs.size() + " docs");
-            OnlineLDASource documents = OnlineLDASource.createDocuments(docs, vocabulary);
-            Trace.trace("OnlineLDA is starting ...");
-
-            ExecutionResult<Result> executionResult = Exec.execute(lda::workOn, documents);
-            OnlineLDAResult result = executionResult.getResult();
-            long executionTime = executionResult.getExecutionTime();
-
-            Trace.trace("Writing results... Batch execution time: " + (executionTime / 1000000000) + "sec");
-            postProcessBatch(batch, result);
-        }
-
-        @Override
-        protected void preProcess() {
-            Trace.trace("Loading ...");
-        }
-
-        @Override
-        protected void postProcess() {
-            Trace.trace("Stopped. No docs available");
-        }
-
-        @Override
-        protected void postProcessBatch(int batch, OnlineLDAResult result) throws IOException {
-            String docsDistributionPath = String.format("%s_batch=%d.txt", Config.getProperty("onlinelds.results.docs"), batch);
-            String topWordsPath = Config.getProperty("onlinelds.results");
-
-            OnlineLDAResultWriter ldaResultWriter = new DefaultOnlineLDAResultWriter();
-
-            try(CloseableWriter topWordsWriter = new DefaultFileWriter(topWordsPath)){
-                ldaResultWriter.writeTopWords(result, topWordsWriter, OnlineLDAResult.NUMBER_OF_TOKENS);
-            }
-            try (DefaultFileWriter docWriter = new DefaultFileWriter(docsDistributionPath)){
-                ldaResultWriter.writeDocumentTopicsDistribution(result, docWriter);
-            }
-        }
-    }
 
     public static List<String> getCurrentVocabulary() throws IOException {
         long startTime = System.nanoTime();

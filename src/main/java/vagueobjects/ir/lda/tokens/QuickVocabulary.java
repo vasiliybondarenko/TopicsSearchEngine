@@ -36,7 +36,6 @@ public class QuickVocabulary implements Vocabulary {
     private final BiMap<String, Integer> words = HashBiMap.create();
 
     public QuickVocabulary(Collection<String> strings) {
-        long start = System.nanoTime();
         int i = 0;
         for (String word : strings) {
             words.put(word, i++);

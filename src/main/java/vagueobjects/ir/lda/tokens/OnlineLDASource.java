@@ -1,5 +1,6 @@
 package vagueobjects.ir.lda.tokens;
 
+import com.google.common.base.Preconditions;
 import vagueobjects.ir.lda.online.demo.DocumentData;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  */
 public interface OnlineLDASource {
     static OnlineLDASource createDocuments(List<DocumentData> docs, Vocabulary vocab){
+        Preconditions.checkArgument(!docs.isEmpty(), "Empty documents batch!");
         return new Documents(docs, vocab);
     }
 
