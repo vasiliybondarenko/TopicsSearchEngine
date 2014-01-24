@@ -6,8 +6,8 @@
           http://www.springframework.org/schema/context/spring-context-3.0.xsd
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
-    <context:property-placeholder location="//Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/localSampleOnlinelda.properties"/>
+    <context:property-placeholder location="classpath:localSampleOnlinelda.properties, classpath:test_mongodb.properties"/>
+    <import resource="test_mongodb.xml"/>
 
     <context:component-scan base-package="infrascructure.data"/>
 
@@ -53,6 +53,38 @@
         <constructor-arg ref="plainDocsRepository"></constructor-arg>
         <constructor-arg value="${min_docs_count}"></constructor-arg>
     </bean>
+
+    <!--<bean id="standaloneLauncher" class="infrascructure.data.StandaloneLauncher"/>-->
+
+     <!--Tasks dispatcher configuration-->
+    <bean id="batchesReaderFactory" class="intelligence.core.engines.DBBatchesReadersFactory">
+        <constructor-arg value="${batch_size}"/>
+    </bean>
+    <bean id="batchesReader" class="vagueobjects.ir.lda.online.demo.BatchesReader" factory-bean="batchesReaderFactory" factory-method="createBatchesReader"/>
+    <bean id="onlineLdaContext" class="intelligence.core.engines.OnlineLDAContext">
+        <constructor-arg ref="batchesReader"/>
+    </bean>
+
+    <bean id="contextSynchronizer" class="infrascructure.data.integration.DirectoryDocumentMetaDataReader">
+        <constructor-arg value="${batches_dir}"/>
+        <constructor-arg value="${tittles_path}"/>
+    </bean>
+    <bean id="onlineLdaResultWriter" class="intelligence.core.engines.onlinelda.OnlineLDAResultsWriter"/>
+    <bean id="fileToDbSynchronizer" class="intelligence.core.engines.FileToDBInferenceContextSynchronizer"/>
+    <bean id="crawlExecutor" class="intelligence.core.engines.crawlers.CrawlerLauncher"/>
+    <bean id="onlineLdaExecutor" class="intelligence.core.engines.onlinelda.OnlineLDAExecutor">
+        <constructor-arg value="${topics}"/>
+        <constructor-arg value="${batch_size}"/>
+        <constructor-arg ref="onlineLdaContext"/>
+        <constructor-arg ref="onlineLdaResultWriter"/>
+    </bean>
+    <bean id="tasksDispatcher" class="intelligence.core.engines.TaskDispatcher">
+        <constructor-arg ref="onlineLdaContext"/>
+        <constructor-arg ref="crawlExecutor"/>
+        <constructor-arg ref="onlineLdaExecutor"/>
+    </bean>
+
+
 
 
 </beans>

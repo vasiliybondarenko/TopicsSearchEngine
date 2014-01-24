@@ -1,7 +1,8 @@
 package intelligence.core;
 
 
-import intelligence.core.util.Document;
+import infrascructure.data.dom.Document;
+import infrascructure.data.dom.DocumentImpl;
 import intelligence.core.util.OnlineLDADocumentsParser;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -9,6 +10,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.stream.CloseableStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -30,7 +32,7 @@ public class DocumentParserTest {
     public void testParser() throws IOException {
         String path = "src/main/resources/docs.txt";
 
-        ArrayList<Document> documents = parser.readDocuments(path);
+        ArrayList<Document> documents = parser.getDocumentsFromFile(path);
 
         Document doc = documents.get(0);
         Assert.assertEquals(1, doc.getIdentifier());
@@ -38,4 +40,12 @@ public class DocumentParserTest {
         Assert.assertEquals(0.01, doc.getTopicsDistribution()[2]);
     }
 
+    @Test
+    public void testLazyParse() throws Exception {
+        String path = "src/main/resources/docs.txt";
+
+        try (CloseableStream<DocumentImpl> documents = parser.getDocumentsFromFileLazy(path)){
+            Assert.assertEquals(documents.count(), 3);
+        }
+    }
 }

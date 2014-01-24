@@ -1,8 +1,7 @@
-package intelligence.core;
+package intelligence.core.dao;
 
-import intelligence.core.dao.DocumentsRepository;
-import intelligence.core.util.Document;
-import intelligence.core.util.DocumentImpl;
+import infrascructure.data.dom.Document;
+import infrascructure.data.dom.DocumentImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ import static org.fest.assertions.Assertions.assertThat;
 //@Transactional
 //@TransactionConfiguration(defaultRollback = true)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:mongodb.xml" })
+@ContextConfiguration(locations = { "classpath:test_mongodb.xml" })
 public class DocumentsRepositoryTest {
 
     @Autowired
