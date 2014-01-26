@@ -6,13 +6,13 @@
           http://www.springframework.org/schema/context/spring-context-3.0.xsd
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-    <context:property-placeholder location="classpath:localSampleOnlinelda.properties, classpath:test_mongodb.properties"/>
+    <context:property-placeholder location="classpath:localSample/localSampleOnlinelda.properties, classpath:localSample/test_mongodb.properties"/>
     <import resource="test_mongodb.xml"/>
 
     <context:component-scan base-package="infrascructure.data"/>
 
     <bean id="config" class="infrascructure.data.Config">
-        <constructor-arg value="/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/localSampleOnlinelda.properties"></constructor-arg>
+        <constructor-arg value="/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/localSample/localSampleOnlinelda.properties"></constructor-arg>
     </bean>
 
     <!-- <context:property-placeholder location="classpath:META-INF/crawler.properties"/> -->
