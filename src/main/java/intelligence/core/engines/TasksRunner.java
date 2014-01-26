@@ -14,7 +14,7 @@ import java.io.File;
  */
 public class TasksRunner {
     public static void main(String[] args) throws Exception {
-        String configPath = "src/main/resources/localSampleContext.xml";
+        String configPath = "src/main/resources/localSample/localSampleContext.xml";
         String fullPath = new File(configPath).getAbsolutePath();
 
         Trace.trace("Configuration path: " + fullPath);

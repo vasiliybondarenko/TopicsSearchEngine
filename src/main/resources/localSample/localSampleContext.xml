@@ -73,6 +73,7 @@
     <bean id="fileToDbSynchronizer" class="intelligence.core.engines.FileToDBInferenceContextSynchronizer"/>
     <bean id="crawlExecutor" class="intelligence.core.engines.crawlers.CrawlerLauncher"/>
     <bean id="onlineLdaExecutor" class="intelligence.core.engines.onlinelda.OnlineLDAExecutor">
+        <constructor-arg ref="stemmer"/>
         <constructor-arg value="${topics}"/>
         <constructor-arg value="${batch_size}"/>
         <constructor-arg ref="onlineLdaContext"/>

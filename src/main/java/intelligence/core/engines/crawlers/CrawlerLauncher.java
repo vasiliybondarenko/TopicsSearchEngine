@@ -1,6 +1,7 @@
 package intelligence.core.engines.crawlers;
 
 import infrascructure.data.BaseCrawlerLauncher;
+import infrascructure.data.util.Trace;
 import intelligence.core.engines.InferenceContextSynchronizer;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +25,7 @@ public class CrawlerLauncher extends BaseCrawlerLauncher {
 
     @Override
     protected void afterCrawlingCompleted(Future<Throwable> parseResult) throws Exception {
+        Trace.trace("Building vocabulary and synchronizing db...");
         buildVocabulary(parseResult);
         contextSynchronizer.synchronize();
     }
