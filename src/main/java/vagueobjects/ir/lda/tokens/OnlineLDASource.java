@@ -1,6 +1,7 @@
 package vagueobjects.ir.lda.tokens;
 
 import com.google.common.base.Preconditions;
+import infrascructure.data.stripping.Stemmer;
 import vagueobjects.ir.lda.online.demo.DocumentData;
 
 import java.util.List;
@@ -13,9 +14,9 @@ import java.util.List;
  * Project: IntelligentSearch
  */
 public interface OnlineLDASource {
-    static OnlineLDASource createDocuments(List<DocumentData> docs, Vocabulary vocab){
+    static OnlineLDASource createDocuments(List<DocumentData> docs, Vocabulary vocab, Stemmer stemmer){
         Preconditions.checkArgument(!docs.isEmpty(), "Empty documents batch!");
-        return new Documents(docs, vocab);
+        return new Documents(docs, vocab, stemmer);
     }
 
     List<DocumentData> getDocumentsData();

@@ -22,7 +22,6 @@ package vagueobjects.ir.lda.tokens;
 
 
 import infrascructure.data.stripping.Stemmer;
-import infrascructure.data.stripping.VoidStripper;
 import vagueobjects.ir.lda.online.demo.DocumentData;
 
 import java.util.*;
@@ -35,7 +34,7 @@ import java.util.regex.Pattern;
  */
 public class Documents implements OnlineLDASource{
     private final Vocabulary vocabulary;
-    private Stemmer stemmer;
+    private final Stemmer stemmer;
     private final List<DocumentData> docs;
 
     /**
@@ -48,9 +47,9 @@ public class Documents implements OnlineLDASource{
      */
     private int[][] tokenCts;
 
-    public Documents(List<DocumentData> docs, Vocabulary vocab) {
+    public Documents(List<DocumentData> docs, Vocabulary vocab, Stemmer stemmer) {
         //stemmer = new EnglishSuffixStripper();
-        stemmer = new VoidStripper();
+        this.stemmer = stemmer;
         this.vocabulary = vocab;
         this.docs = docs;
         build(docs, vocab);

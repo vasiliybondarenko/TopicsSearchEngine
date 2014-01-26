@@ -20,7 +20,6 @@ package vagueobjects.ir.lda.online;
  *
  */
 
-import infrascructure.data.util.Trace;
 import vagueobjects.ir.lda.online.matrix.Matrix;
 import vagueobjects.ir.lda.online.matrix.Vector;
 import vagueobjects.ir.lda.tokens.OnlineLDASource;
@@ -55,7 +54,6 @@ public class OnlineLDA implements TopicModelAlgorithm {
      */
     public OnlineLDA(int W, int K, int D, double alpha,
                      double eta, double tau , double kappa) {
-	long start = System.nanoTime();
 	
         this.K = K;
         this.D = D;
@@ -70,8 +68,7 @@ public class OnlineLDA implements TopicModelAlgorithm {
         //posterior over topics -beta is parameterized by lambda
         this.eLogBeta = dirichletExpectation(lambda);
         this.expELogBeta = exp(eLogBeta);
-        
-        Trace.trace("[OnlineLDA]: " + (System.nanoTime() - start));
+
     }
 
 

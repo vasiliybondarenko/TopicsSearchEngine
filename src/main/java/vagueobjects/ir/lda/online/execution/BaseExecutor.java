@@ -1,6 +1,7 @@
 package vagueobjects.ir.lda.online.execution;
 
 import infrascructure.data.InferenceTaskExecutor;
+import infrascructure.data.stripping.Stemmer;
 import vagueobjects.ir.lda.online.TopicModelAlgorithm;
 import vagueobjects.ir.lda.online.demo.*;
 import vagueobjects.ir.lda.tokens.OnlineLDASource;
@@ -20,8 +21,10 @@ public abstract class BaseExecutor implements InferenceTaskExecutor {
     protected final int topics;
     protected final int batchSize;
     protected BatchesReader batchesReader;
+    protected final Stemmer stemmer;
 
-    protected BaseExecutor(int topics, int batchSize) {
+    protected BaseExecutor(Stemmer stemmer, int topics, int batchSize) {
+        this.stemmer = stemmer;
         this.topics = topics;
         this.batchSize = batchSize;
     }
@@ -50,7 +53,7 @@ public abstract class BaseExecutor implements InferenceTaskExecutor {
     }
 
     protected void processSingleBatch(Vocabulary vocabulary, List<DocumentData> docs, TopicModelAlgorithm lda, int batch) throws IOException {
-        OnlineLDASource documents = OnlineLDASource.createDocuments(docs, vocabulary);
+        OnlineLDASource documents = OnlineLDASource.createDocuments(docs, vocabulary, stemmer);
         OnlineLDAResult result = lda.workOn(documents);
         postProcessBatch(batch, result);
     }

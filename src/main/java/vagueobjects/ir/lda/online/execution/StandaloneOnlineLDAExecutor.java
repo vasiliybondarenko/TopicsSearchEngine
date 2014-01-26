@@ -21,6 +21,7 @@
 package vagueobjects.ir.lda.online.execution;
 
 
+import infrascructure.data.stripping.StemmerFactory;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 import vagueobjects.ir.lda.online.Config;
@@ -43,8 +44,8 @@ public class StandaloneOnlineLDAExecutor {
 
             int topics = Integer.parseInt(Config.getProperty("topics"));
             int batchSize = Integer.parseInt(Config.getProperty("batch_size", "1024"));
-            //TODO: in non standalone version executor instance should be obtained from spring context
-            BaseExecutor executor = new LocalOnlineLDAExecutor(topics, batchSize, new FilesBatchesReadersFactory(batchSize));
+
+            BaseExecutor executor = new LocalOnlineLDAExecutor(StemmerFactory.createStemmer(), topics, batchSize, new FilesBatchesReadersFactory(batchSize));
             executor.start();
 
         } catch (Exception e) {

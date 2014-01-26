@@ -1,5 +1,6 @@
 package vagueobjects.ir.lda.online.execution;
 
+import infrascructure.data.stripping.Stemmer;
 import infrascructure.data.util.CloseableWriter;
 import infrascructure.data.util.DefaultFileWriter;
 import infrascructure.data.util.Trace;
@@ -25,8 +26,8 @@ public class LocalOnlineLDAExecutor extends BaseExecutor{
 
     protected final BatchesReadersFactory batchesReaderFactory;
 
-    public LocalOnlineLDAExecutor(int topics, int batchSize, BatchesReadersFactory batchesReadersFactory) {
-        super(topics, batchSize);
+    public LocalOnlineLDAExecutor(Stemmer stemmer, int topics, int batchSize, BatchesReadersFactory batchesReadersFactory) {
+        super(stemmer, topics, batchSize);
         this.batchesReaderFactory = batchesReadersFactory;
     }
 
@@ -51,7 +52,7 @@ public class LocalOnlineLDAExecutor extends BaseExecutor{
     protected void processSingleBatch(Vocabulary vocabulary, List<DocumentData> docs, TopicModelAlgorithm lda, int batch) throws IOException {
         Trace.trace("==================== Batch " + batch++ + " ========================");
         Trace.trace("Read " + docs.size() + " docs");
-        OnlineLDASource documents = OnlineLDASource.createDocuments(docs, vocabulary);
+        OnlineLDASource documents = OnlineLDASource.createDocuments(docs, vocabulary, stemmer);
         Trace.trace("OnlineLDA is starting ...");
 
         StandaloneOnlineLDAExecutor.ExecutionResult<Result> executionResult = StandaloneOnlineLDAExecutor.Exec.execute(lda::workOn, documents);
