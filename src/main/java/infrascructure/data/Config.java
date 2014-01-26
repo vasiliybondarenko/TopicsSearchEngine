@@ -42,9 +42,11 @@ public class Config {
     public final static String MIN_DOCS_COUNT = "min_docs_count";
     public final static String QUEUE_DOCS_PATH = "queue_docs";
     public final static String STOP_WORDS_PATH = "stop_words_path";
+    public static final String TOPICS = "topics";
     public final static String RAWDOCS_DIR = "rawdocs_dir";
     public final static String PARSE_DOCS_NOW = "parse_docs_now";
     public final static String ONLINELDA_RESULTS_PATH = "onlinelds.results";
+    public final static String ONLINELDA_RESULTS_DOCS_PATH = "onlinelds.results.docs";
     //public final static String PARSE_DOCS_NOW = "parse_docs_now";
 
 

@@ -20,34 +20,33 @@
  */
 package infrascructure.data.vocabulary;
 
-import java.util.Map;
-
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Map;
+
 /**
  * @author shredinger
- *
  */
-public class VocabularyImpl implements Vocabulary{
+public class VocabularyImpl implements Vocabulary {
 
     private ImmutableBiMap<String, Integer> words;
     private ImmutableMap<String, Integer> wordCounts;
-    
+
     /**
-     * 
+     *
      */
     public VocabularyImpl(Map<String, Integer> words, Map<String, Integer> wordCounts) {
-	this.wordCounts = ImmutableMap.copyOf(wordCounts);
-	this.words = ImmutableBiMap.copyOf(words);
-    }    
-    
-    public ImmutableBiMap<String, Integer> getWords(){	
-	return words;
-    } 
-    
-    public ImmutableMap<String, Integer> getWordCounts(){
-	return wordCounts;
-    } 
+        this.wordCounts = ImmutableMap.copyOf(wordCounts);
+        this.words = ImmutableBiMap.copyOf(words);
+    }
+
+    public ImmutableBiMap<String, Integer> getWords() {
+        return words;
+    }
+
+    public ImmutableMap<String, Integer> getWordCounts() {
+        return wordCounts;
+    }
 
 }
