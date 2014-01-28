@@ -24,7 +24,10 @@ package vagueobjects.ir.lda.tokens;
 import infrascructure.data.stripping.Stemmer;
 import vagueobjects.ir.lda.online.demo.DocumentData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,7 +80,7 @@ public class Documents implements OnlineLDASource{
         for (int docId = 0; docId < docs.size(); ++docId) {
             String doc = docs.get(docId).getText();
             Map<Integer, Integer> counts = new LinkedHashMap<Integer, Integer>();
-            Set<String> tokens = new HashSet<>();
+            List<String> tokens = new ArrayList<>();
 
             String wordPattern = "[a-zA-Z]+";
             Pattern pattern = Pattern.compile(wordPattern, Pattern.CASE_INSENSITIVE);
@@ -87,9 +90,7 @@ public class Documents implements OnlineLDASource{
             while (matcher.find()) {
                 String word = matcher.group().toLowerCase();
                 word = stemmer.getCanonicalForm(word);
-                if (!tokens.contains(word)) {
-                    tokens.add(word);
-                }
+                tokens.add(word);
             }
 
             for (String token : tokens) {
