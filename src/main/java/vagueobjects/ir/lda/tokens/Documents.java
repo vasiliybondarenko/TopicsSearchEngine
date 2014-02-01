@@ -22,6 +22,8 @@ package vagueobjects.ir.lda.tokens;
 
 
 import infrascructure.data.stripping.Stemmer;
+import vagueobjects.ir.lda.online.analysis.Analyser;
+import vagueobjects.ir.lda.online.analysis.WordMetaData;
 import vagueobjects.ir.lda.online.demo.DocumentData;
 
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class Documents implements OnlineLDASource{
     private final Vocabulary vocabulary;
     private final Stemmer stemmer;
     private final List<DocumentData> docs;
+    private static final boolean PRINT_TF_ITF = false;
 
     /**
      * wordIds[i][j] gives the jth unique token present in document i
@@ -105,18 +108,25 @@ public class Documents implements OnlineLDASource{
                 }
             }
 
-            int tokenCount = counts.size();
+            if(PRINT_TF_ITF){
+                Iterable<WordMetaData> sortedWords = Analyser.getWords(vocab, counts, tokens);
+                Analyser.printWords(sortedWords, "TD_IDF.TXT", MIN_TOKENS_COUNT);
+            }
+
+            int tokenCount = counts.size() < MIN_TOKENS_COUNT ? 0 : counts.size();
             wordIds[docId] = new int[tokenCount];
             tokenCts[docId] = new int[tokenCount];
-            int i = 0;
-            for (Map.Entry<Integer, Integer> e : counts.entrySet()) {
-                wordIds[docId][i] = e.getKey();
-                tokenCts[docId][i] = e.getValue();
-                ++i;
+            if(tokenCount > 0){
+                int i = 0;
+                for (Map.Entry<Integer, Integer> e : counts.entrySet()) {
+                    wordIds[docId][i] = e.getKey();
+                    tokenCts[docId][i] = e.getValue();
+                    ++i;
+                }
             }
         }
-    }
 
+    }
 
     @Override
     public String getTokenById(int i) {

@@ -30,4 +30,6 @@ public interface OnlineLDASource {
     int size();
 
     int getTokenCount();
+
+    static final int MIN_TOKENS_COUNT = 100;
 }
