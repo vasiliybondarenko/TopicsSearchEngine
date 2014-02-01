@@ -24,11 +24,16 @@ import infrascructure.data.Data;
 import infrascructure.data.util.IOHelper;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author shredinger
  */
 public abstract class FileResourceSerializer<T extends Data> implements ResourceSerializer<T> {
+
+    public static final String ID_TITLE_SEPARATOR = ":";
 
     protected String dataDirectory;
 
@@ -44,6 +49,19 @@ public abstract class FileResourceSerializer<T extends Data> implements Resource
             throw new IllegalArgumentException("source directory '" + dataDirectory + "' is invalid");
         }
         this.dataDirectory = dataDirectory;
+    }
+
+    public static Map<Integer, String> parseTittles(List<String> titlesLines){
+        Map<Integer, String> idToTitlesMap = new HashMap<>();
+        for(String line: titlesLines){
+            if(!line.isEmpty()){
+                String[] parts = line.split(ID_TITLE_SEPARATOR);
+                Integer id = Integer.parseInt(parts[0].trim());
+                String title = parts[1].trim();
+                idToTitlesMap.put(id, title);
+            }
+        }
+        return idToTitlesMap;
     }
 
     protected String getPath(Integer id) {

@@ -2,6 +2,7 @@ package infrascructure.data.integration;
 
 import com.google.common.base.Preconditions;
 import infrascructure.data.dom.DocumentMetaData;
+import infrascructure.data.serialize.FileResourceSerializer;
 import infrascructure.data.util.IOHelper;
 
 import java.io.File;
@@ -11,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.CloseableStream;
 
@@ -29,7 +32,6 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
     private final String titlesFileName;
 
     private CloseableStream<Path> pathStream;
-    private CloseableStream<String> titlesStream;
 
     public DirectoryDocumentMetaDataReader(String batchesDirectory, String titlesFileName) {
         this.batchesDirectory = batchesDirectory;
@@ -39,20 +41,25 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
     @Override
     public Iterator<DocumentMetaData> readDocumentMetaData() throws IOException {
         final String titlesPath = new File(batchesDirectory).getAbsolutePath() + File.separator + titlesFileName;
-        titlesStream = IOHelper.readLinesFromFileLazy(titlesPath);
-        Iterator<String> titlesIterator = titlesStream.iterator();
+
+        List<String> titlesLines = IOHelper.readLinesFromFile(titlesPath);
+        Map<Integer,String> tittles = FileResourceSerializer.parseTittles(titlesLines);
+
         pathStream = Files.walk(Paths.get(batchesDirectory), 1, FileVisitOption.FOLLOW_LINKS);
 
         return pathStream.filter(isDocFile(FILE_PATTERN)).map(
                 (path) -> {
                     String pathStr = path.toAbsolutePath().toString();
                     String idStr = pathStr.substring(pathStr.lastIndexOf(File.separator) + 1, pathStr.lastIndexOf(".txt"));
+                    Integer id = Integer.valueOf(idStr);
 
-                    Preconditions.checkArgument(titlesIterator.hasNext(), "Titles file " + titlesPath + " does not contain all titles");
-                    String  title = titlesIterator.next();
-                    return new DocumentMetaData(Integer.valueOf(idStr), title, pathStr, false);
 
-                }).iterator();
+                    Preconditions.checkArgument(tittles.containsKey(id), "Titles file " + titlesPath + " does not contain all titles");
+                    String title = tittles.get(id);
+                    return new DocumentMetaData(id, title, pathStr, false);
+
+                }).sorted((d1, d2) -> (int) (new File(d1.getFilePath()).length() - new File(d2.getFilePath()).length()))
+                .iterator();
     }
 
     protected Predicate<? super Path> isDocFile(String pattern) {
@@ -62,7 +69,6 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
     @Override
     public void close() throws Exception {
         close(pathStream);
-        close(titlesStream);
     }
 
     private void close(AutoCloseable resource) throws Exception {

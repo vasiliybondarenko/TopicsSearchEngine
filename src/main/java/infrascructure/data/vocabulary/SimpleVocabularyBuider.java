@@ -52,6 +52,7 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     protected int from_doc;
     protected int to_doc;
     protected List<String> words;
+    private Set<String> stopWords;
 
     public Vocabulary buildVocabulary() {
         return createVocabulary();
@@ -82,10 +83,11 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     @PostConstruct
     private void init() {
         this.to_doc = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT) - 1;
+        this.stopWords = getStopWords();
     }
 
     protected Vocabulary createVocabulary() {
-        Map<String, Integer> allWords = new HashMap<String, Integer>();
+        Map<String, Integer> allWords = new HashMap<>();
         for (int i = from_doc; i <= to_doc; i++) {
             Map<String, Integer> words = retrieveAllWordCounts(i);
             for (String word : words.keySet()) {
@@ -96,7 +98,7 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
         Map<String, Integer> wordCounts = new HashMap<>();
         Map<String, Integer> wordIds = new HashMap<>();
         int id = 0;
-        int max = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT) / 3;
+        int max = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT) / config.getPropertyInt(Config.TOPICS);
         for (String word : allWords.keySet()) {
             int docsCount = allWords.get(word);
             if (docsCount >= min_count && docsCount <= max) {
@@ -128,8 +130,8 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     protected Map<String, Integer> retrieveAllWordCounts(int i) {
         Map<String, Integer> allWordCounts = new HashMap<String, Integer>();
         PlainTextResource r = reader.get(i);
-        Set<String> wordCounts = retrieveWords(r);
-        for (String word : wordCounts) {
+        List<String> tokens = retrieveWords(r);
+        for (String word : tokens) {
             Integer count = allWordCounts.containsKey(word) ? allWordCounts.get(word) : 0;
             allWordCounts.put(word, count + 1);
         }
@@ -137,18 +139,24 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     }
 
 
-    protected Set<String> retrieveWords(PlainTextResource resource) {
-        Set<String> stopWords = getStopWords();
-        String wordPattern = "[a-zA-Z]+";
+    protected List<String> retrieveWords(PlainTextResource resource) {
+        String wordPattern = "[a-zA-Z]+'?[a-zA-Z]+";
         Pattern pattern = Pattern.compile(wordPattern, Pattern.CASE_INSENSITIVE);
         String source = resource.getText();
         Matcher matcher = pattern.matcher(source);
-        Set<String> tokens = new HashSet<String>();
+        List<String> tokens = new ArrayList<>();
         while (matcher.find()) {
             String word = matcher.group().toLowerCase();
+
+            int indexOfAp = word.indexOf("'");
+            if(indexOfAp != -1){
+                String[] ww = word.split("'");
+                word = ww[0];
+            }
+
             if (!stopWords.contains(word)) {
                 word = stemmer.getCanonicalForm(word);
-                if (!tokens.contains(word)) {
+                if(!stopWords.contains(word)){
                     tokens.add(word);
                 }
             }

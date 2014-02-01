@@ -22,11 +22,10 @@ package infrascructure.data.serialize;
 
 import infrascructure.data.PlainTextResource;
 import infrascructure.data.util.IOHelper;
-import infrascructure.data.util.Trace;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author shredinger
@@ -34,20 +33,15 @@ import java.util.List;
 public class PlainTextResourceSerializer extends FileResourceSerializer<PlainTextResource> {
 
     protected String titlesFilePath;
-    protected List<String> tittles;
-    protected HashSet<String> tittlesItems;
-
+    protected Map<Integer, String> tittles;
 
     public PlainTextResourceSerializer(String dataDirectory, String titlesFile) {
         super(dataDirectory);
         this.titlesFilePath = titlesFile;
         String fullTittlesPath = dataDirectory + IOHelper.FILE_SEPARATOR + titlesFilePath;
         try {
-            tittles = IOHelper.readLinesFromFile(fullTittlesPath);
-            tittlesItems = new HashSet<>(tittles);
-            if(tittles.size() != tittlesItems.size()){
-                Trace.trace("THERE ARE DUPLICATED ITEMS IN TITTLES FILE!!!!!");
-            }
+            List<String> titlesLines = IOHelper.readLinesFromFile(fullTittlesPath);
+            tittles = parseTittles(titlesLines);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -82,9 +76,9 @@ public class PlainTextResourceSerializer extends FileResourceSerializer<PlainTex
         try {
             String path = getPath(id);
             IOHelper.saveToFile(path, data.getData());
-            tittles.add(data.getTittle());
+            tittles.put(id, data.getTittle());
             String titlesFullFilePath = getTittlesPath();
-            IOHelper.appendLineToFile(titlesFullFilePath, data.getTittle());
+            IOHelper.appendLineToFile(titlesFullFilePath, id + ID_TITLE_SEPARATOR + data.getTittle());
         } catch (IOException e) {
             e.printStackTrace();
         }

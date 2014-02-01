@@ -22,43 +22,46 @@ package infrascructure.data.vocabulary;
 
 /**
  * @author shredinger
- *
  */
-public class Word implements Comparable<Word>{
-    private String word;
-    private Integer count;
-    
+public class Word implements Comparable<Word> {
+    private final String word;
+    private final Integer count;
+
     /**
      * @return the word
      */
     public String getWord() {
-	return word;
+        return word;
     }
-    
+
     /**
      * @return the count
      */
     public Integer getCount() {
-	return count;
+        return count;
     }
-    
+
     /**
-     * 
+     *
      */
     public Word(String word, Integer count) {
-	this.word = word;
-	this.count = count;	
-    }  
+        this.word = word;
+        this.count = count;
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
     public int compareTo(Word o) {
-	if(this.count != o.count) {
-	    return  o.count - this.count;
-	}
-	return this.word.compareTo(o.word);
+        if (this.count != o.count) {
+            return o.count - this.count;
+        }
+        return this.word.compareTo(o.word);
     }
 
+    @Override
+    public String toString() {
+        return word + " " + count;
+    }
 }
