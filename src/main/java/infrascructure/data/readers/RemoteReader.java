@@ -20,7 +20,7 @@ public class RemoteReader implements ResourceReader {
 
     @Autowired
     private Config config;
-	private int timeout;
+    private int timeout;
 
     @PostConstruct
     private void init() {
@@ -28,53 +28,53 @@ public class RemoteReader implements ResourceReader {
     }
 
     @Override
-	public Resource read(String location) {		
-		try {	    
-		    String body = readUrl(location);		
-		    return new Resource(body);			
-		} catch (Exception e) {
-			Trace.trace(e);
-		}		
-		return null;
-	}
+    public Resource read(String location) {
+        try {
+            String body = readUrl(location);
+            return new Resource(body);
+        } catch (Exception e) {
+            Trace.trace(e);
+        }
+        return null;
+    }
 
-	/**
-	 * @param location
-	 * @return
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 */
-	private String readFromUrl(String location)
-		throws MalformedURLException, IOException {
-	    URL url = new URL(location);
-	    URLConnection con = url.openConnection();
-	    InputStream in = con.getInputStream();
-	    String encoding = con.getContentEncoding();
-	    encoding = encoding == null ? "UTF-8" : encoding;
-	    String body = IOUtils.toString(in, encoding);
-	    return body;
-	}
-	
-	private String readUrl(String location) throws IOException  {
-    		URL url;
-        	StringBuilder body = new StringBuilder();		
-        	url = new URL(location);
-        	URLConnection con = url.openConnection();
-        	con.setReadTimeout(timeout);
-        	con.setConnectTimeout(timeout);        	
-        	
-        	
-        	try(BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))){
-        	    String inputLine;
-        	    while ((inputLine = in.readLine()) != null) {
-        		body.append(inputLine);
-        	    }
-        	      return body.toString();
-        	}catch (SocketTimeoutException e) {        	    
-		    throw new SocketTimeoutException("Read time out was expired. Time out is " + timeout + " ms");
-		}
-        		      
-	}
-	
-	
+    /**
+     * @param location
+     * @return
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+    private String readFromUrl(String location)
+            throws MalformedURLException, IOException {
+        URL url = new URL(location);
+        URLConnection con = url.openConnection();
+        InputStream in = con.getInputStream();
+        String encoding = con.getContentEncoding();
+        encoding = encoding == null ? "UTF-8" : encoding;
+        String body = IOUtils.toString(in, encoding);
+        return body;
+    }
+
+    private String readUrl(String location) throws IOException {
+        URL url;
+        StringBuilder body = new StringBuilder();
+        url = new URL(location);
+        URLConnection con = url.openConnection();
+        con.setReadTimeout(timeout);
+        con.setConnectTimeout(timeout);
+
+
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                body.append(inputLine);
+            }
+            return body.toString();
+        } catch (SocketTimeoutException e) {
+            throw new SocketTimeoutException("Read time out was expired. Time out is " + timeout + " ms");
+        }
+
+    }
+
+
 }

@@ -47,6 +47,7 @@ public class Config {
     public final static String PARSE_DOCS_NOW = "parse_docs_now";
     public final static String ONLINELDA_RESULTS_PATH = "onlinelds.results";
     public final static String ONLINELDA_RESULTS_DOCS_PATH = "onlinelds.results.docs";
+    public static final String RAW_EMAILS_REPOSITORY = "raw_email_repository";
     //public final static String PARSE_DOCS_NOW = "parse_docs_now";
 
 

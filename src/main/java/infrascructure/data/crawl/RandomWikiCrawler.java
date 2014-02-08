@@ -22,20 +22,17 @@ package infrascructure.data.crawl;
 
 /**
  * @author shredinger
- *
  */
-public class RandomWikiCrawler implements URLIterator{
+public class RandomWikiCrawler implements URLIterator {
 
     /* (non-Javadoc)
      * @see infrascructure.data.crawl.URLIterator#getNextURL()
      */
     @Override
     public String getNextURL() {
-	String url = "http://en.wikipedia.org/wiki/Special:Random";
-	return url;
+        String url = "http://en.wikipedia.org/wiki/Special:Random";
+        return url;
     }
 
-
-    
 
 }
