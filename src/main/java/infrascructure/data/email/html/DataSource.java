@@ -9,13 +9,13 @@ import java.io.IOException;
 /**
  * Created by Roman on 08.02.14.
  */
-public class DateSource {
+public class DataSource {
 
     private File input;
     private Document doc;
     private String source;
 
-    public DateSource(String url) throws IOException {
+    public DataSource(String url) throws IOException {
         this.source = url;
         this.input = new File(url);
         this.doc = Jsoup.parse(input, "UTF-8");
