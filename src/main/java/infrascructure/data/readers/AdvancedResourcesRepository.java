@@ -68,6 +68,10 @@ public class AdvancedResourcesRepository extends ResourcesRepository implements 
                 Trace.trace("Skipping resource " + index + " ...");
                 continue;
             }
+            if(resource.getIdentifier() == null){
+                resource = new Resource(resource.getData(), String.valueOf(index.get()));
+            }
+
             try {
                 rawdocs.add(resource);
                 Trace.trace("Doc " + index + " was read");
