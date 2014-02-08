@@ -1,10 +1,13 @@
 package intelligence.core.engines.onlinelda;
 
 import infrascructure.data.Config;
+import infrascructure.data.dom.Document;
+import infrascructure.data.stripping.Stemmer;
 import infrascructure.data.util.CloseableWriter;
 import infrascructure.data.util.DefaultFileWriter;
 import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
+import intelligence.core.dao.DocumentsRepository;
 import intelligence.core.engines.InferenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import vagueobjects.ir.lda.online.TopicModelAlgorithm;
@@ -14,6 +17,7 @@ import vagueobjects.ir.lda.tokens.QuickVocabulary;
 import vagueobjects.ir.lda.tokens.Vocabulary;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -31,8 +35,11 @@ public class OnlineLDAExecutor extends BaseExecutor {
     private final InferenceContext context;
     private final InferenceResultWriter resultWriter;
 
-    public OnlineLDAExecutor(int topics, int batchSize, InferenceContext context, InferenceResultWriter resultWriter) {
-        super(topics, batchSize);
+    @Autowired
+    private DocumentsRepository documentsRepository;
+
+    public OnlineLDAExecutor(Stemmer stemmer, int topics, int batchSize, InferenceContext context, InferenceResultWriter resultWriter) {
+        super(stemmer, topics, batchSize);
         this.context = context;
         this.resultWriter = resultWriter;
     }
@@ -64,6 +71,17 @@ public class OnlineLDAExecutor extends BaseExecutor {
         saveTopWords(result, topWordsPath, new DefaultOnlineLDAResultWriter());
 
         resultWriter.saveDocumentsDistribution(result.getDocuments());
+
+        String docsPath = config.getProperty(Config.ONLINELDA_RESULTS_DOCS_PATH);
+        int topics = config.getPropertyInt(Config.TOPICS);
+
+        try(PrintWriter writer = new PrintWriter(docsPath)){
+            for (int i = 0; i < topics; i++) {
+                List<Document> documentsByTopic = documentsRepository.getDocumentsByTopic(i, 100);
+                writer.println("\n\nTOPIC " + i + ":\n");
+                documentsByTopic.forEach(writer::println);
+            }
+        }
 
     }
 

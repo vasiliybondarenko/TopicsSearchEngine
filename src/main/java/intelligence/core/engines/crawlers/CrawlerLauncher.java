@@ -25,6 +25,7 @@ public class CrawlerLauncher extends BaseCrawlerLauncher {
 
     @Override
     protected void afterCrawlingCompleted(Future<Throwable> parseResult) throws Exception {
+        parseResult.get();
         Trace.trace("Building vocabulary and synchronizing db...");
         buildVocabulary(parseResult);
         contextSynchronizer.synchronize();

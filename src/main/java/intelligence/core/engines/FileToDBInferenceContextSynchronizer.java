@@ -2,9 +2,11 @@ package intelligence.core.engines;
 
 import infrascructure.data.dom.DocumentMetaData;
 import infrascructure.data.integration.DirectoryDocumentMetaDataReader;
+import infrascructure.data.util.IOHelper;
 import intelligence.core.dao.DocumentMetaDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -27,11 +29,16 @@ public class FileToDBInferenceContextSynchronizer implements InferenceContextSyn
 
     @Override
     public void synchronize() throws Exception {
+        ArrayList<String> titles = new ArrayList<>();
         try{
             Iterator<DocumentMetaData> documentMetaDataIterator = documentMetaDataReader.readDocumentMetaData();
             while (documentMetaDataIterator.hasNext()){
-                repository.save(documentMetaDataIterator.next());
+                DocumentMetaData next = documentMetaDataIterator.next();
+                repository.save(next);
+                titles.add(next.getTitle());
             }
+            String path = "/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/OnlineLDA-Launch/data/OnlineLDA_Test_SampleData/Results/processed_docs.txt";
+            IOHelper.writeLinesToFile(path, titles);
         }finally {
              documentMetaDataReader.close();
         }
