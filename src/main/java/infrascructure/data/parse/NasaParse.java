@@ -1,7 +1,9 @@
-package data.parse;
 
-import data.PlainTextResource;
-import data.Resource;
+package infrascructure.data.parse;
+
+
+import infrascructure.data.PlainTextResource;
+import infrascructure.data.Resource;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

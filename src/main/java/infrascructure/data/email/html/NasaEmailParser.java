@@ -20,7 +20,7 @@ public class NasaEmailParser implements EmailParser
 
     public ResultLink parse() throws IOException {
         ResultLink resultLink = null;
-        DateSource dateSource = new DateSource(source);
+        DataSource dateSource = new DataSource(source);
         Document doc = dateSource.getDoc();
         Elements elementRssTitle = doc.getElementsByClass("rss_title");
 

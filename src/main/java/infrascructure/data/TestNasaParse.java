@@ -1,7 +1,8 @@
-package data;
+package infrascructure.data;
 
-import data.email.html.DateSource;
-import data.parse.NasaParse;
+
+import infrascructure.data.email.html.DataSource;
+import infrascructure.data.parse.NasaParse;
 
 
 import java.io.IOException;
@@ -11,8 +12,8 @@ import java.io.IOException;
  */
 public class TestNasaParse {
     public static void main(String[] args) throws IOException {
-        DateSource dataSource
-                = new DateSource("C:\\Users\\Roman\\svn_and_git\\Careers at NASA   NASA.htm");
+        DataSource dataSource
+                = new DataSource("C:\\Users\\Roman\\svn_and_git\\Careers at NASA   NASA.htm");
         Resource resource = new Resource(dataSource.getDoc().html());
 
         NasaParse nasaParse = new NasaParse();
