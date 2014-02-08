@@ -35,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 
@@ -147,6 +149,10 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
 
     private int getLastReadIndex() throws IOException {
         String indexPath = sourceDir + IOHelper.FILE_SEPARATOR + REPOSITORY_STATE_FILE;
+        if(!Files.exists(Paths.get(indexPath))){
+            Files.createFile(Paths.get(indexPath));
+            IOHelper.appendLineToFile(indexPath, "-1");
+        }
         String indexStr = IOHelper.readFromFile(indexPath);
         return Integer.parseInt(indexStr.trim().replace("\n", ""));
     }

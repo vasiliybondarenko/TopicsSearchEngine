@@ -12,5 +12,5 @@ import java.io.IOException;
  * Project: IntelligentSearch
  */
 public interface EmailParser {
-    public ResultLink parse() throws IOException;
+    public ResultLink parse(String source) throws IOException;
 }
