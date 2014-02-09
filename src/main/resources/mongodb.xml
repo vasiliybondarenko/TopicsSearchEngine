@@ -16,7 +16,7 @@
     <mongo:repositories base-package="intelligence.core.dao">
         <!--<repo:include-filter type="regex" expression=".*UserRepository" />-->
     </mongo:repositories>
-    <!--<bean id="customRepositoryImpl" class="intelligence.core.dao.CustomDocumentRepositoryImplImpl"/>-->
+    <!--<bean id="customRepositoryImpl" class="intelligence.core.infrascructure.data.dao.CustomDocumentRepositoryImplImpl"/>-->
 
     <!--<bean id="transactionManager"-->
           <!--class="org.springframework.orm.hibernate4.HibernateTransactionManager">-->

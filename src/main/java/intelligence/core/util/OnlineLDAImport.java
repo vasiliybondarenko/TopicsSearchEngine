@@ -2,6 +2,7 @@ package intelligence.core.util;
 
 import infrascructure.data.dom.Document;
 import infrascructure.data.util.IOHelper;
+import infrascructure.data.util.Trace;
 import intelligence.core.dao.DocumentsRepository;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -22,18 +23,22 @@ public class OnlineLDAImport {
 
 
     public static void main(String[] args) throws IOException {
-        String contextPath = "///Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/mongodb.xml";
+        String contextPath = "///Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/test_mongodb.xml";
         FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext(contextPath);
         DocumentsRepository documentsRepository = context.getBean(DocumentsRepository.class);
 
-        String dir = "/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/OnlineLDA-Launch/data/OnlineLDA_Test_SampleData/Results";
-        List<String> files = getFiles(dir);
-        DocumentsParser parser = new OnlineLDADocumentsParser();
+        //String dir = "/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/OnlineLDA-Launch/data/OnlineLDA_Test_SampleData/Results";
+        //List<String> files = getFiles(dir);
+        //DocumentsParser parser = new OnlineLDADocumentsParser();
 
-        importOnlineLDAResultsToDB(parser, files, documentsRepository);
+        //importOnlineLDAResultsToDB(parser, files, documentsRepository);
 
-        List<Document> documentsByTopic = documentsRepository.getDocumentsByTopic(2, 3000);
-        documentsByTopic.forEach(System.out::println);
+
+        for (int i = 0; i < 3; i++) {
+            List<Document> documentsByTopic = documentsRepository.getDocumentsByTopic(i, 100);
+            Trace.trace("\n\nTOPIC " + i + ":\n");
+            documentsByTopic.forEach(System.out::println);
+        }
 
     }
 

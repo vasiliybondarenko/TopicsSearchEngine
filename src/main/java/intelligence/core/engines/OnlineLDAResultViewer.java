@@ -24,6 +24,6 @@ public class OnlineLDAResultViewer {
         FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext(configPath);
 
         DocumentsRepository documentsRepository = context.getBean(DocumentsRepository.class);
-        documentsRepository.getDocumentsByTopic(0, 200).forEach((d) -> System.out.println(d.getTitle() + d.getTopicsDistribution()[0]));
+        documentsRepository.getDocumentsByTopic(0, 200).forEach((d) -> System.out.println(d.getTitle() + d.getTopicsDistribution()[0] + " [" + d.getUrl() + "]"));
     }
 }
