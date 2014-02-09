@@ -22,7 +22,10 @@ package infrascructure.data.readers;
 
 import infrascructure.data.Config;
 import infrascructure.data.Resource;
+import infrascructure.data.dao.ResultLinkDao;
+import infrascructure.data.email.html.entity.ResultLink;
 import infrascructure.data.util.Trace;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +39,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AdvancedResourcesRepository extends ResourcesRepository implements Runnable {
 
     private volatile AtomicInteger index;
+
+    @Autowired
+    private ResultLinkDao resultLinkDao;
 
     /* (non-Javadoc)
      * @see infrascructure.data.readers.ResourcesRepository#readAll()
@@ -72,6 +78,8 @@ public class AdvancedResourcesRepository extends ResourcesRepository implements 
                 resource = new Resource(resource.getData(), String.valueOf(index.get()));
             }
 
+            updateResultLin(url, resource);
+
             try {
                 rawdocs.add(resource);
                 Trace.trace("Doc " + index + " was read");
@@ -81,6 +89,12 @@ public class AdvancedResourcesRepository extends ResourcesRepository implements 
             index.incrementAndGet();
 
         }
+    }
+
+    protected void updateResultLin(String url, Resource resource) {
+        ResultLink link = resultLinkDao.findByUrl(url);
+        link.setRawDocId(resource.getIdentifier());
+        resultLinkDao.save(link);
     }
 
 

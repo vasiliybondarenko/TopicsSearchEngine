@@ -2,6 +2,7 @@ package infrascructure.data.email.crawl;
 
 import infrascructure.data.Resource;
 import infrascructure.data.crawl.URLIterator;
+import infrascructure.data.dao.ResultLinkDao;
 import infrascructure.data.email.RawEmailsRepository;
 import infrascructure.data.email.html.EmailParser;
 import infrascructure.data.email.html.NasaEmailParser;
@@ -27,6 +28,9 @@ public class EmailURLIterator implements URLIterator{
     private int currentId;
 
     @Autowired
+    private ResultLinkDao resultLinkDao;
+
+    @Autowired
     public EmailURLIterator(RawEmailsRepository emailsRepository, NasaEmailParser parser){
         this.emailsRepository = emailsRepository;
         this.parser = parser;
@@ -40,6 +44,7 @@ public class EmailURLIterator implements URLIterator{
         if(resource != null){
             try {
                 ResultLink resultLink = parser.parse(resource.getData());
+                resultLinkDao.save(resultLink);
                 return resultLink.getUrl();
             } catch (IOException e) {
                 e.printStackTrace();

@@ -10,5 +10,7 @@ package infrascructure.data.dom;
 public interface Document {
     int getIdentifier();
     String getTitle();
+    String getUrl();
+    void setUrl(String url);
     double[] getTopicsDistribution();
 }

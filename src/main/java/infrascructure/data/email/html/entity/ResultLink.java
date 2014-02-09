@@ -1,12 +1,16 @@
 package infrascructure.data.email.html.entity;
 
+import org.springframework.data.annotation.Id;
+
 /**
  * Created by Roman on 08.02.14.
  */
 public class ResultLink {
 
+    @Id
     private String url;
     private String name;
+    private String rawDocId;
 
     public ResultLink(String url, String name) {
         this.url = url;
@@ -29,6 +33,13 @@ public class ResultLink {
         this.name = name;
     }
 
+    public String getRawDocId() {
+        return rawDocId;
+    }
+
+    public void setRawDocId(String rawDocId) {
+        this.rawDocId = rawDocId;
+    }
 
     @Override
     public String toString() {
