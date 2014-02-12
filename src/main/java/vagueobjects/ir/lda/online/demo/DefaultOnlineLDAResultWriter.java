@@ -17,7 +17,8 @@ public class DefaultOnlineLDAResultWriter implements OnlineLDAResultWriter{
 
     @Override
     public void writeTopWords(OnlineLDAResult onlineLDAResult, CloseableWriter writer, int topWordsCount) {
-        List<Topic> topics = onlineLDAResult.getTopics(); System.out.println();
+        List<Topic> topics = onlineLDAResult.getTopics();
+        System.out.println();
         for (int t = 0; t < topics.size(); t++) {
             writer.appendLine("--------- TOPIC " + t + "-------------------");
             topics.get(t).words.stream().sorted((x, y) -> Double.compare(y.probability, x.probability)).limit(topWordsCount).
