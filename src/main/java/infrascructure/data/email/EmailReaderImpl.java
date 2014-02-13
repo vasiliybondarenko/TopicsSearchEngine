@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Properties;
 
+import static infrascructure.data.email.EmailConfig.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: shredinger
@@ -55,16 +57,17 @@ public class EmailReaderImpl implements EmailReader{
     }
 
     private void init() throws IOException, MessagingException {
-        String emailsDir = properties.getProperty("mail.store_directory");
+        String emailsDir = properties.getProperty(EMAIL_STORE_DIRECTORY);
         createSourceDirectory(emailsDir);
 
         Session session = Session.getInstance(properties, null);
         Store store = session.getStore();
 
-        String password = properties.getProperty("mail.password");
-        String account = properties.getProperty("mail.account");
+        String host = properties.getProperty(EMAIL_HOST);
+        String password = properties.getProperty(EMAIL_PASSWORD);
+        String account = properties.getProperty(EMAIL_ACCOUNT);
 
-        store.connect("imap.gmail.com", account, password);
+        store.connect(host, account, password);
         inbox = store.getFolder("INBOX");
         inbox.open(Folder.READ_ONLY);
         messageCount = inbox.getMessageCount();
