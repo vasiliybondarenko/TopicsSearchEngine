@@ -7,7 +7,7 @@
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     <context:property-placeholder location="classpath:localSample/localSampleOnlinelda.properties, classpath:localSample/test_mongodb.properties"/>
-    <import resource="test_mongodb.xml"/>
+    <import resource="classpath:localSample/test_mongodb.xml"/>
 
     <context:component-scan base-package="infrascructure.data"/>
 
@@ -46,6 +46,7 @@
     </bean>
 
     <bean id="stemmer" class="infrascructure.data.stripping.VoidStripper"/>
+    <!--<bean id="stemmer" class="infrascructure.data.stripping.EnglishSuffixStripper"/>-->
 
     <bean id="plainDocsValidator" class="infrascructure.data.parse.PlainDocValidatorImpl"/>
 

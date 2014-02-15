@@ -25,7 +25,7 @@ import static org.fest.assertions.Assertions.assertThat;
 //@Transactional
 //@TransactionConfiguration(defaultRollback = true)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test_mongodb.xml" })
+@ContextConfiguration(locations = { "classpath:localSample/test_mongodb.xml" })
 public class DocumentsRepositoryTest {
 
     @Autowired

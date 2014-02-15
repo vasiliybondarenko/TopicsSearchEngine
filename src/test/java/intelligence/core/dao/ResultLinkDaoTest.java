@@ -22,7 +22,7 @@ import static org.fest.assertions.Assertions.assertThat;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:emails/test_mongodb.xml" })
+@ContextConfiguration(locations = { "classpath:localSample/test_mongodb.xml" })
 public class ResultLinkDaoTest {
 
     @Autowired
