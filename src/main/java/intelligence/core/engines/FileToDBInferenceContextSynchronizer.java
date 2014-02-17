@@ -2,6 +2,7 @@ package intelligence.core.engines;
 
 import infrascructure.data.dom.DocumentMetaData;
 import infrascructure.data.integration.DirectoryDocumentMetaDataReader;
+import infrascructure.data.integration.DocumentMetaDataReader;
 import infrascructure.data.util.IOHelper;
 import intelligence.core.dao.DocumentMetaDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,10 @@ import java.util.Iterator;
 public class FileToDBInferenceContextSynchronizer implements InferenceContextSynchronizer {
 
     private final DocumentMetaDataRepository repository;
-    private final DirectoryDocumentMetaDataReader documentMetaDataReader;
+    private final DocumentMetaDataReader documentMetaDataReader;
 
     @Autowired
-    public FileToDBInferenceContextSynchronizer(DocumentMetaDataRepository repository, DirectoryDocumentMetaDataReader documentMetaDataReader) {
+    public FileToDBInferenceContextSynchronizer(DocumentMetaDataRepository repository, DocumentMetaDataReader documentMetaDataReader) {
         this.repository = repository;
         this.documentMetaDataReader = documentMetaDataReader;
     }
@@ -40,7 +41,10 @@ public class FileToDBInferenceContextSynchronizer implements InferenceContextSyn
             String path = "/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/OnlineLDA-Launch/data/OnlineLDA_Test_SampleData/Results/processed_docs.txt";
             IOHelper.writeLinesToFile(path, titles);
         }finally {
-             documentMetaDataReader.close();
+             //TODO:XXX
+             if(documentMetaDataReader instanceof DirectoryDocumentMetaDataReader){
+                 ((DirectoryDocumentMetaDataReader) documentMetaDataReader).close();
+             }
         }
 
     }

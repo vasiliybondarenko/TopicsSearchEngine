@@ -15,6 +15,46 @@
         <constructor-arg value="/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/emails/nasa_mail_OnlineLda.properties"></constructor-arg>
     </bean>
 
+    <!--BigList beans -->
+    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="rawEmailSerializer">
+        <constructor-arg value="${raw_email_repository}"/>
+    </bean>
+    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="rawDocSerializer">
+        <constructor-arg value="${rawdocs_repository}"/>
+    </bean>
+    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="plainDocSerializer">
+        <constructor-arg value="${plaindocs_dir}"/>
+    </bean>
+
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="emailMetaDataRepository">
+        <constructor-arg value="emailMetaData_collection"/>
+    </bean>
+    <bean class="infrascructure.data.readers.DBSimpleList" id="emailsList">
+        <constructor-arg ref="emailMetaDataRepository"/>
+        <constructor-arg ref="rawEmailSerializer"/>
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="rawDocMetaDataRepository">
+        <constructor-arg value="rawDocsMetaData_collection"/>
+    </bean>
+    <bean class="infrascructure.data.readers.DBSimpleList" id="rawDocsList">
+        <constructor-arg ref="rawDocMetaDataRepository"/>
+        <constructor-arg ref="rawDocSerializer"/>
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="plainDocMetaDataRepository">
+        <constructor-arg value="plainDocsMetaData_collection"/>
+    </bean>
+    <bean class="infrascructure.data.readers.DBSimpleList" name="plainDocsList">
+        <constructor-arg ref="plainDocMetaDataRepository"/>
+        <constructor-arg ref="plainDocSerializer"/>
+        <constructor-arg value="1"/>
+    </bean>
+
+    <!-- -->
+
     <bean id="rawSerializersFactory" class="infrascructure.data.serialize.SampleRawSerializersFactory"/>
 
     <bean id="emailReaderFactory" class="infrascructure.data.email.DefaultEmailReaderFactory">
@@ -73,6 +113,7 @@
         <constructor-arg value="${batches_dir}"/>
         <constructor-arg value="${tittles_path}"/>
     </bean>
+
     <bean id="onlineLdaResultWriter" class="intelligence.core.engines.onlinelda.OnlineLDAResultsWriter"/>
     <bean id="fileToDbSynchronizer" class="intelligence.core.engines.FileToDBInferenceContextSynchronizer"/>
     <bean id="crawlExecutor" class="intelligence.core.engines.crawlers.CrawlerLauncher"/>

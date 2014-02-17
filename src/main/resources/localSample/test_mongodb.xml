@@ -15,6 +15,10 @@
 
     <mongo:repositories base-package="intelligence.core.dao, infrascructure.data.dao"/>
 
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="resourceMetaDataRepository">
+        <constructor-arg value="resourceMetaData_test_collection"/>
+    </bean>
+
     <mongo:mongo host="${mongo.host}" port="${mongo.port}"/>
     <mongo:db-factory dbname="${mongo.dbname}" />
 

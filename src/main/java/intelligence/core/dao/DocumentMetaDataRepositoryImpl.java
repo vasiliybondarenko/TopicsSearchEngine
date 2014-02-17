@@ -23,8 +23,13 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 @Repository
 public class DocumentMetaDataRepositoryImpl implements CustomDocumentMetaDataRepository {
 
-    @Autowired
+
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    public void setMongoTemplate(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Override
     public List<DocumentMetaData> getUnprocessedDocs(int batchSize) {

@@ -9,6 +9,8 @@
           http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <!--TODO: replace with java config! -->
+
     <context:property-placeholder location="classpath:emails/test_mongodb.properties"/>
 
     <context:component-scan base-package="intelligence.core.dao,infrascructure.data.dao"/>
