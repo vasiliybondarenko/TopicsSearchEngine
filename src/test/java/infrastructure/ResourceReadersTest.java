@@ -77,7 +77,7 @@ public class ResourceReadersTest {
 //	public void testCachedList() {
 //		String sourceDir = Config.getProperty("rawdocs_dir");				
 //		SimpleResourceSerializer serializer = SerializersFactory.createSimpleSerializer(sourceDir);		
-//		BigList<Resource> rawdocs = new SimpleCachedList<Resource>(sourceDir, 10, serializer);		
+//		BigListResource<Resource> rawdocs = new SimpleCachedList<Resource>(sourceDir, 10, serializer);
 //		try {
 //		    rawdocs.add(new Resource("Metallica"));
 //		    Assert.assertEquals(rawdocs.contains(0), true);

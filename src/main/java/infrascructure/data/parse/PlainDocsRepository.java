@@ -22,41 +22,36 @@ package infrascructure.data.parse;
 
 import infrascructure.data.Config;
 import infrascructure.data.PlainTextResource;
-import infrascructure.data.Resource;
+import infrascructure.data.dom.ResourceMetaData;
+import infrascructure.data.dom.Tag;
+import infrascructure.data.dom.Tags;
 import infrascructure.data.list.BigList;
 import infrascructure.data.readers.CacheableReader;
-import infrascructure.data.readers.SimpleCachedList;
-import infrascructure.data.serialize.PlainDocsSerializersFactory;
-import infrascructure.data.serialize.PlainTextResourceSerializer;
-import infrascructure.data.util.IOHelper;
 import infrascructure.data.util.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * @author shredinger
  */
-public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
+public class PlainDocsRepository extends CacheableReader<ResourceMetaData> {
 
 
-    private final int MAX_CACHE_SIZE = 100;
+    private final int MAX_CACHE_SIZE = 1;
     private final String REPOSITORY_STATE_FILE = "last_index.txt";
 
     private String sourceDir;
-    private volatile BigList<PlainTextResource> docs;
+
+    @Autowired
+    @Qualifier(value = "plainDocsList")
+    private volatile BigList<ResourceMetaData> docs;
 
     @Autowired
     private Parser parser;
-
-    @Autowired
-    private PlainDocsSerializersFactory serializersFactory;
 
     @Autowired
     private Config config;
@@ -65,12 +60,12 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
 
     private int required_docs_count;
 
-    private CacheableReader<Resource> resourcesRepository;
+    private CacheableReader<ResourceMetaData> resourcesRepository;
 
     /**
      *
      */
-    public PlainDocsRepository(CacheableReader<Resource> resourcesRepository) {
+    public PlainDocsRepository(CacheableReader<ResourceMetaData> resourcesRepository) {
         this.resourcesRepository = resourcesRepository;
     }
 
@@ -78,26 +73,13 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
     private void init() throws IOException {
         required_docs_count = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT);
         sourceDir = config.getProperty(Config.PLAINDOCS_DIR);
-        String tittlesFileName = config.getProperty(Config.TITTLES_PATH);
-        PlainTextResourceSerializer serializer = serializersFactory.createPlainTextSerializer(sourceDir, tittlesFileName);
-        docs = new SimpleCachedList<PlainTextResource>(sourceDir, MAX_CACHE_SIZE, serializer);
-        initTitles();
     }
-
-    private void initTitles() throws IOException {
-        List<String> titles = IOHelper.readLinesFromFile(config.getProperty(Config.TITTLES_PATH));
-        uniqueTitles = new HashSet<>(titles);
-        if(titles.size() != uniqueTitles.size()){
-            Trace.trace("WARNING: DUPLICATED ITEMS (all count = " + titles.size() + "; unique count = " + uniqueTitles.size() );
-        }
-    }
-
 
     /* (non-Javadoc)
      * @see infrascructure.data.readers.CacheableReader#get(java.lang.Integer)
      */
     @Override
-    public PlainTextResource get(Integer i) {
+    public ResourceMetaData get(Integer i) {
         return i >= required_docs_count ? null : docs.get(i);
     }
 
@@ -111,15 +93,21 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
             Trace.trace("Property " + Config.PARSE_DOCS_NOW + " is false. Parsing disabled.");
             return;
         }
-        int resourceId = getLastReadIndex();
+        int resourceId = docs.size();
         while (docs.size() < required_docs_count) {
-            Resource resource = resourcesRepository.get(++ resourceId);
+            ResourceMetaData resource = resourcesRepository.get(++ resourceId);
             if(resource == null){
-                Trace.trace("Resource is null. Stopping read");
-                break;
+                Trace.trace("Resource is null. Trying next ...");
+                continue;
             }
             PlainTextResource data = parser.parse(resource);
-            boolean added = addData(data);
+            Tag[] tags = new Tag[]{
+                 resource.getTag(Tags.URL),
+                 new Tag(Tags.TITLE, data.getTittle())
+            };
+            ResourceMetaData resourceMetaData = new ResourceMetaData(resourceId, data.getData(), tags);
+
+            boolean added = addData(resourceMetaData);
             onAdded(resourceId, added);
         }
 
@@ -131,39 +119,14 @@ public class PlainDocsRepository extends CacheableReader<PlainTextResource> {
         } else {
             Trace.trace("Doc " + resourceId + " cannot be parsed");
         }
-        writeLastReadIndex(resourceId);
     }
 
-    protected boolean addData(PlainTextResource data) throws IOException {
+    protected boolean addData(ResourceMetaData data) throws IOException {
         if(data == null){
             return false;
         }
-        if(uniqueTitles.contains(data.getTittle())){
-            Trace.trace("Document '" + data.getTittle() + "' is duplicated");
-            return false;
-        }
         docs.add(data);
-        uniqueTitles.add(data.getTittle());
         return true;
-    }
-
-    private int getLastReadIndex() throws IOException {
-        String indexPath = sourceDir + IOHelper.FILE_SEPARATOR + REPOSITORY_STATE_FILE;
-        if(!Files.exists(Paths.get(indexPath))){
-            Files.createFile(Paths.get(indexPath));
-            IOHelper.appendLineToFile(indexPath, "-1");
-        }
-        String indexStr = IOHelper.readFromFile(indexPath);
-        return Integer.parseInt(indexStr.trim().replace("\n", ""));
-    }
-
-    private void writeLastReadIndex(int index) throws IOException {
-        String indexPath = sourceDir + IOHelper.FILE_SEPARATOR + REPOSITORY_STATE_FILE;
-        File f = new File(indexPath);
-        if(!f.exists()){
-            f.createNewFile();
-        }
-        IOHelper.saveToFile(indexPath, String.valueOf(index));
     }
 
 }

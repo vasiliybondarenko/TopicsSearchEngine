@@ -1,9 +1,13 @@
 package infrascructure.data.integration;
 
-import com.google.common.base.Preconditions;
+import infrascructure.data.dao.ResourceMetaDataRepository;
 import infrascructure.data.dom.DocumentMetaData;
+import infrascructure.data.dom.ResourceMetaData;
+import infrascructure.data.dom.Tags;
 import infrascructure.data.serialize.FileResourceSerializer;
 import infrascructure.data.util.IOHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +35,10 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
     private final String batchesDirectory;
     private final String titlesFileName;
 
+    @Autowired
+    @Qualifier(value = "plainDocMetaDataRepository")
+    private ResourceMetaDataRepository repository;
+
     private CloseableStream<Path> pathStream;
 
     public DirectoryDocumentMetaDataReader(String batchesDirectory, String titlesFileName) {
@@ -53,9 +61,9 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
                     String idStr = pathStr.substring(pathStr.lastIndexOf(File.separator) + 1, pathStr.lastIndexOf(".txt"));
                     Integer id = Integer.valueOf(idStr);
 
+                    ResourceMetaData resourceMetaData = repository.findById(id);
+                    String title = resourceMetaData.getTag(Tags.TITLE).getValue();
 
-                    Preconditions.checkArgument(tittles.containsKey(id), "Titles file " + titlesPath + " does not contain all titles");
-                    String title = tittles.get(id);
                     return new DocumentMetaData(id, title, pathStr, false);
 
                 }).sorted((d1, d2) -> (int) (new File(d1.getFilePath()).length() - new File(d2.getFilePath()).length()))

@@ -2,13 +2,16 @@ package infrascructure.data.email;
 
 import infrascructure.data.Config;
 import infrascructure.data.Resource;
+import infrascructure.data.dom.ResourceMetaData;
+import infrascructure.data.dom.Tag;
+import infrascructure.data.dom.Tags;
 import infrascructure.data.list.BigList;
 import infrascructure.data.readers.CacheableReader;
-import infrascructure.data.readers.SimpleCachedList;
 import infrascructure.data.serialize.RawResourceSerializer;
 import infrascructure.data.serialize.RawSerializersFactory;
 import infrascructure.data.util.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -33,7 +36,9 @@ public class RawEmailsRepository extends CacheableReader<Resource> {
     @Autowired
     private EmailFilter filter;
 
-    protected BigList<Resource> rawdocs;
+    @Autowired
+    @Qualifier(value = "emailsList")
+    protected BigList<ResourceMetaData> rawdocs;
 
     public RawEmailsRepository(Config config, RawSerializersFactory serializersFactory, EmailReader emailReader) {
         this.config = config;
@@ -43,7 +48,7 @@ public class RawEmailsRepository extends CacheableReader<Resource> {
         max_docs_count = config.getPropertyInt(Config.MAX_DOCS_COUNT);
         String sourceDir = config.getProperty(Config.RAW_EMAILS_REPOSITORY);
         RawResourceSerializer serializer = this.serializersFactory.createSimpleSerializer(sourceDir);
-        rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
+        //rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
     }
 
     @Override
@@ -60,8 +65,7 @@ public class RawEmailsRepository extends CacheableReader<Resource> {
             if(filter.accept(message)){
                 try {
                     Trace.trace("Message " + id + " was read [" + truncate(message.getSubject(), 100) + "]");
-                    String email = EmailUtil.getEmail(message);
-                    Resource resource = new Resource(email, String.valueOf(id));
+                    ResourceMetaData resource = createEmailResourceMetaData(message, id);
                     rawdocs.add(resource);
                     id ++;
                 } catch (MessagingException e) {
@@ -69,6 +73,15 @@ public class RawEmailsRepository extends CacheableReader<Resource> {
                 }
             }
         }
+    }
+
+    private ResourceMetaData createEmailResourceMetaData(Message message, int id) throws IOException, MessagingException {
+        String email = EmailUtil.getEmail(message);
+        ResourceMetaData resource = new ResourceMetaData(id, email,
+                new Tag(Tags.EMAIL_SUBJECT, message.getSubject()),
+                new Tag(Tags.EMAIL_DATE, message.getReceivedDate().toString())
+        );
+        return resource;
     }
 
     private String truncate(String s, int length){

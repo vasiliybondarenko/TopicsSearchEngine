@@ -41,8 +41,8 @@ public class DirectoryDocumentMetaDataReaderTest {
     public void setUp() throws Exception {
         File batchesDir = new File(batchesDirectory);
         batchesDir.mkdir();
-        IOHelper.saveToFile(fullTitlePath, "Load\nReload\n");
-        IOHelper.saveToFile(fullTitlesPathOfWrongTitles, "T1");
+        IOHelper.saveToFile(fullTitlePath, "1:Load\n2:Reload\n");
+        IOHelper.saveToFile(fullTitlesPathOfWrongTitles, "1:T1");
         IOHelper.saveToFile(fullDoc1Path, "A1");
         IOHelper.saveToFile(fullDoc2Path, "A2");
     }

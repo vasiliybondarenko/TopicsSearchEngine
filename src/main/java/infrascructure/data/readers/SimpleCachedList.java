@@ -69,7 +69,7 @@ public class SimpleCachedList<T extends Data> implements BigList<T> {
 
 
     /* (non-Javadoc)
-     * @see infrascructure.data.list.BigList#get(int)
+     * @see infrascructure.data.list.BigListResource#get(int)
      */
     @Override
     public T get(int i) {
@@ -97,7 +97,7 @@ public class SimpleCachedList<T extends Data> implements BigList<T> {
     }
 
     /* (non-Javadoc)
-     * @see infrascructure.data.list.BigList#contains(int)
+     * @see infrascructure.data.list.BigListResource#contains(int)
      */
     @Override
     public boolean contains(int i) {
@@ -111,7 +111,7 @@ public class SimpleCachedList<T extends Data> implements BigList<T> {
     }
 
     /* (non-Javadoc)
-     * @see infrascructure.data.list.BigList#add(infrascructure.data.Data)
+     * @see infrascructure.data.list.BigListResource#add(infrascructure.data.Data)
      */
     @Override
     public void add(T data) throws IOException {
@@ -129,7 +129,7 @@ public class SimpleCachedList<T extends Data> implements BigList<T> {
     }
 
     /* (non-Javadoc)
-     * @see infrascructure.data.list.BigList#size()
+     * @see infrascructure.data.list.BigListResource#size()
      */
     @Override
     public int size() {
@@ -176,7 +176,7 @@ public class SimpleCachedList<T extends Data> implements BigList<T> {
         }
     }
 
-    private class ConcurrentLinkedMap<K, V> {
+    private static class ConcurrentLinkedMap<K, V> {
         private List<K> keys;
         private Map<K, V> map;
 

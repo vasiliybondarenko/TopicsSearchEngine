@@ -21,7 +21,7 @@
 package infrascructure.data.vocabulary;
 
 import infrascructure.data.Config;
-import infrascructure.data.PlainTextResource;
+import infrascructure.data.dom.ResourceMetaData;
 import infrascructure.data.readers.CacheableReader;
 import infrascructure.data.stripping.Stemmer;
 import infrascructure.data.util.IOHelper;
@@ -47,7 +47,7 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     @Autowired
     private Stemmer stemmer;
 
-    protected CacheableReader<PlainTextResource> reader;
+    protected CacheableReader<ResourceMetaData> reader;
     protected int min_count;
     protected int from_doc;
     protected int to_doc;
@@ -74,7 +74,7 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     /**
      *
      */
-    public SimpleVocabularyBuider(CacheableReader<PlainTextResource> reader, int min_count) {
+    public SimpleVocabularyBuider(CacheableReader<ResourceMetaData> reader, int min_count) {
         this.reader = reader;
         this.min_count = min_count;
         this.from_doc = 0;
@@ -129,20 +129,22 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
 
     protected Map<String, Integer> retrieveAllWordCounts(int i) {
         Map<String, Integer> allWordCounts = new HashMap<String, Integer>();
-        PlainTextResource r = reader.get(i);
-        List<String> tokens = retrieveWords(r);
-        for (String word : tokens) {
-            Integer count = allWordCounts.containsKey(word) ? allWordCounts.get(word) : 0;
-            allWordCounts.put(word, count + 1);
+        ResourceMetaData r = reader.get(i);
+        if(r != null){
+            List<String> tokens = retrieveWords(r);
+            for (String word : tokens) {
+                Integer count = allWordCounts.containsKey(word) ? allWordCounts.get(word) : 0;
+                allWordCounts.put(word, count + 1);
+            }
         }
         return allWordCounts;
     }
 
 
-    protected List<String> retrieveWords(PlainTextResource resource) {
+    protected List<String> retrieveWords(ResourceMetaData resource) {
         String wordPattern = "[a-zA-Z]+'?[a-zA-Z]+";
         Pattern pattern = Pattern.compile(wordPattern, Pattern.CASE_INSENSITIVE);
-        String source = resource.getText();
+        String source = resource.getData();
         Matcher matcher = pattern.matcher(source);
         List<String> tokens = new ArrayList<>();
         while (matcher.find()) {

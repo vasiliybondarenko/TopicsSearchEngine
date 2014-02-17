@@ -56,12 +56,14 @@ public class EmailReaderImpl implements EmailReader{
         }
     }
 
+
     private void init() throws IOException, MessagingException {
         String emailsDir = properties.getProperty(EMAIL_STORE_DIRECTORY);
         createSourceDirectory(emailsDir);
 
         Session session = Session.getInstance(properties, null);
         Store store = session.getStore();
+
 
         String host = properties.getProperty(EMAIL_HOST);
         String password = properties.getProperty(EMAIL_PASSWORD);

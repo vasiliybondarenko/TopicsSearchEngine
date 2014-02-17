@@ -23,11 +23,15 @@ package infrascructure.data.readers;
 import infrascructure.data.Config;
 import infrascructure.data.Resource;
 import infrascructure.data.crawl.URLIterator;
+import infrascructure.data.dom.ResourceMetaData;
+import infrascructure.data.dom.Tag;
+import infrascructure.data.dom.Tags;
 import infrascructure.data.list.BigList;
 import infrascructure.data.serialize.RawResourceSerializer;
 import infrascructure.data.serialize.RawSerializersFactory;
 import infrascructure.data.util.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -35,9 +39,9 @@ import java.io.IOException;
 /**
  * @author shredinger
  */
-public class ResourcesRepository extends CacheableReader<Resource> {
+public class ResourcesRepository extends CacheableReader<ResourceMetaData> {
 
-    private final int MAX_CACHE_SIZE = 100;
+    private final int MAX_CACHE_SIZE = 1;
     @Autowired
     protected Config config;
 
@@ -52,7 +56,10 @@ public class ResourcesRepository extends CacheableReader<Resource> {
 
     protected String sourceDir;
     protected int max_docs_count;
-    protected BigList<Resource> rawdocs;
+
+    @Autowired
+    @Qualifier(value = "rawDocsList")
+    protected BigList<ResourceMetaData> rawdocs;
 
 
     /**
@@ -66,14 +73,14 @@ public class ResourcesRepository extends CacheableReader<Resource> {
         max_docs_count = config.getPropertyInt(Config.MAX_DOCS_COUNT);
         sourceDir = config.getProperty(Config.RAWDOCS_REPOSITORY);
         RawResourceSerializer serializer = serializersFactory.createSimpleSerializer(sourceDir);
-        rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
+        //rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
     }
 
     /**
      * @return the Resource object or null if index is out of range
      */
     @Override
-    public Resource get(Integer i) {
+    public ResourceMetaData get(Integer i) {
         return i >= max_docs_count ? null : rawdocs.get(i);
     }
 
@@ -91,7 +98,11 @@ public class ResourcesRepository extends CacheableReader<Resource> {
                 Trace.trace("Skipping resource ...");
                 continue;
             }
-            rawdocs.add(resource);
+            Tag[] tags = new Tag[]{
+                 new Tag(Tags.URL, url)
+            };
+            ResourceMetaData resourceMetaData = new ResourceMetaData(i, resource.getData(), tags);
+            rawdocs.add(resourceMetaData);
             Trace.trace("Doc " + i + " was read");
         }
     }

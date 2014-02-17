@@ -23,6 +23,9 @@ package infrascructure.data.readers;
 import infrascructure.data.Config;
 import infrascructure.data.Resource;
 import infrascructure.data.dao.ResultLinkDao;
+import infrascructure.data.dom.ResourceMetaData;
+import infrascructure.data.dom.Tag;
+import infrascructure.data.dom.Tags;
 import infrascructure.data.email.html.entity.ResultLink;
 import infrascructure.data.util.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,10 +81,13 @@ public class AdvancedResourcesRepository extends ResourcesRepository implements 
                 resource = new Resource(resource.getData(), String.valueOf(index.get()));
             }
 
-            updateResultLin(url, resource);
-
+            Integer id = index.get();
+            Tag[] tags = new Tag[]{
+                    new Tag(Tags.URL, url)
+            };
+            ResourceMetaData resourceMetaData = new ResourceMetaData(id, resource.getData(), tags);
             try {
-                rawdocs.add(resource);
+                rawdocs.add(resourceMetaData);
                 Trace.trace("Doc " + index + " was read");
             } catch (IOException e) {
                 e.printStackTrace();
