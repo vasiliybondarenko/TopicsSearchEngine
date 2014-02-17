@@ -1,11 +1,13 @@
 package intelligence.core.engines.onlinelda;
 
+import infrascructure.data.dao.ResourceMetaDataRepository;
 import infrascructure.data.dao.ResultLinkDao;
 import infrascructure.data.dom.Document;
-import infrascructure.data.email.html.entity.ResultLink;
-import infrascructure.data.util.Trace;
+import infrascructure.data.dom.ResourceMetaData;
+import infrascructure.data.dom.Tags;
 import intelligence.core.dao.DocumentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 
@@ -20,6 +22,10 @@ public class OnlineLDAResultsWriter implements InferenceResultWriter {
     private final DocumentsRepository documentsRepository;
 
     @Autowired
+    @Qualifier(value = "plainDocMetaDataRepository")
+    private ResourceMetaDataRepository resourceMetaDataRepository;
+
+    @Autowired
     private ResultLinkDao resultLinkDao;
 
     @Autowired
@@ -31,12 +37,10 @@ public class OnlineLDAResultsWriter implements InferenceResultWriter {
     public void saveDocumentsDistribution(Iterable<Document> documents) {
         ArrayList<Document> resultDocs = new ArrayList<>();
         for(Document doc: documents){
-            ResultLink link = resultLinkDao.findByrawDocId(String.valueOf(doc.getIdentifier()));
-            if(link == null){
-                Trace.trace("URL was not found for "  + doc.getIdentifier());
-                continue;
-            }
-            doc.setUrl(link.getUrl());
+            ResourceMetaData resourceMetaData = resourceMetaDataRepository.findById(doc.getIdentifier());
+            String url = resourceMetaData == null ? "UNDEFINED" : resourceMetaData.getTag(Tags.URL).getValue();
+
+            doc.setUrl(url);
             resultDocs.add(doc);
         }
 
