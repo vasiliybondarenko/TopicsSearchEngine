@@ -29,7 +29,6 @@ public class EmailReaderImpl implements EmailReader{
 
     public EmailReaderImpl(Properties properties) throws IOException, MessagingException {
         this.properties = properties;
-        init();
     }
 
     public Iterator<Message> getMessagesIterator(){
@@ -49,8 +48,11 @@ public class EmailReaderImpl implements EmailReader{
 
     private Message readNextMessage(){
         try {
+            if(inbox == null){
+                init();
+            }
             return inbox.getMessage(--currentId);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

@@ -21,8 +21,6 @@
 package infrascructure.data.readers;
 
 import infrascructure.data.Data;
-import infrascructure.data.Resource;
-import infrascructure.data.list.BigList;
 
 import java.io.IOException;
 
@@ -31,7 +29,12 @@ import java.io.IOException;
  *
  */
 public abstract class CacheableReader<T extends Data> {
-    
+
+    /**
+     *
+     * @param i
+     * @return resource with the specified id or null if the provided id does not exist
+     */
     public abstract T get(Integer i);
     
     public abstract void readAll() throws IOException;

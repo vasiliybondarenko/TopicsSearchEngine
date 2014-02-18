@@ -7,7 +7,6 @@ import infrascructure.data.dom.Tag;
 import infrascructure.data.dom.Tags;
 import infrascructure.data.list.BigList;
 import infrascructure.data.readers.CacheableReader;
-import infrascructure.data.serialize.RawResourceSerializer;
 import infrascructure.data.serialize.RawSerializersFactory;
 import infrascructure.data.util.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import java.util.Iterator;
  * Project: IntelligentSearch
  */
 public class RawEmailsRepository extends CacheableReader<Resource> {
-    private final int MAX_CACHE_SIZE = 20;
 
     protected final Config config;
     private final int max_docs_count;
@@ -44,11 +42,7 @@ public class RawEmailsRepository extends CacheableReader<Resource> {
         this.config = config;
         this.serializersFactory = serializersFactory;
         this.emailReader = emailReader;
-
         max_docs_count = config.getPropertyInt(Config.MAX_DOCS_COUNT);
-        String sourceDir = config.getProperty(Config.RAW_EMAILS_REPOSITORY);
-        RawResourceSerializer serializer = this.serializersFactory.createSimpleSerializer(sourceDir);
-        //rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
     }
 
     @Override
