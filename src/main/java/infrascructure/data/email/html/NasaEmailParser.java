@@ -7,6 +7,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Roman on 08.02.14.
@@ -19,7 +21,7 @@ public class NasaEmailParser implements EmailParser{
      * @return
      * @throws IOException
      */
-    public ResultLink parse(String source) throws IOException {
+    public List<ResultLink> parse(String source) throws IOException {
         ResultLink resultLink = null;
         Document doc = Jsoup.parse(source);
         Elements elementRssTitle = doc.getElementsByClass("rss_title");
@@ -27,7 +29,9 @@ public class NasaEmailParser implements EmailParser{
         for (Element elementRT : elementRssTitle) {
             resultLink = getResultLinkForRssTitle(elementRT);
         }
-        return resultLink;
+        ArrayList<ResultLink> resultLinks = new ArrayList<>(1);
+        resultLinks.add(resultLink);
+        return resultLinks;
     }
 
     private ResultLink getResultLinkForRssTitle(Element elementRT) {

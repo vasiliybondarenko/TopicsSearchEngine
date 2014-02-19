@@ -3,6 +3,7 @@ package infrascructure.data.email.html;
 import infrascructure.data.email.html.entity.ResultLink;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,5 +13,5 @@ import java.io.IOException;
  * Project: IntelligentSearch
  */
 public interface EmailParser {
-    public ResultLink parse(String source) throws IOException;
+    public List<ResultLink> parse(String source) throws IOException;
 }

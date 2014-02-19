@@ -4,8 +4,6 @@ import infrascructure.data.dao.ResourceMetaDataRepository;
 import infrascructure.data.dom.DocumentMetaData;
 import infrascructure.data.dom.ResourceMetaData;
 import infrascructure.data.dom.Tags;
-import infrascructure.data.serialize.FileResourceSerializer;
-import infrascructure.data.util.IOHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -16,8 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.CloseableStream;
 
@@ -48,10 +44,6 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
 
     @Override
     public Iterator<DocumentMetaData> readDocumentMetaData() throws IOException {
-        final String titlesPath = new File(batchesDirectory).getAbsolutePath() + File.separator + titlesFileName;
-
-        List<String> titlesLines = IOHelper.readLinesFromFile(titlesPath);
-        Map<Integer,String> tittles = FileResourceSerializer.parseTittles(titlesLines);
 
         pathStream = Files.walk(Paths.get(batchesDirectory), 1, FileVisitOption.FOLLOW_LINKS);
 

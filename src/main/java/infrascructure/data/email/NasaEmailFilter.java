@@ -16,7 +16,8 @@ public class NasaEmailFilter implements EmailFilter {
     public boolean accept(Message email) {
         try {
             Address[] from = email.getFrom();
-            return from[0].toString().toLowerCase().contains("nasa_subscriptions@service.govdelivery.com");
+            //return from[0].toString().toLowerCase().contains("nasa_subscriptions@service.govdelivery.com");
+            return from[0].toString().toLowerCase().contains("codeproject.com");
         } catch (MessagingException e) {
             e.printStackTrace();
         }

@@ -10,6 +10,9 @@ import infrascructure.data.email.html.entity.ResultLink;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Executors;
 
 /**
@@ -23,6 +26,8 @@ public class EmailURLIterator implements URLIterator{
 
     private RawEmailsRepository emailsRepository;
 
+    private Queue<ResultLink> resultLinks;
+
     private EmailParser parser;
 
     private int currentId;
@@ -35,17 +40,22 @@ public class EmailURLIterator implements URLIterator{
         this.emailsRepository = emailsRepository;
         this.parser = parser;
         currentId = 0;
+        this.resultLinks = new LinkedList<>();
         readEmailsAsync();
     }
 
     @Override
     public String getNextURL() {
+        if(!resultLinks.isEmpty()){
+            return resultLinks.poll().getUrl();
+        }
         Resource resource = emailsRepository.get(currentId++);
         if(resource != null){
             try {
-                ResultLink resultLink = parser.parse(resource.getData());
-                resultLinkDao.save(resultLink);
-                return resultLink.getUrl();
+                List<ResultLink> links = parser.parse(resource.getData());
+                resultLinks.addAll(links);
+                resultLinkDao.save(links);
+                return !resultLinks.isEmpty() ? resultLinks.poll().getUrl() : null;
             } catch (IOException e) {
                 e.printStackTrace();
             }
