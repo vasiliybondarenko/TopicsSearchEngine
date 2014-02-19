@@ -19,6 +19,7 @@ public class EmailUtil {
     public static String getEmail(Message message) throws IOException, MessagingException {
         Object content = message.getContent();
         StringBuilder sb = new StringBuilder("");
+        //TODO: remove porno
         if(content instanceof Multipart){
             Multipart multyPart = (Multipart)message.getContent();
             int partsCount = multyPart.getCount();
@@ -27,7 +28,9 @@ public class EmailUtil {
                 sb.append(part.getContent().toString() + "\n");
             }
             return sb.toString();
-        }else{
+        }else if(content instanceof String){
+            return (String)content;
+        } else{
             Trace.trace(content.getClass() + " is not supported yet");
         }
         return null;

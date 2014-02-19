@@ -26,6 +26,7 @@ public class EmailReaderImpl implements EmailReader{
     private Folder inbox;
     private int messageCount;
     private int currentId;
+    private volatile boolean emailInitialized;
 
     public EmailReaderImpl(Properties properties) throws IOException, MessagingException {
         this.properties = properties;
@@ -35,6 +36,9 @@ public class EmailReaderImpl implements EmailReader{
         return new Iterator<Message>() {
             @Override
             public boolean hasNext() {
+                if(!emailInitialized){
+                    init();
+                }
                 return currentId > 1;
             }
 
@@ -48,7 +52,7 @@ public class EmailReaderImpl implements EmailReader{
 
     private Message readNextMessage(){
         try {
-            if(inbox == null){
+            if(!emailInitialized){
                 init();
             }
             return inbox.getMessage(--currentId);
@@ -59,23 +63,28 @@ public class EmailReaderImpl implements EmailReader{
     }
 
 
-    private void init() throws IOException, MessagingException {
-        String emailsDir = properties.getProperty(EMAIL_STORE_DIRECTORY);
-        createSourceDirectory(emailsDir);
+    private void init() throws RuntimeException {
+        try{
+            String emailsDir = properties.getProperty(EMAIL_STORE_DIRECTORY);
+            createSourceDirectory(emailsDir);
 
-        Session session = Session.getInstance(properties, null);
-        Store store = session.getStore();
+            Session session = Session.getInstance(properties, null);
+            Store store = session.getStore();
 
 
-        String host = properties.getProperty(EMAIL_HOST);
-        String password = properties.getProperty(EMAIL_PASSWORD);
-        String account = properties.getProperty(EMAIL_ACCOUNT);
+            String host = properties.getProperty(EMAIL_HOST);
+            String password = properties.getProperty(EMAIL_PASSWORD);
+            String account = properties.getProperty(EMAIL_ACCOUNT);
 
-        store.connect(host, account, password);
-        inbox = store.getFolder("INBOX");
-        inbox.open(Folder.READ_ONLY);
-        messageCount = inbox.getMessageCount();
-        currentId = messageCount - 1;
+            store.connect(host, account, password);
+            inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            messageCount = inbox.getMessageCount();
+            currentId = messageCount - 1;
+            emailInitialized = true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     private void createSourceDirectory(String emailsDir) throws IOException {
