@@ -70,7 +70,8 @@ public class AdvancedResourcesRepository extends ResourcesRepository implements 
         while (index.get() < max_docs_count) {
             url = urlIterator.getNextURL();
             if (url == null) {
-                break;
+                //TODO: change URLIterator interface in proper way to avoid null!
+                continue;
             }
             Resource resource = reader.read(url);
             if (resource == null) {

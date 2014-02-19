@@ -5,7 +5,6 @@ import infrascructure.data.crawl.URLIterator;
 import infrascructure.data.dao.ResultLinkDao;
 import infrascructure.data.email.RawEmailsRepository;
 import infrascructure.data.email.html.EmailParser;
-import infrascructure.data.email.html.NasaEmailParser;
 import infrascructure.data.email.html.entity.ResultLink;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +35,7 @@ public class EmailURLIterator implements URLIterator{
     private ResultLinkDao resultLinkDao;
 
     @Autowired
-    public EmailURLIterator(RawEmailsRepository emailsRepository, NasaEmailParser parser){
+    public EmailURLIterator(RawEmailsRepository emailsRepository, EmailParser parser){
         this.emailsRepository = emailsRepository;
         this.parser = parser;
         currentId = 0;
