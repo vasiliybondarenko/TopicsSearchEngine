@@ -1,6 +1,10 @@
 package infrastructure.data.integration;
 
+import infrascructure.data.dao.ResourceMetaDataRepository;
 import infrascructure.data.dom.DocumentMetaData;
+import infrascructure.data.dom.ResourceMetaData;
+import infrascructure.data.dom.Tag;
+import infrascructure.data.dom.Tags;
 import infrascructure.data.integration.DirectoryDocumentMetaDataReader;
 import infrascructure.data.util.IOHelper;
 import org.junit.After;
@@ -8,11 +12,16 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 import java.util.Iterator;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -22,6 +31,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * Time: 1:59 PM
  * Project: IntelligentSearch
  */
+@RunWith(MockitoJUnitRunner.class)
 public class DirectoryDocumentMetaDataReaderTest {
 
     private final String batchesDirectory = "src/main/resources/batches";
@@ -33,6 +43,13 @@ public class DirectoryDocumentMetaDataReaderTest {
     private final String fullTitlesPathOfWrongTitles = absoluteBatchesDirectoryPath + File.separatorChar + titlesPathOfInvalidTitles;
     private final String fullDoc1Path = absoluteBatchesDirectoryPath + File.separatorChar + "1.txt";
     private final String fullDoc2Path = absoluteBatchesDirectoryPath + File.separatorChar + "2.txt";
+
+
+    @Mock
+    private ResourceMetaDataRepository repository;
+
+    @InjectMocks
+    private final DirectoryDocumentMetaDataReader reader = new DirectoryDocumentMetaDataReader(batchesDirectory);
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -59,14 +76,16 @@ public class DirectoryDocumentMetaDataReaderTest {
 
     @Test
     public void readerShouldReadAllSpecifiedDocs() throws Exception {
-        DirectoryDocumentMetaDataReader reader = new DirectoryDocumentMetaDataReader(batchesDirectory, titlesPath);
+        when(repository.findById(1)).thenReturn(new ResourceMetaData(1, "", new Tag(Tags.TITLE, "Load")));
+        when(repository.findById(2)).thenReturn(new ResourceMetaData(2, "", new Tag(Tags.TITLE, "Reload")));
 
         assertThat(reader.readDocumentMetaData()).hasSize(2);
     }
 
     @Test
     public void readerShouldReadDocsWithTitles() throws Exception {
-        DirectoryDocumentMetaDataReader reader = new DirectoryDocumentMetaDataReader(batchesDirectory, titlesPath);
+        when(repository.findById(1)).thenReturn(new ResourceMetaData(1, "", new Tag(Tags.TITLE, "Load")));
+        when(repository.findById(2)).thenReturn(new ResourceMetaData(2, "", new Tag(Tags.TITLE, "Reload")));
 
         assertThat(reader.readDocumentMetaData()).containsOnly(
                 new DocumentMetaData(1, "Load", fullDoc1Path, false),
@@ -77,9 +96,9 @@ public class DirectoryDocumentMetaDataReaderTest {
     @Test
     public void readerShouldThrowExceptionIfTitlesFileIsWrong() throws Exception {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Titles file " + fullTitlesPathOfWrongTitles + " does not contain all titles");
-
-        DirectoryDocumentMetaDataReader reader = new DirectoryDocumentMetaDataReader(batchesDirectory, titlesPathOfInvalidTitles);
+        thrown.expectMessage("Title cannot be null");
+        when(repository.findById(1)).thenReturn(new ResourceMetaData(1, "", new Tag(Tags.URL, "")));
+        when(repository.findById(2)).thenReturn(new ResourceMetaData(2, "", new Tag(Tags.URL, "")));
 
         Iterator<DocumentMetaData> docsIterator = reader.readDocumentMetaData();
         docsIterator.next();

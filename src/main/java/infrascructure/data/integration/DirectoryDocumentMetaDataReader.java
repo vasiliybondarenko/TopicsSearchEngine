@@ -1,8 +1,10 @@
 package infrascructure.data.integration;
 
+import com.google.common.base.Preconditions;
 import infrascructure.data.dao.ResourceMetaDataRepository;
 import infrascructure.data.dom.DocumentMetaData;
 import infrascructure.data.dom.ResourceMetaData;
+import infrascructure.data.dom.Tag;
 import infrascructure.data.dom.Tags;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,7 +31,6 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
     final String FILE_PATTERN = ".*[\\d+]+\\.txt";
 
     private final String batchesDirectory;
-    private final String titlesFileName;
 
     @Autowired
     @Qualifier(value = "plainDocMetaDataRepository")
@@ -37,9 +38,8 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
 
     private CloseableStream<Path> pathStream;
 
-    public DirectoryDocumentMetaDataReader(String batchesDirectory, String titlesFileName) {
+    public DirectoryDocumentMetaDataReader(String batchesDirectory) {
         this.batchesDirectory = batchesDirectory;
-        this.titlesFileName = titlesFileName;
     }
 
     @Override
@@ -54,7 +54,9 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
                     Integer id = Integer.valueOf(idStr);
 
                     ResourceMetaData resourceMetaData = repository.findById(id);
-                    String title = resourceMetaData.getTag(Tags.TITLE).getValue();
+                    Tag titleTag = resourceMetaData.getTag(Tags.TITLE);
+                    Preconditions.checkArgument(titleTag != null, "Title cannot be null");
+                    String title = titleTag.getValue();
 
                     return new DocumentMetaData(id, title, pathStr, false);
 
