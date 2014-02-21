@@ -95,7 +95,7 @@ public class PlainDocsRepository extends CacheableReader<ResourceMetaData> {
         }
         int resourceId = docs.size();
         while (docs.size() < required_docs_count) {
-            ResourceMetaData resource = resourcesRepository.get(++ resourceId);
+            ResourceMetaData resource = resourcesRepository.get(resourceId ++);
             if(resource == null){
                 Trace.trace("Resource is null. Trying next ...");
                 continue;
