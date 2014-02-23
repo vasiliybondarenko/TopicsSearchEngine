@@ -21,7 +21,7 @@
 package infrascructure.data.vocabulary;
 
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author shredinger
@@ -29,5 +29,5 @@ import com.google.common.collect.ImmutableMap;
  */
 public interface Vocabulary {
     ImmutableBiMap<String, Integer> getWords();
-    ImmutableMap<String, Integer> getWordCounts();
+    ImmutableList<Word> getWordCounts();
 }

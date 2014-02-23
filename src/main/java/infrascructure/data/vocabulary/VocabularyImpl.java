@@ -21,8 +21,9 @@
 package infrascructure.data.vocabulary;
 
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,13 +32,13 @@ import java.util.Map;
 public class VocabularyImpl implements Vocabulary {
 
     private ImmutableBiMap<String, Integer> words;
-    private ImmutableMap<String, Integer> wordCounts;
+    private ImmutableList<Word> wordCounts;
 
     /**
      *
      */
-    public VocabularyImpl(Map<String, Integer> words, Map<String, Integer> wordCounts) {
-        this.wordCounts = ImmutableMap.copyOf(wordCounts);
+    public VocabularyImpl(Map<String, Integer> words, List<Word> wordCounts) {
+        this.wordCounts = ImmutableList.copyOf(wordCounts);
         this.words = ImmutableBiMap.copyOf(words);
     }
 
@@ -45,7 +46,7 @@ public class VocabularyImpl implements Vocabulary {
         return words;
     }
 
-    public ImmutableMap<String, Integer> getWordCounts() {
+    public ImmutableList<Word> getWordCounts() {
         return wordCounts;
     }
 

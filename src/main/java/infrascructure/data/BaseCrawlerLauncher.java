@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -113,19 +113,18 @@ public abstract class BaseCrawlerLauncher implements CrawlTaskExecutor{
         String vocabularyPath = config.getProperty(Config.VOCABULARY_PATH);
         String wordCountsPath = config.getProperty(Config.WORDCOUNTS_PATH);
         Set<String> words = v.getWords().keySet();
-        Map<String, Integer> wordCounts = v.getWordCounts();
+        List<Word> wordCounts = v.getWordCounts();
 
         Queue<Word> sortedWordCounts = new PriorityQueue<>();
-        for (String word : wordCounts.keySet()) {
-            Integer count = wordCounts.get(word);
-            sortedWordCounts.add(new Word(word, count));
+        for (Word w : wordCounts) {
+            sortedWordCounts.add(w);
         }
 
         IOHelper.writeLinesToFile(vocabularyPath, words);
         try (PrintWriter pw = new PrintWriter(wordCountsPath)) {
             while (!sortedWordCounts.isEmpty()) {
                 Word w = sortedWordCounts.poll();
-                String line = w.getWord() + "\t" + w.getCount();
+                String line = w.toString();
                 pw.println(line);
             }
         }

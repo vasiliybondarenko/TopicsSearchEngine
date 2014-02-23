@@ -27,7 +27,6 @@ import infrascructure.data.dom.ResourceMetaData;
 import infrascructure.data.dom.Tag;
 import infrascructure.data.dom.Tags;
 import infrascructure.data.list.BigList;
-import infrascructure.data.serialize.RawResourceSerializer;
 import infrascructure.data.serialize.RawSerializersFactory;
 import infrascructure.data.util.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +71,6 @@ public class ResourcesRepository extends CacheableReader<ResourceMetaData> {
     private void init(){
         max_docs_count = config.getPropertyInt(Config.MAX_DOCS_COUNT);
         sourceDir = config.getProperty(Config.RAWDOCS_REPOSITORY);
-        RawResourceSerializer serializer = serializersFactory.createSimpleSerializer(sourceDir);
-        //rawdocs = new SimpleCachedList<Resource>(sourceDir, MAX_CACHE_SIZE, serializer);
     }
 
     /**

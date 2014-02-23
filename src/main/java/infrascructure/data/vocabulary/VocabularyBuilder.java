@@ -20,15 +20,12 @@
  */
 package infrascructure.data.vocabulary;
 
-import infrascructure.data.PlainTextResource;
-
-import java.util.Collection;
-import java.util.List;
-
 /**
  * @author shredinger
  *
  */
 public interface VocabularyBuilder {
     Vocabulary buildVocabulary();
+
+    static final String WORD_PATTERN = "[a-zA-Z]+'?[a-zA-Z]+";
 }

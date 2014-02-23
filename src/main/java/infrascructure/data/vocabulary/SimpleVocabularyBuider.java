@@ -87,27 +87,32 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
     }
 
     protected Vocabulary createVocabulary() {
-        Map<String, Integer> allWords = new HashMap<>();
+        Map<String, Word> allWords = new HashMap<>();
         for (int i = from_doc; i <= to_doc; i++) {
-            Map<String, Integer> words = retrieveAllWordCounts(i);
-            for (String word : words.keySet()) {
-                int docsCount = allWords.containsKey(word) ? allWords.get(word) : 0;
-                allWords.put(word, docsCount + 1);
+            Collection<Word> words = retrieveAllWordCounts(i);
+            for (Word word : words) {
+                String stemmedWord = word.getStemmedWord();
+                if(allWords.containsKey(stemmedWord)){
+                    Word existedWord = allWords.get(stemmedWord);
+                    existedWord.getOriginalWords().addAll(word.getOriginalWords());
+                    allWords.put(stemmedWord, new Word(stemmedWord, existedWord.getCount() + word.getCount(), existedWord.getOriginalWords()));
+                }else{
+                    allWords.put(stemmedWord, word);
+                }
             }
         }
-        Map<String, Integer> wordCounts = new HashMap<>();
+        Map<String, Word> wordCounts = new HashMap<>();
         Map<String, Integer> wordIds = new HashMap<>();
         int id = 0;
         int max = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT) / config.getPropertyInt(Config.TOPICS);
         for (String word : allWords.keySet()) {
-            int docsCount = allWords.get(word);
+            int docsCount = allWords.get(word).getCount();
             if (docsCount >= min_count && docsCount <= max) {
-                wordCounts.put(word, docsCount);
+                wordCounts.put(word, allWords.get(word));
                 wordIds.put(word, id++);
             }
         }
-
-        Vocabulary vocabulary = new VocabularyImpl(wordIds, wordCounts);
+        Vocabulary vocabulary = new VocabularyImpl(wordIds, new ArrayList<>(wordCounts.values()));
         return vocabulary;
     }
 
@@ -127,26 +132,22 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
         return new HashSet<String>();
     }
 
-    protected Map<String, Integer> retrieveAllWordCounts(int i) {
-        Map<String, Integer> allWordCounts = new HashMap<String, Integer>();
+    protected Collection<Word> retrieveAllWordCounts(int i) {
         ResourceMetaData r = reader.get(i);
         if(r != null){
-            List<String> tokens = retrieveWords(r);
-            for (String word : tokens) {
-                Integer count = allWordCounts.containsKey(word) ? allWordCounts.get(word) : 0;
-                allWordCounts.put(word, count + 1);
-            }
+            return retrieveWords(r);
         }
-        return allWordCounts;
+        return new ArrayList<>(1);
     }
 
 
-    protected List<String> retrieveWords(ResourceMetaData resource) {
-        String wordPattern = "[a-zA-Z]+'?[a-zA-Z]+";
+    protected Collection<Word> retrieveWords(ResourceMetaData resource) {
+        String wordPattern = WORD_PATTERN;
         Pattern pattern = Pattern.compile(wordPattern, Pattern.CASE_INSENSITIVE);
         String source = resource.getData();
         Matcher matcher = pattern.matcher(source);
-        List<String> tokens = new ArrayList<>();
+
+        HashMap<String, Word> wordsMap = new LinkedHashMap<>(200);
         while (matcher.find()) {
             String word = matcher.group().toLowerCase();
 
@@ -157,14 +158,22 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
             }
 
             if (!stopWords.contains(word)) {
-                word = stemmer.getCanonicalForm(word);
-                if(!stopWords.contains(word)){
-                    tokens.add(word);
+                String stemmedWord = stemmer.getCanonicalForm(word);
+                if(!stopWords.contains(stemmedWord)){
+                    Set<String> originalWords = wordsMap.containsKey(stemmedWord) ? wordsMap.get(stemmedWord).getOriginalWords() : new HashSet<>();
+                    originalWords.add(word);
+                    if(!wordsMap.containsKey(stemmedWord)){
+                        wordsMap.put(stemmedWord, new Word(stemmedWord, 1, originalWords));
+                    }else{
+                        Word existedToken = wordsMap.get(stemmedWord);
+                        wordsMap.put(stemmedWord, new Word(stemmedWord, existedToken.getCount() + 1, originalWords));
+                    }
                 }
             }
         }
 
-        return tokens;
+        return wordsMap.values();
     }
+
 
 }

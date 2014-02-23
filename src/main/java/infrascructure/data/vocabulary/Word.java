@@ -20,18 +20,22 @@
  */
 package infrascructure.data.vocabulary;
 
+import java.util.Set;
+
 /**
  * @author shredinger
  */
 public class Word implements Comparable<Word> {
-    private final String word;
+    private final String stemmedWord;
     private final Integer count;
+    private final Set<String> originalWords;
+
 
     /**
      * @return the word
      */
-    public String getWord() {
-        return word;
+    public String getStemmedWord() {
+        return stemmedWord;
     }
 
     /**
@@ -41,12 +45,17 @@ public class Word implements Comparable<Word> {
         return count;
     }
 
+    public Set<String> getOriginalWords() {
+        return originalWords;
+    }
+
     /**
      *
      */
-    public Word(String word, Integer count) {
-        this.word = word;
+    public Word(String stemmedWord, Integer count, Set<String> originalWords) {
+        this.stemmedWord = stemmedWord;
         this.count = count;
+        this.originalWords = originalWords;
     }
 
     /* (non-Javadoc)
@@ -57,11 +66,12 @@ public class Word implements Comparable<Word> {
         if (this.count != o.count) {
             return o.count - this.count;
         }
-        return this.word.compareTo(o.word);
+        return this.stemmedWord.compareTo(o.stemmedWord);
     }
 
     @Override
     public String toString() {
-        return word + " " + count;
+        String originalWordsStr = originalWords.stream().reduce((x, y) -> x + ", " + y).get();
+        return stemmedWord +  " " + count + "   [" + originalWordsStr + "]";
     }
 }
