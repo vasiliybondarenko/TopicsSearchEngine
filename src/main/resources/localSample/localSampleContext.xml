@@ -15,6 +15,32 @@
         <constructor-arg value="/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/localSample/localSampleOnlinelda.properties"></constructor-arg>
     </bean>
 
+    <!--BigList beans -->
+    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="rawDocSerializer">
+        <constructor-arg value="${rawdocs_repository}"/>
+    </bean>
+    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="plainDocSerializer">
+        <constructor-arg value="${plaindocs_dir}"/>
+    </bean>
+
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="rawDocMetaDataRepository">
+        <constructor-arg value="rawDocsMetaData_collection"/>
+    </bean>
+    <bean class="infrascructure.data.readers.DBSimpleList" id="rawDocsList">
+        <constructor-arg ref="rawDocMetaDataRepository"/>
+        <constructor-arg ref="rawDocSerializer"/>
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="plainDocMetaDataRepository">
+        <constructor-arg value="plainDocsMetaData_collection"/>
+    </bean>
+    <bean class="infrascructure.data.readers.DBSimpleList" name="plainDocsList">
+        <constructor-arg ref="plainDocMetaDataRepository"/>
+        <constructor-arg ref="plainDocSerializer"/>
+        <constructor-arg value="1"/>
+    </bean>
+
     <!-- <context:property-placeholder location="classpath:META-INF/crawler.properties"/> -->
     <!-- <context:component-scan base-package="infrastructure.data" /> -->
 
@@ -68,7 +94,6 @@
 
     <bean id="contextSynchronizer" class="infrascructure.data.integration.DirectoryDocumentMetaDataReader">
         <constructor-arg value="${batches_dir}"/>
-        <constructor-arg value="${tittles_path}"/>
     </bean>
     <bean id="onlineLdaResultWriter" class="intelligence.core.engines.onlinelda.OnlineLDAResultsWriter"/>
     <bean id="fileToDbSynchronizer" class="intelligence.core.engines.FileToDBInferenceContextSynchronizer"/>
