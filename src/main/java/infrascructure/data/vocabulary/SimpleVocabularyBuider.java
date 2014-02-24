@@ -159,7 +159,7 @@ public class SimpleVocabularyBuider extends BaseVocabularyBuilder {
 
             if (!stopWords.contains(word)) {
                 String stemmedWord = stemmer.getCanonicalForm(word);
-                if(!stopWords.contains(stemmedWord)){
+                if(!stopWords.contains(stemmedWord) && word.length() > 2){
                     Set<String> originalWords = wordsMap.containsKey(stemmedWord) ? wordsMap.get(stemmedWord).getOriginalWords() : new HashSet<>();
                     originalWords.add(word);
                     if(!wordsMap.containsKey(stemmedWord)){

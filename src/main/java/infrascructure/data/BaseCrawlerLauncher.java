@@ -119,8 +119,10 @@ public abstract class BaseCrawlerLauncher implements CrawlTaskExecutor{
         for (Word w : wordCounts) {
             sortedWordCounts.add(w);
         }
+        IOHelper.writeLinesToFile(vocabularyPath, wordCounts.stream().map(
+                (w) -> w.getStemmedWord() + ": " + w.getOriginalWords().stream().reduce((x, y) -> x + " " + y).get()).iterator());
 
-        IOHelper.writeLinesToFile(vocabularyPath, words);
+//        IOHelper.writeLinesToFile(vocabularyPath, words);
         try (PrintWriter pw = new PrintWriter(wordCountsPath)) {
             while (!sortedWordCounts.isEmpty()) {
                 Word w = sortedWordCounts.poll();
