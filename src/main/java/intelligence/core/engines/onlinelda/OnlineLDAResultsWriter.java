@@ -1,7 +1,6 @@
 package intelligence.core.engines.onlinelda;
 
 import infrascructure.data.dao.ResourceMetaDataRepository;
-import infrascructure.data.dao.ResultLinkDao;
 import infrascructure.data.dom.Document;
 import infrascructure.data.dom.ResourceMetaData;
 import infrascructure.data.dom.Tags;
@@ -24,9 +23,6 @@ public class OnlineLDAResultsWriter implements InferenceResultWriter {
     @Autowired
     @Qualifier(value = "plainDocMetaDataRepository")
     private ResourceMetaDataRepository resourceMetaDataRepository;
-
-    @Autowired
-    private ResultLinkDao resultLinkDao;
 
     @Autowired
     public OnlineLDAResultsWriter(DocumentsRepository documentsRepository) {
