@@ -22,6 +22,7 @@ package vagueobjects.ir.lda.tokens;
 
 
 import infrascructure.data.stripping.Stemmer;
+import infrascructure.data.vocabulary.VocabularyBuilder;
 import vagueobjects.ir.lda.online.analysis.Analyser;
 import vagueobjects.ir.lda.online.analysis.WordMetaData;
 import vagueobjects.ir.lda.online.demo.DocumentData;
@@ -85,7 +86,7 @@ public class Documents implements OnlineLDASource{
             Map<Integer, Integer> counts = new LinkedHashMap<Integer, Integer>();
             List<String> tokens = new ArrayList<>();
 
-            String wordPattern = "[a-zA-Z]+";
+            String wordPattern = VocabularyBuilder.WORD_PATTERN;
             Pattern pattern = Pattern.compile(wordPattern, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(doc);
 

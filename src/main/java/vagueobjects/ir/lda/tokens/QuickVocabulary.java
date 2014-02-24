@@ -26,6 +26,8 @@ import com.google.common.collect.HashBiMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -34,11 +36,19 @@ import java.util.Scanner;
 public class QuickVocabulary implements Vocabulary {
 
     private final BiMap<String, Integer> words = HashBiMap.create();
+    private Map<String, String> stemmedWords;
+
 
     public QuickVocabulary(Collection<String> strings) {
+        stemmedWords = new HashMap<>();
         int i = 0;
         for (String word : strings) {
-            words.put(word, i++);
+            String[] parts = word.split(":");
+            if(parts.length == 2){
+                words.put(parts[0], i++);
+                stemmedWords.put(parts[0], parts[1].trim());
+            }
+
         }
     }
 
@@ -81,7 +91,9 @@ public class QuickVocabulary implements Vocabulary {
      */
     @Override
     public String getToken(int id) {
-        return words.inverse().get(id);
+        String stemmedWord = words.inverse().get(id);
+        return stemmedWords.get(stemmedWord);
+        //return words.inverse().get(id);
     }
 
 }
