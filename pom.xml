@@ -130,6 +130,14 @@
             <version>1.0.3</version>
         </dependency>
 
+        <!-- RSS-->
+        <dependency>
+            <groupId>rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>0.9</version>
+        </dependency>
+
+
     </dependencies>
 
 
