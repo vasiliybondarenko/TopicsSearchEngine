@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.stream.CloseableStream;
+import java.util.stream.Stream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,7 +44,7 @@ public class DocumentParserTest {
     public void testLazyParse() throws Exception {
         String path = "src/main/resources/docs.txt";
 
-        try (CloseableStream<DocumentImpl> documents = parser.getDocumentsFromFileLazy(path)){
+        try (Stream<DocumentImpl> documents = parser.getDocumentsFromFileLazy(path)){
             Assert.assertEquals(documents.count(), 3);
         }
     }

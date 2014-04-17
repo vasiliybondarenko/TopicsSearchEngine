@@ -4,6 +4,8 @@ import infrascructure.data.dao.ResourceMetaDataRepository;
 import infrascructure.data.dom.ResourceMetaData;
 import infrascructure.data.dom.Tag;
 import infrascructure.data.dom.Tags;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,16 @@ public class ResourceMetaDataRepositoryTest {
 
     @Autowired
     private ResourceMetaDataRepository repository;
+
+    @Before
+    public void setUp() throws Exception {
+        repository.deleteAll();
+    }
+
+    @After
+    public void cleanDB() throws Exception {
+        repository.deleteAll();
+    }
 
     @Test
     public void testFindById() throws Exception {

@@ -77,11 +77,10 @@ public class DocumentMetaDataRepositoryTest {
 
         repository.setAsProcessed(processedDocs);
 
-        List<DocumentMetaData> expected = new ArrayList<DocumentMetaData>() {{
-            add(new DocumentMetaData(1, "1", "1", true));
-            add(new DocumentMetaData(2, "2", "2", true));
-        }};
-        assertThat(repository.findAll()).isEqualTo(expected);
+        assertThat(repository.findAll()).contains(
+                new DocumentMetaData(1, "1", "1", true),
+                new DocumentMetaData(2, "2", "2", true)
+        );
     }
 
     @Test

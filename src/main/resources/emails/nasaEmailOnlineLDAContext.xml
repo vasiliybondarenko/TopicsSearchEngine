@@ -62,9 +62,11 @@
     </bean>
     <bean id="emailReader" factory-bean="emailReaderFactory" factory-method="createEmailReader"/>
 
-    <bean id="emailFilter" class="infrascructure.data.email.NasaEmailFilter"/>
+    <!--<bean id="emailFilter" class="infrascructure.data.email.NasaEmailFilter"/>-->
+    <bean id="emailFilter" class="infrascructure.data.email.CodeProjectEmailFilter"/>
 
-    <bean id="emailParser" class="infrascructure.data.email.html.NasaEmailParser"/>
+    <!--<bean id="emailParser" class="infrascructure.data.email.html.NasaEmailParser"/>-->
+    <bean id="emailParser" class="infrascructure.data.email.html.CodeProjectEmailParser"/>
 
     <bean id="rawEmailsRepository" class="infrascructure.data.email.RawEmailsRepository">
         <constructor-arg ref="config"/>
@@ -74,7 +76,8 @@
 
     <bean id="urlIterator" class="infrascructure.data.email.crawl.EmailURLIterator"/>
 
-    <bean id="parser" class="infrascructure.data.parse.NasaParse"/>
+    <!--<bean id="parser" class="infrascructure.data.parse.NasaParse"/>-->
+    <bean id="parser" class="infrascructure.data.parse.PParser"/>
 
     <!-- -->
     <bean id="readersFactory" class="infrascructure.data.readers.RemoteResourceReadersFactory"/>
@@ -91,6 +94,7 @@
         <constructor-arg  ref="resourcesRepository"></constructor-arg>
     </bean>
 
+    <!--<bean id="stemmer" class="infrascructure.data.stripping.MorphaStemmer"/>-->
     <bean id="stemmer" class="infrascructure.data.stripping.VoidStripper"/>
 
     <bean id="plainDocsValidator" class="infrascructure.data.parse.PlainDocValidatorImpl"/>
@@ -111,7 +115,6 @@
 
     <bean id="contextSynchronizer" class="infrascructure.data.integration.DirectoryDocumentMetaDataReader">
         <constructor-arg value="${batches_dir}"/>
-        <constructor-arg value="${tittles_path}"/>
     </bean>
 
     <bean id="onlineLdaResultWriter" class="intelligence.core.engines.onlinelda.OnlineLDAResultsWriter"/>

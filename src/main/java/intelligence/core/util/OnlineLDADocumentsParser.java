@@ -6,9 +6,7 @@ import infrascructure.data.dom.DocumentImpl;
 import infrascructure.data.util.IOHelper;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -16,8 +14,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.CloseableStream;
-import java.util.stream.DelegatingStream;
 import java.util.stream.Stream;
 
 /**
@@ -44,7 +40,7 @@ public class OnlineLDADocumentsParser implements DocumentsParser {
     }
 
     @Override
-    public CloseableStream<DocumentImpl> getDocumentsFromFileLazy(String path) throws IOException {
+    public Stream<DocumentImpl> getDocumentsFromFileLazy(String path) throws IOException {
         return readDocumentsLazy(path);
     }
 
@@ -70,30 +66,12 @@ public class OnlineLDADocumentsParser implements DocumentsParser {
     }
 
 
-    private CloseableStream<DocumentImpl> readDocumentsLazy(String path) throws IOException {
+    private Stream<DocumentImpl> readDocumentsLazy(String path) throws IOException {
         Path filePath = FileSystems.getDefault().getPath(path);
         BufferedReader br = Files.newBufferedReader(filePath, Charset.defaultCharset());
-        return new DelegatingCloseableStream<DocumentImpl>(br, br.lines().map(s -> parseDoc(s)));
+
+        //TODO: implement lazy
+        return br.lines().map(s -> parseDoc(s));
     }
 
-
-    private static class DelegatingCloseableStream<T> extends DelegatingStream<T>
-            implements CloseableStream<T>
-    {
-        private final Closeable closeable;
-
-        DelegatingCloseableStream(Closeable c, Stream<T> delegate) {
-            super(delegate);
-            this.closeable = c;
-        }
-
-        @Override
-        public void close() {
-            try {
-                closeable.close();
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-    }
 }

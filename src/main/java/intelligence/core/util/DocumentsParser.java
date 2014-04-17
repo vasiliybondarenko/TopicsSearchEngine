@@ -5,7 +5,7 @@ import infrascructure.data.dom.DocumentImpl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.stream.CloseableStream;
+import java.util.stream.Stream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,5 +17,5 @@ import java.util.stream.CloseableStream;
 public interface DocumentsParser {
     ArrayList<Document> getDocumentsFromFile(String path) throws IOException;
 
-    CloseableStream<DocumentImpl> getDocumentsFromFileLazy(String path) throws IOException;
+    Stream<DocumentImpl> getDocumentsFromFileLazy(String path) throws IOException;
 }

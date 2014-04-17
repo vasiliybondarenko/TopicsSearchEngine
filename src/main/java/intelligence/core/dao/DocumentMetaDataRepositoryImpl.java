@@ -33,7 +33,7 @@ public class DocumentMetaDataRepositoryImpl implements CustomDocumentMetaDataRep
 
     @Override
     public List<DocumentMetaData> getUnprocessedDocs(int batchSize) {
-        return mongoTemplate.find(query(where("isProcessed").is(false)).with(new Sort(Sort.Direction.ASC, "id")).limit(batchSize),
+        return mongoTemplate.find(query(where("isProcessed").is(false)).with(new Sort(new Sort.Order(Sort.Direction.ASC, "_id"))).limit(2),
                 DocumentMetaData.class);
     }
 
