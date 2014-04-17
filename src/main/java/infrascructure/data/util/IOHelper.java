@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.CloseableStream;
+import java.util.stream.Stream;
 
 /**
  * @author shredinger
@@ -55,6 +55,15 @@ public class IOHelper {
             Iterator<String> it = lines.iterator();
             while (it.hasNext()) {
                 String line = it.next();
+                writer.println(line);
+            }
+        }
+    }
+
+    public static void writeLinesToFile(String path, Iterator<String> lines) throws IOException {
+        try (PrintWriter writer = new PrintWriter(path)) {
+            while (lines.hasNext()) {
+                String line = lines.next();
                 writer.println(line);
             }
         }
@@ -97,7 +106,7 @@ public class IOHelper {
         return lines;
     }
 
-    public static CloseableStream<String> readLinesFromFileLazy(String path) throws IOException {
+    public static Stream<String> readLinesFromFileLazy(String path) throws IOException {
         return Files.lines(Paths.get(path), Charset.defaultCharset());
     }
 

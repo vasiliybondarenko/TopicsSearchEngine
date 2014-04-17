@@ -20,7 +20,6 @@ public class ResourceMetaData extends Resource{
 
     @Id
     private final Integer id;
-    private final String data;
     private final Tag[] tags;
     private final Map<Tags, Tag> tagsMap;
 

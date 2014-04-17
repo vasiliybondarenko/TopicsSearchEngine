@@ -3,7 +3,7 @@ package infrascructure.data;
 public class Resource implements Data{
 
     private String identifier;
-	private String data;
+	protected String data;
 
 	public String getData() {
 		return data;

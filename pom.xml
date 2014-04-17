@@ -10,6 +10,12 @@
   <name>onlinelda.infrastructure</name>
   <url>http://maven.apache.org</url>
 
+    <parent>
+        <artifactId>IntelligentTopicsSearch</artifactId>
+        <groupId>IntelligentTopicsSearch</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -143,13 +149,13 @@
 
 	<build>
 	  <plugins>
-	    <plugin>
-		<artifactId>maven-compiler-plugin</artifactId>
-		<configuration>
-			<source>1.8</source>
-			<target>1.8</target>
-		</configuration>
-	    </plugin>
+	    <!--<plugin>-->
+		<!--<artifactId>maven-compiler-plugin</artifactId>-->
+		<!--<configuration>-->
+			<!--<source>1.8</source>-->
+			<!--<target>1.8</target>-->
+		<!--</configuration>-->
+	    <!--</plugin>-->
 
         <plugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -161,19 +167,19 @@
               </configuration>
         </plugin>
 
-          <plugin>
-              <artifactId>maven-assembly-plugin</artifactId>
-              <configuration>
-                  <descriptorRefs>
-                      <descriptorRef>jar-with-dependencies</descriptorRef>
-                  </descriptorRefs>
-                  <archive>
-                      <manifest>
-                          <mainClass>infrascructure.data.StandaloneLauncher</mainClass>
-                      </manifest>
-                  </archive>
-              </configuration>
-          </plugin>
+          <!--<plugin>-->
+              <!--<artifactId>maven-assembly-plugin</artifactId>-->
+              <!--<configuration>-->
+                  <!--<descriptorRefs>-->
+                      <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+                  <!--</descriptorRefs>-->
+                  <!--<archive>-->
+                      <!--<manifest>-->
+                          <!--<mainClass>infrascructure.data.StandaloneLauncher</mainClass>-->
+                      <!--</manifest>-->
+                  <!--</archive>-->
+              <!--</configuration>-->
+          <!--</plugin>-->
 
 	  </plugins>
 	</build>

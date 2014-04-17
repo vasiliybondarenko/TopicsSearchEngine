@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.function.Predicate;
-import java.util.stream.CloseableStream;
+import java.util.stream.Stream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -36,7 +36,7 @@ public class DirectoryDocumentMetaDataReader implements DocumentMetaDataReader, 
     @Qualifier(value = "plainDocMetaDataRepository")
     private ResourceMetaDataRepository repository;
 
-    private CloseableStream<Path> pathStream;
+    private Stream<Path> pathStream;
 
     public DirectoryDocumentMetaDataReader(String batchesDirectory) {
         this.batchesDirectory = batchesDirectory;

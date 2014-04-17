@@ -101,7 +101,7 @@ public class DBSimpleList implements BigList<ResourceMetaData>{
             lastAddedId = data.getId();
             if(idToMetaDataMap.size() == cacheSize){
                 ArrayList<ResourceMetaData> listToSave = new ArrayList<>(cacheSize);
-                idToMetaDataMap.forEachValueSequentially((v) -> listToSave.add(v));
+                idToMetaDataMap.forEachValue(0, (v) -> listToSave.add(v));
                 saveElements(listToSave);
                 idToMetaDataMap.clear();
             }
