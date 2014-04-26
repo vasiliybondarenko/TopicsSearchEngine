@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-3.0.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <context:property-placeholder location="classpath:emails/nasa_mail_OnlineLda.properties, classpath:emails/test_mongodb.properties"/>
+    <import resource="test_mongodb.xml"/>
+
+    <context:component-scan base-package="infrascructure.data"/>
+
+    <bean id="config" class="infrascructure.data.Config">
+        <constructor-arg value="/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/emails/nasa_mail_OnlineLda.properties"></constructor-arg>
+    </bean>
+
+    <!--BigList beans -->
+    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="rawEmailSerializer">
+        <constructor-arg value="${raw_email_repository}"/>
+    </bean>
+    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="rawDocSerializer">
+        <constructor-arg value="${rawdocs_repository}"/>
+    </bean>
+    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="plainDocSerializer">
+        <constructor-arg value="${plaindocs_dir}"/>
+    </bean>
+
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="emailMetaDataRepository">
+        <constructor-arg value="emailMetaData_collection"/>
+    </bean>
+    <bean class="infrascructure.data.readers.DBSimpleList" id="emailsList">
+        <constructor-arg ref="emailMetaDataRepository"/>
+        <constructor-arg ref="rawEmailSerializer"/>
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="rawDocMetaDataRepository">
+        <constructor-arg value="rawDocsMetaData_collection"/>
+    </bean>
+    <bean class="infrascructure.data.readers.DBSimpleList" id="rawDocsList">
+        <constructor-arg ref="rawDocMetaDataRepository"/>
+        <constructor-arg ref="rawDocSerializer"/>
+        <constructor-arg value="1"/>
+    </bean>
+
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="plainDocMetaDataRepository">
+        <constructor-arg value="plainDocsMetaData_collection"/>
+    </bean>
+    <bean class="infrascructure.data.readers.DBSimpleList" name="plainDocsList">
+        <constructor-arg ref="plainDocMetaDataRepository"/>
+        <constructor-arg ref="plainDocSerializer"/>
+        <constructor-arg value="1"/>
+    </bean>
+
+    <!-- -->
+
+    <bean id="rawSerializersFactory" class="infrascructure.data.serialize.SampleRawSerializersFactory"/>
+
+    <bean id="emailReaderFactory" class="infrascructure.data.email.DefaultEmailReaderFactory">
+        <constructor-arg value="/Users/shredinger/Documents/DEVELOPMENT/Projects/SHARED/IntelligentSearch/src/main/resources/emails/email.properties"/>
+    </bean>
+    <bean id="emailReader" factory-bean="emailReaderFactory" factory-method="createEmailReader"/>
+
+    <!--<bean id="emailFilter" class="infrascructure.data.email.NasaEmailFilter"/>-->
+    <bean id="emailFilter" class="infrascructure.data.email.CodeProjectEmailFilter"/>
+
+    <!--<bean id="emailParser" class="infrascructure.data.email.html.NasaEmailParser"/>-->
+    <bean id="emailParser" class="infrascructure.data.email.html.CodeProjectEmailParser"/>
+
+    <bean id="rawEmailsRepository" class="infrascructure.data.email.RawEmailsRepository">
+        <constructor-arg ref="config"/>
+        <constructor-arg ref="rawSerializersFactory"/>
+        <constructor-arg ref="emailReader"/>
+    </bean>
+
+    <bean id="urlIterator" class="infrascructure.data.email.crawl.EmailURLIterator"/>
+
+    <!--<bean id="parser" class="infrascructure.data.parse.NasaParse"/>-->
+    <bean id="parser" class="infrascructure.data.parse.PParser"/>
+
+    <!-- -->
+    <bean id="readersFactory" class="infrascructure.data.readers.RemoteResourceReadersFactory"/>
+    <bean id="resourcesReader"
+          factory-bean="readersFactory"
+          factory-method="getResourceReader"
+            />
+
+    <bean id="plainDocsSerializersFactory" class="infrascructure.data.serialize.DefaultPlainDocsSerializersFactory"/>
+
+    <bean id="resourcesRepository" class="infrascructure.data.readers.AdvancedResourcesRepository"/>
+
+    <bean id="plainDocsRepository" class="infrascructure.data.parse.PlainDocsRepository">
+        <constructor-arg  ref="resourcesRepository"></constructor-arg>
+    </bean>
+
+    <!--<bean id="stemmer" class="infrascructure.data.stripping.MorphaStemmer"/>-->
+    <bean id="stemmer" class="infrascructure.data.stripping.VoidStripper"/>
+
+    <bean id="plainDocsValidator" class="infrascructure.data.parse.PlainDocValidatorImpl"/>
+
+    <bean id="vocabularyBuilder" class="infrascructure.data.vocabulary.SimpleVocabularyBuider" depends-on="stemmer">
+        <constructor-arg ref="plainDocsRepository"></constructor-arg>
+        <constructor-arg value="${min_docs_count}"></constructor-arg>
+    </bean>
+
+    <!--Tasks dispatcher configuration-->
+    <bean id="batchesReaderFactory" class="intelligence.core.engines.DBBatchesReadersFactory">
+        <constructor-arg value="${batch_size}"/>
+    </bean>
+    <bean id="batchesReader" class="vagueobjects.ir.lda.online.demo.BatchesReader" factory-bean="batchesReaderFactory" factory-method="createBatchesReader"/>
+    <bean id="onlineLdaContext" class="intelligence.core.engines.OnlineLDAContext">
+        <constructor-arg ref="batchesReader"/>
+    </bean>
+
+    <bean id="contextSynchronizer" class="infrascructure.data.integration.DirectoryDocumentMetaDataReader">
+        <constructor-arg value="${batches_dir}"/>
+    </bean>
+
+    <bean id="onlineLdaResultWriter" class="intelligence.core.engines.onlinelda.OnlineLDAResultsWriter"/>
+    <bean id="fileToDbSynchronizer" class="intelligence.core.engines.FileToDBInferenceContextSynchronizer"/>
+    <bean id="crawlExecutor" class="intelligence.core.engines.crawlers.CrawlerLauncher"/>
+    <bean id="onlineLdaExecutor" class="intelligence.core.engines.onlinelda.OnlineLDAExecutor">
+        <constructor-arg ref="stemmer"/>
+        <constructor-arg value="${topics}"/>
+        <constructor-arg value="${batch_size}"/>
+        <constructor-arg ref="onlineLdaContext"/>
+        <constructor-arg ref="onlineLdaResultWriter"/>
+    </bean>
+    <bean id="tasksDispatcher" class="intelligence.core.engines.TaskDispatcher">
+        <constructor-arg ref="onlineLdaContext"/>
+        <constructor-arg ref="crawlExecutor"/>
+        <constructor-arg ref="onlineLdaExecutor"/>
+    </bean>
+
+
+</beans>
