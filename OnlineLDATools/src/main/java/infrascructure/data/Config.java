@@ -20,7 +20,8 @@
  */
 package infrascructure.data;
 
-import java.io.FileInputStream;
+import org.springframework.core.io.ClassPathResource;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -57,7 +58,7 @@ public class Config {
 
     public Config(String path) throws IOException {
         props = new Properties();
-        props.load(new FileInputStream(path));
+        props.load(new ClassPathResource(path).getInputStream());
     }
 
     public String getProperty(String key) {

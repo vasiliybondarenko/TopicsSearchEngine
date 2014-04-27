@@ -1,6 +1,7 @@
 package infrascructure.data.email;
 
-import java.io.FileInputStream;
+import org.springframework.core.io.ClassPathResource;
+
 import java.util.Properties;
 
 /**
@@ -22,7 +23,7 @@ public class DefaultEmailReaderFactory extends EmailReaderFactory {
     @Override
     EmailReader createEmailReader() throws Exception{
         Properties properties = new Properties();
-        properties.load(new FileInputStream(propertiesPath));
+        properties.load(new ClassPathResource(propertiesPath).getInputStream());
         return new EmailReaderImpl(properties);
     }
 }
