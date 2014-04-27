@@ -96,7 +96,7 @@ public class EmailReaderImpl implements EmailReader{
 
     public static void main(String[] args) throws IOException, MessagingException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream("src/main/resources/emails/email.properties"));
+        properties.load(new FileInputStream("IntelligentSearch/src/main/resources/emails/email.properties"));
         EmailReaderImpl emailReader = new EmailReaderImpl(properties);
         Iterator<Message> messagesIterator = emailReader.getMessagesIterator();
         while (messagesIterator.hasNext()){
