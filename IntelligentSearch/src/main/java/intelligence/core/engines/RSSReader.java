@@ -3,7 +3,7 @@ package intelligence.core.engines;
 import infrascructure.data.dom.rss.RssFeedItem;
 import infrascructure.data.rss.RssReader;
 import infrascructure.data.util.Trace;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.util.List;
@@ -18,12 +18,12 @@ import java.util.List;
 public class RSSReader {
     public static void main(String[] args) throws Exception {
 
-        String configPath = "IntelligentSearch/src/main/resources/rss/rssOnlineLDAContext.xml";
+        String configPath = "rss/rssOnlineLDAContext.xml";
         String fullPath = new File(configPath).getAbsolutePath();
 
         Trace.trace("Configuration path: " + fullPath);
 
-        FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext(configPath);
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("rss/rssOnlineLDAContext.xml");
         List<RssReader> rssReaders = (List<RssReader>)context.getBean("rssReaders");
 
         for (RssReader reader : rssReaders) {

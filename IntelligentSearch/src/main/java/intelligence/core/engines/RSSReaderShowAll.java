@@ -3,7 +3,7 @@ package intelligence.core.engines;
 import infrascructure.data.dao.RSSFeedRepository;
 import infrascructure.data.dom.rss.RssFeedItem;
 import infrascructure.data.util.Trace;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.util.List;
@@ -17,12 +17,12 @@ import java.util.List;
  */
 public class RSSReaderShowAll {
     public static void main(String[] args) {
-        String configPath = "IntelligentSearch/src/main/resources/rss/rssOnlineLDAContext.xml";
+        String configPath = "rss/rssOnlineLDAContext.xml";
         String fullPath = new File(configPath).getAbsolutePath();
 
         Trace.trace("Configuration path: " + fullPath);
 
-        FileSystemXmlApplicationContext context = new FileSystemXmlApplicationContext(configPath);
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("rss/rssOnlineLDAContext.xml");
         RSSFeedRepository repository = context.getBean(RSSFeedRepository.class);
         List<RssFeedItem> spaceFeeds = repository.getFeeds(1000, "space.com");
         int spaceTotal = spaceFeeds.size();
