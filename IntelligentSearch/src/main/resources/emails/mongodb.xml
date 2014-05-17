@@ -11,12 +11,11 @@
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     <!--TODO: replace with java config! -->
 
-    <context:property-placeholder location="classpath:emails/test_mongodb.properties"/>
+    <context:property-placeholder location="classpath:emails/mongodb.properties"/>
 
     <context:component-scan base-package="intelligence.core.dao,infrascructure.data.dao"/>
 
     <mongo:repositories base-package="intelligence.core.dao">
-        <!--<repo:include-filter type="regex" expression=".*UserRepository" />-->
     </mongo:repositories>
 
     <mongo:repositories base-package="infrascructure.data.dao"/>
@@ -28,7 +27,5 @@
           class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
     </bean>
-
-
 
 </beans>
