@@ -64,7 +64,11 @@ public class EmailURLIterator implements URLIterator{
 
     private void readEmailsAsync(){
         Executors.newCachedThreadPool().submit(()->{
-            emailsRepository.readAll();
+            try{
+                emailsRepository.readAll();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
             return null;
         });
     }

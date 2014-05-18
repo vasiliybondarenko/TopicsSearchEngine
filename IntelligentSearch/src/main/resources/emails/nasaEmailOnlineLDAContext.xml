@@ -7,7 +7,7 @@
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     <context:property-placeholder location="classpath:emails/nasa_mail_OnlineLda.properties, classpath:emails/mongodb.properties"/>
-    <import resource="mongodb.xml"/>
+    <import resource="classpath:emails/mongodb.xml"/>
 
     <context:component-scan base-package="infrascructure.data"/>
 
@@ -26,11 +26,11 @@
         <constructor-arg value="${plaindocs_dir}"/>
     </bean>
 
-    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="emailMetaDataRepository">
+    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="emailsMetaDataRepository">
         <constructor-arg value="emailMetaData_collection"/>
     </bean>
     <bean class="infrascructure.data.readers.DBSimpleList" id="emailsList">
-        <constructor-arg ref="emailMetaDataRepository"/>
+        <constructor-arg ref="emailsMetaDataRepository"/>
         <constructor-arg ref="rawEmailSerializer"/>
         <constructor-arg value="1"/>
     </bean>

@@ -15,7 +15,7 @@
 
     <context:component-scan base-package="intelligence.core.dao,infrascructure.data.dao"/>
 
-    <mongo:repositories base-package="intelligence.core.dao">
+    <mongo:repositories base-package="intelligence.core.dao, infrascructure.data.dao">
     </mongo:repositories>
 
     <mongo:repositories base-package="infrascructure.data.dao"/>

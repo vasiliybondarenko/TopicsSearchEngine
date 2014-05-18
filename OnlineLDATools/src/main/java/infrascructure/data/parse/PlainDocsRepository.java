@@ -33,18 +33,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.HashSet;
 
 /**
  * @author shredinger
  */
 public class PlainDocsRepository extends CacheableReader<ResourceMetaData> {
-
-
-    private final int MAX_CACHE_SIZE = 1;
-    private final String REPOSITORY_STATE_FILE = "last_index.txt";
-
-    private String sourceDir;
 
     @Autowired
     @Qualifier(value = "plainDocsList")
@@ -55,8 +48,6 @@ public class PlainDocsRepository extends CacheableReader<ResourceMetaData> {
 
     @Autowired
     private Config config;
-
-    private HashSet<String> uniqueTitles;
 
     private int required_docs_count;
 
@@ -72,7 +63,6 @@ public class PlainDocsRepository extends CacheableReader<ResourceMetaData> {
     @PostConstruct
     private void init() throws IOException {
         required_docs_count = config.getPropertyInt(Config.REQUIRED_DOCS_COUNT);
-        sourceDir = config.getProperty(Config.PLAINDOCS_DIR);
     }
 
     /* (non-Javadoc)

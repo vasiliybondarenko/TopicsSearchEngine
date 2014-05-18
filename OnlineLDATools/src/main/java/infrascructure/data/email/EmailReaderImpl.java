@@ -1,14 +1,16 @@
 package infrascructure.data.email;
 
+import infrascructure.data.dao.EmailMetaDataRepository;
+import infrascructure.data.dom.email.EmailMetaData;
 import infrascructure.data.util.Trace;
 
 import javax.mail.*;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import static infrascructure.data.email.EmailConfig.*;
@@ -27,11 +29,14 @@ public class EmailReaderImpl implements EmailReader{
     private int messageCount;
     private int currentId;
     private volatile boolean emailInitialized;
+    private EmailMetaDataRepository metaDataRepository;
 
-    public EmailReaderImpl(Properties properties) throws IOException, MessagingException {
+    public EmailReaderImpl(Properties properties, EmailMetaDataRepository emailMetaDataRepository) throws IOException, MessagingException {
         this.properties = properties;
+        this.metaDataRepository = emailMetaDataRepository;
     }
 
+    @Override
     public Iterator<Message> getMessagesIterator(){
         return new Iterator<Message>() {
             @Override
@@ -39,7 +44,7 @@ public class EmailReaderImpl implements EmailReader{
                 if(!emailInitialized){
                     init();
                 }
-                return currentId > 1;
+                return currentId <= messageCount;
             }
 
             @Override
@@ -55,7 +60,10 @@ public class EmailReaderImpl implements EmailReader{
             if(!emailInitialized){
                 init();
             }
-            return inbox.getMessage(--currentId);
+            Message message = inbox.getMessage(currentId);
+            metaDataRepository.save(new EmailMetaData(currentId, message.getSubject(), message.getReceivedDate(), message.getFrom()[0].toString()));
+            currentId ++;
+            return message;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -63,7 +71,7 @@ public class EmailReaderImpl implements EmailReader{
     }
 
 
-    private void init() throws RuntimeException {
+    private void init() {
         try{
             String emailsDir = properties.getProperty(EMAIL_STORE_DIRECTORY);
             createSourceDirectory(emailsDir);
@@ -80,10 +88,21 @@ public class EmailReaderImpl implements EmailReader{
             inbox = store.getFolder("INBOX");
             inbox.open(Folder.READ_ONLY);
             messageCount = inbox.getMessageCount();
-            currentId = messageCount - 1;
+
+            currentId = 1;
+            List<EmailMetaData> lastItems = metaDataRepository.getLastItems(1);
+            if(!lastItems.isEmpty()){
+                int lastEmailId = lastItems.get(0).getId();
+                if(lastEmailId > messageCount){
+                    throw new IllegalStateException("LastEmailId is greater than total messages count: " + lastEmailId + " > " + messageCount);
+                }
+                currentId = lastEmailId + 1;
+            }
+            Trace.trace("EmailReader has been initialized successfully. Total messages: " + messageCount + ", current index: " + currentId);
             emailInitialized = true;
         }catch (Exception ex){
             ex.printStackTrace();
+            throw new RuntimeException("Email box initializing failed", ex);
         }
     }
 
@@ -94,15 +113,4 @@ public class EmailReaderImpl implements EmailReader{
         }
     }
 
-    public static void main(String[] args) throws IOException, MessagingException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("IntelligentSearch/src/main/resources/emails/email.properties"));
-        EmailReaderImpl emailReader = new EmailReaderImpl(properties);
-        Iterator<Message> messagesIterator = emailReader.getMessagesIterator();
-        while (messagesIterator.hasNext()){
-            Message message = messagesIterator.next();
-            Trace.trace(message.getSubject());
-        }
-
-    }
 }
