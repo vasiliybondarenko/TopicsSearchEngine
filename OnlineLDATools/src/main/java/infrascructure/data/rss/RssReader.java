@@ -6,7 +6,6 @@ import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import infrascructure.data.dao.RSSFeedRepository;
 import infrascructure.data.dom.rss.RssFeedItem;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,19 +19,19 @@ import java.util.List;
  * Time: 8:20 PM
  * Project: IntelligentSearch
  */
-public class RssReader {
+public class RssReader implements FeedReader{
 
-    @Autowired
-    private RSSFeedRepository repository;
-
+    RSSFeedRepository repository;
     private final String location;
     private final String tag;
 
-    public RssReader(String location, String tag) {
+    protected RssReader(RSSFeedRepository repository, String location, String tag) {
+        this.repository = repository;
         this.location = location;
         this.tag = tag;
     }
 
+    @Override
     public List<RssFeedItem> read() throws Exception {
         URL url  = new URL(location);
         ArrayList<RssFeedItem> rssFeedItems = new ArrayList<>();
@@ -50,6 +49,7 @@ public class RssReader {
         return repository.addNewFeeds(rssFeedItems);
     }
 
+    @Override
     public String getTag() {
         return tag;
     }

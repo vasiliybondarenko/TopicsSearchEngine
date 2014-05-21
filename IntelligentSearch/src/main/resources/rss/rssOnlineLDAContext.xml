@@ -15,24 +15,7 @@
         <constructor-arg value="rss/rss_OnlineLda.properties"></constructor-arg>
     </bean>
 
-    <bean class="infrascructure.data.rss.RssReader" id="rssReader1">
-        <constructor-arg value="${rss_url1}"/>
-        <constructor-arg value="${rss_tag1}"/>
-    </bean>
-
-    <bean class="infrascructure.data.rss.RssReader" id="rssReader2">
-        <constructor-arg value="${rss_url2}"/>
-        <constructor-arg value="${rss_tag2}"/>
-    </bean>
-
-    <bean id="rssReaders" class="java.util.ArrayList">
-        <constructor-arg>
-            <list>
-                <ref bean="rssReader1"/>
-                <ref bean="rssReader2"/>
-            </list>
-        </constructor-arg>
-    </bean>
+    <bean class="infrascructure.data.rss.DefaultRssReaderFactory" id="rssReaderFactory"/>
 
     <!--BigList beans -->
     <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="rawEmailSerializer">
@@ -75,11 +58,6 @@
     <!-- -->
 
     <bean id="rawSerializersFactory" class="infrascructure.data.serialize.SampleRawSerializersFactory"/>
-
-    <bean id="emailReaderFactory" class="infrascructure.data.email.DefaultEmailReaderFactory">
-        <constructor-arg value="emails/email.properties"/>
-    </bean>
-    <bean id="emailReader" factory-bean="emailReaderFactory" factory-method="createEmailReader"/>
 
     <!--<bean id="emailFilter" class="infrascructure.data.email.NasaEmailFilter"/>-->
     <bean id="emailFilter" class="infrascructure.data.email.CodeProjectEmailFilter"/>
