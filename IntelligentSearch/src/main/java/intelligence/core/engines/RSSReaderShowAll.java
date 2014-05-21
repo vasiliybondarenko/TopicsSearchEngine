@@ -34,7 +34,7 @@ public class RSSReaderShowAll {
     }
 
     private static void processRssFeeds(List<RssFeedItem> feeds){
-        feeds.stream().limit(20).forEach((f) -> System.out.println(String.format("%s - %s  %s", f.getPublishedDate(), f.getTitle(), f.getUrl())));
+        feeds.stream().limit(20).forEach((f) -> Trace.trace("%s - %s  %s", f.getPublishedDate(), f.getTitle(), f.getUrl()) );
         System.out.println(String.format("Total: %s", feeds.size()));
         System.out.println();
     }

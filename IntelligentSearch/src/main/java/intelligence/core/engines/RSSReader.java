@@ -24,7 +24,6 @@ public class RSSReader {
 
         Preconditions.checkArgument(args.length > 0, "RSSReader expects non empty arguments list");
 
-
         String configPath = "rss/rssOnlineLDAContext.xml";
         String fullPath = new File(configPath).getAbsolutePath();
 
@@ -40,8 +39,8 @@ public class RSSReader {
     private static void processReader(FeedReader reader){
         try {
             List<RssFeedItem> newItems = reader.read();
-            System.out.println(String.format("[%s] NEW FEEDS:", reader.getTag()));
-            newItems.forEach((f) -> System.out.println(f.getPublishedDate() + " - " + f.getTitle()));
+            Trace.trace(String.format("[%s] NEW FEEDS:", reader.getTag()));
+            newItems.forEach((f) -> Trace.trace("%s - %s", f.getPublishedDate(), f.getTitle()));
             System.out.println("------------------------------------------\n\n");
         }catch (Exception ex){
             ex.printStackTrace();
