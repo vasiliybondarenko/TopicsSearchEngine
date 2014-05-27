@@ -29,7 +29,7 @@ public class RSSReaderShowAll {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("rss/rssOnlineLDAContext.xml");
         RSSFeedRepository repository = context.getBean(RSSFeedRepository.class);
 
-        Arrays.asList(args).stream().map(tag -> repository.getFeeds(2000, tag.trim())).forEach(feeds -> processRssFeeds(feeds));
+        Arrays.stream(args).map(tag -> repository.getFeeds(2000, tag.trim())).forEach(feeds -> processRssFeeds(feeds));
 
     }
 

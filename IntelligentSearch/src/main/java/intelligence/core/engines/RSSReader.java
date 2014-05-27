@@ -31,9 +31,7 @@ public class RSSReader {
 
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("rss/rssOnlineLDAContext.xml");
         RssReaderFactory rssReaderFactory = context.getBean(RssReaderFactory.class);
-        Arrays.asList(args).stream().map(s -> parseArgument(rssReaderFactory, s)).forEach(reader -> processReader(reader));
-
-
+        Arrays.stream(args).map(s -> parseArgument(rssReaderFactory, s)).forEach(reader -> processReader(reader));
     }
 
     private static void processReader(FeedReader reader){
