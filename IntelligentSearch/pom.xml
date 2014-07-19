@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>4.0.0.RELEASE</version>
+            <version>4.0.5.RELEASE</version>
         </dependency>
 
         <!-- Spring framework -->
@@ -62,20 +62,20 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>4.0.0.RELEASE</version>
+            <version>4.0.5.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>4.0.0.RELEASE</version>
+            <version>4.0.5.RELEASE</version>
         </dependency>
 
         <!-- need this for @Configuration -->
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
-            <version>2.2.2</version>
+            <version>3.1</version>
         </dependency>
 
         <!-- NUnit -->
@@ -97,6 +97,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
+            <!--<version>1.5.0.RELEASE</version>-->
             <version>1.4.1.RELEASE</version>
         </dependency>
 
@@ -138,6 +139,39 @@
             <artifactId>rome</artifactId>
             <version>0.9</version>
         </dependency>
+
+        <!-- Groovy -->
+        <!--<dependency>-->
+            <!--<groupId>org.codehaus.groovy</groupId>-->
+            <!--<artifactId>groovy-all</artifactId>-->
+            <!--<version>1.8.0</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+        <!-- Lets do benchmarks with JMH!-->
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>0.1</version>
+        </dependency>
+
+        <!-- Spock tests -->
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>0.7-groovy-2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.spockframework</groupId>-->
+            <!--<artifactId>spock-core</artifactId>-->
+            <!--<version>1.0-groovy-2.0-SNAPSHOT</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
     </dependencies>
 

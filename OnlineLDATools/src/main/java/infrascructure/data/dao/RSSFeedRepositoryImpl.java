@@ -82,6 +82,14 @@ public class RSSFeedRepositoryImpl implements RSSFeedRepository {
                 RssFeedItem.class, collectionName);
     }
 
+    @Override
+    public List<RssFeedItem> getFeeds(int minId, int limit, String tag) {
+        Preconditions.checkArgument(!StringUtils.isEmpty(tag));
+        Query query = query(where("tag").is(tag)).addCriteria(where("_id").gte(String.valueOf(minId)));
+        return mongoTemplate.find(query.with(new Sort(new Sort.Order(Sort.Direction.ASC, "_id"))).limit(limit),
+                RssFeedItem.class, collectionName);
+    }
+
     protected List<RssFeedItem> getRssFeedItems(int limit) {
         return mongoTemplate.find(query(new Criteria()).with(new Sort(new Sort.Order(Sort.Direction.DESC, "publishedDate"))).limit(limit),
                 RssFeedItem.class, collectionName);

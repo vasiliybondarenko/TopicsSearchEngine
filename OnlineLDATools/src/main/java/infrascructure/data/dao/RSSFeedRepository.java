@@ -21,4 +21,6 @@ public interface RSSFeedRepository {
     List<RssFeedItem> addNewFeeds(List<RssFeedItem> feeds);
 
     List<RssFeedItem> getFeeds(int limit, String tag);
+
+    List<RssFeedItem> getFeeds(int minId, int limit, String tag);
 }

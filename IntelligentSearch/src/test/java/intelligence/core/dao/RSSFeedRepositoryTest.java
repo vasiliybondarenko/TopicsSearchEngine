@@ -108,4 +108,21 @@ public class RSSFeedRepositoryTest {
         );
 
     }
+
+    @Test
+    public void getFeedsByTagShouldReturnFeedsSortedById() throws Exception {
+        repository.deleteAll();
+        List<RssFeedItem> feedsToAdd = new ArrayList<>();
+        feedsToAdd.add(new RssFeedItem("1", "", "", Calendar.getInstance().getTime(), "", "A"));
+        feedsToAdd.add(new RssFeedItem("2", "", "", Calendar.getInstance().getTime(), "", "A"));
+        feedsToAdd.add(new RssFeedItem("3", "", "", Calendar.getInstance().getTime(), "", "A"));
+        repository.addFeeds(feedsToAdd);
+
+        List<RssFeedItem> actualItems = repository.getFeeds(2, 2, "A");
+
+        assertThat(actualItems).containsSequence(
+          feedsToAdd.get(1),
+          feedsToAdd.get(2)
+        );
+    }
 }

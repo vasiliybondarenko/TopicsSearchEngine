@@ -11,9 +11,9 @@
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     <context:property-placeholder location="classpath:mongodb.properties"/>
 
-    <context:component-scan base-package="intelligence.core.dao"/>
+    <context:component-scan base-package="intelligence.core.dao,infrascructure.data.dao"/>
 
-    <mongo:repositories base-package="intelligence.core.dao">
+    <mongo:repositories base-package="intelligence.core.dao, infrascructure.data.dao">
         <!--<repo:include-filter type="regex" expression=".*UserRepository" />-->
     </mongo:repositories>
     <!--<bean id="customRepositoryImpl" class="intelligence.core.infrascructure.data.dao.CustomDocumentRepositoryImplImpl"/>-->

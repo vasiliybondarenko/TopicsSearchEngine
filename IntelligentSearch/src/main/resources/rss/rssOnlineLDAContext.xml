@@ -18,23 +18,11 @@
     <bean class="infrascructure.data.rss.DefaultRssReaderFactory" id="rssReaderFactory"/>
 
     <!--BigList beans -->
-    <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="rawEmailSerializer">
-        <constructor-arg value="${raw_email_repository}"/>
-    </bean>
     <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="rawDocSerializer">
         <constructor-arg value="${rawdocs_repository}"/>
     </bean>
     <bean class="infrascructure.data.serialize.SimpleResourceSerializer" name="plainDocSerializer">
         <constructor-arg value="${plaindocs_dir}"/>
-    </bean>
-
-    <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="emailMetaDataRepository">
-        <constructor-arg value="emailMetaData_collection"/>
-    </bean>
-    <bean class="infrascructure.data.readers.DBSimpleList" id="emailsList">
-        <constructor-arg ref="emailMetaDataRepository"/>
-        <constructor-arg ref="rawEmailSerializer"/>
-        <constructor-arg value="1"/>
     </bean>
 
     <bean class="infrascructure.data.dao.ResourceMetaDataRepositoryImpl" id="rawDocMetaDataRepository">
@@ -59,12 +47,12 @@
 
     <bean id="rawSerializersFactory" class="infrascructure.data.serialize.SampleRawSerializersFactory"/>
 
-    <!--<bean id="emailFilter" class="infrascructure.data.email.NasaEmailFilter"/>-->
-    <bean id="emailFilter" class="infrascructure.data.email.CodeProjectEmailFilter"/>
+    <!--<bean id="emailFilter" class="infrascructure.data.email.CodeProjectEmailFilter"/>-->
 
+    <bean id="urlIterator" class="infrascructure.data.crawl.RssURLIterator">
+        <constructor-arg value="${rss.tag}"/>
+    </bean>
 
-
-    <bean id="urlIterator" class="infrascructure.data.crawl.RssURLIterator"/>
 
     <bean id="parser" class="infrascructure.data.parse.PParser"/>
 

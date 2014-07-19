@@ -53,4 +53,12 @@ public class RssReader implements FeedReader{
     public String getTag() {
         return tag;
     }
+
+    @Override
+    public String toString() {
+        return "RssReader{" +
+                "location='" + location + '\'' +
+                ", tag='" + tag + '\'' +
+                '}';
+    }
 }
